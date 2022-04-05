@@ -2,19 +2,19 @@
 import { defineComponent } from 'vue';
 
 // Components
-import Container from "@/components/Container";
-import Button from "@/components/Button";
+import Container from '@/components/Container';
+import Button from '@/components/Button';
 
 const Welcome = defineComponent({
   name: 'Welcome',
 
   render() {
     return (
-      <Container class-name="container--black">
+      <Container className="container--black">
         <Button>
           Create an account
         </Button>
-        <Button class-name="button--transparent">
+        <Button className="button--transparent">
           Import an existing account
         </Button>
       </Container>

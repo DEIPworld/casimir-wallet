@@ -10,13 +10,14 @@ const Container = defineComponent({
   props: {
     className: {
       type: String,
+      default: '',
     },
   },
 
-  render() {
-    return (
-      <div class="container" v-bind:class="className">
-        <slot/>
+  setup(props) {
+    return () => (
+      <div class={`container ${props.className}`}>
+        <slot />
       </div>
     );
   },
