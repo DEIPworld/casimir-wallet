@@ -1,6 +1,9 @@
 // Lib
 import { defineComponent } from 'vue';
 
+// Styles
+import './styles.scss';
+
 const Button = defineComponent({
   name: 'Button',
 
@@ -11,10 +14,10 @@ const Button = defineComponent({
     },
   },
 
-  setup(props) {
+  setup(props, { slots }) {
     return () => (
       <button class={`button ${props.className}`}>
-        <slot />
+        {() => slots}
       </button>
     );
   },
