@@ -3,7 +3,7 @@
   import { defineComponent } from 'vue';
 
   // Components
-  import Header from '@/components/Header.vue';
+  import Header from '@/components/Header';
 
   export default defineComponent({
     components: {
