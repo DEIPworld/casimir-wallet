@@ -7,13 +7,14 @@ const Button = defineComponent({
   props: {
     className: {
       type: String,
+      default: '',
     },
   },
 
-  render() {
-    return (
-      <button class="button" v-bind:class="className">
-        <slot/>
+  setup(props) {
+    return () => (
+      <button class={`button ${props.className}`}>
+        <slot />
       </button>
     );
   },

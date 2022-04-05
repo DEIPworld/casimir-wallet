@@ -1,11 +1,11 @@
 // Lib
-import { createApp } from 'vue'
+import { createApp } from 'vue';
 
 // Routes
-import router from './router'
+import router from './router';
 
 // Components
-import App from './App.vue'
+import App from './App';
 
 // Styles
 import './styles/app.scss';
