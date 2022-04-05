@@ -14,10 +14,10 @@ const Container = defineComponent({
     },
   },
 
-  setup(props) {
+  setup(props, { slots }) {
     return () => (
       <div class={`container ${props.className}`}>
-        <slot />
+        {() => slots}
       </div>
     );
   },
