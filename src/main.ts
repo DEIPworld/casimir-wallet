@@ -1,6 +1,13 @@
+// Lib
 import { createApp } from 'vue'
-import App from './App.vue'
+
+// Routes
 import router from './router'
+
+// Components
+import App from './App.vue'
+
+// Styles
 import './styles/app.scss';
 
-createApp(App).use(router).mount('#app')
+createApp(App).use(router).mount('#app');
