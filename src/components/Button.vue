@@ -1,0 +1,40 @@
+<script lang="ts">
+  // Lib
+  import { defineComponent } from 'vue';
+
+  export default defineComponent({
+    props: {
+      className: {
+        type: String,
+      },
+    },
+  });
+</script>
+
+<template>
+  <button class="button" v-bind:class="className">
+    <slot />
+  </button>
+</template>
+
+<style lang="scss">
+  .button {
+    padding: 16px 24px;
+    font-weight: 500;
+    letter-spacing: 1.25px;
+    text-transform: uppercase;
+    border-radius: 4px;
+    color: black;
+    background: white;
+
+    &--black {
+      background: black;
+      color: white;
+    }
+
+    &--transparent {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+  }
+</style>
