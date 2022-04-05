@@ -6,7 +6,7 @@
 
 <style lang="scss">
   .grid__cell {
-    width: calc(100% / 3);
-    max-width: 100%;
+    max-width: calc(100% / 3);
+    width: 100%;
   }
 </style>
