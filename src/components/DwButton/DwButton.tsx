@@ -4,23 +4,21 @@ import { defineComponent } from 'vue';
 // Styles
 import './styles.scss';
 
-const Container = defineComponent({
-  name: 'Container',
+export const DwButton = defineComponent({
+  name: 'DwButton',
 
   props: {
     className: {
       type: String,
-      default: '',
-    },
+      default: ''
+    }
   },
 
   setup(props, { slots }) {
     return () => (
-      <div class={`container ${props.className}`}>
+      <button class={`button ${props.className}`}>
         {() => slots}
-      </div>
+      </button>
     );
-  },
+  }
 });
-
-export default Container;

@@ -1,20 +1,7 @@
-// Lib
-import { defineComponent } from 'vue';
+import { RouterView } from 'vue-router';
 
-// Components
-import Header from '@/components/Header';
-
-const App = defineComponent({
-  name: 'App',
-
-  render() {
-    return (
-      <>
-        <Header />
-        <router-view />
-      </>
-    );
-  },
-});
-
-export default App;
+export const App = () => (
+  <div>
+    <RouterView/>
+  </div>
+);
