@@ -1,14 +1,11 @@
 // Lib
 import { defineComponent } from 'vue';
 
-// Components
-import GridCell from './GridCell';
-
 // Styles
 import './styles.scss';
 
-const Grid = defineComponent({
-  name: 'Grid',
+export const DwGrid = defineComponent({
+  name: 'DwGrid',
 
   render() {
     return (
@@ -16,8 +13,5 @@ const Grid = defineComponent({
         <slot/>
       </div>
     );
-  },
+  }
 });
-
-export { GridCell };
-export default Grid;

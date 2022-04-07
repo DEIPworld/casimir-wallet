@@ -4,8 +4,8 @@ import { defineComponent } from 'vue';
 // Styles
 import './styles.scss';
 
-const GridCell = defineComponent({
-  name: 'GridCell',
+export const DwGridCell = defineComponent({
+  name: 'DwGridCell',
 
   render() {
     return (
@@ -13,7 +13,5 @@ const GridCell = defineComponent({
         <slot/>
       </div>
     );
-  },
+  }
 });
-
-export default GridCell;

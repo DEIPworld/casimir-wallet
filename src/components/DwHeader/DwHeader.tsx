@@ -2,23 +2,21 @@
 import { defineComponent } from 'vue';
 
 // Components
-import Container from '../Container';
+import { DwContainer } from '../DwContainer';
 
 // Styles
 import './styles.scss';
 
-const Header = defineComponent({
-  name: 'Header',
+export const DwHeader = defineComponent({
+  name: 'DwHeader',
 
   render() {
     return (
       <div class="header">
-        <Container>
+        <DwContainer>
           <router-link to="/">Logo</router-link>
-        </Container>
+        </DwContainer>
       </div>
     );
-  },
+  }
 });
-
-export default Header;
