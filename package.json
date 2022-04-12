@@ -12,6 +12,8 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@polkadot/api": "^7.15.1",
+    "@polkadot/ui-keyring": "^1.4.1",
     "pinia": "^2.0.13",
     "vue": "^3.2.31",
     "vue-router": "^4.0.14"
