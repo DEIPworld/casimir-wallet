@@ -28,8 +28,8 @@ class KeyringService {
 
   selectWordFromSeedPhrase(seedPhrase: string): { wordNum: number, word: string } {
     const words: string[] = seedPhrase.split(' ');
-    const min: number = Math.ceil(0);
-    const max: number = Math.floor(words.length - 1);
+    const min = 0;
+    const max: number = words.length - 1;
     const index: number = Math.floor(Math.random() * (max - min) + min);
 
     return {
