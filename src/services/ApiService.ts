@@ -4,7 +4,7 @@ class ApiService {
 
   env = {
     development: 'wss://gateway.testnet.octopus.network/deip/46v4p8ss613olf92p2scmsjud68mhzrr',
-    production: 'WIP'
+    production: 'wss://gateway.mainnet.octopus.network/deip/b9e1ipeh3ejw2znrb4s2xd4tlf6gynq0'
   };
 
   api: any = {};
