@@ -26,12 +26,12 @@ class ApiService {
   private api: any;
 
   private formatCurrency(currency: any): string {
-    return new BigNumber(currency).shiftedBy(-21).toFormat();
+    return new BigNumber(currency).shiftedBy(-18).toFormat();
   }
 
   async init(): Promise<void> {
     try {
-      const provider = new WsProvider(this.env.production);
+      const provider = new WsProvider(this.env.development);
       this.api = await ApiPromise.create({ provider });
     } catch (error) {
       console.log('Unable to initiate an API service: ', error);
