@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
-import type { IAccount, IVestingContract } from '@/types';
+import type { IAccount, IVestingPlan } from '@/types';
 import type { ApiTypes } from '@polkadot/api-base/types';
 import type { ApiDecoration } from '@polkadot/api/types';
 
@@ -23,7 +23,11 @@ class ApiService {
   // this.api.tx
   // All extrinsics, e.g. this.api.tx.balances.transfer(accountId, value).
   // private api: ApiDecoration<ApiTypes> | any = {};
-  private api: any = {};
+  private api: any;
+
+  private formatCurrency(currency: any): string {
+    return new BigNumber(currency).shiftedBy(-21).toFormat();
+  }
 
   async init(): Promise<void> {
     try {
@@ -34,24 +38,31 @@ class ApiService {
     }
   }
 
-  async getVestingContract(address: string): Promise<IVestingContract | undefined> {
+  async getVestingPlan(address: string): Promise<IVestingPlan | undefined> {
     try {
       const { value } = await this.api.query.deipVesting.vestingPlans(address);
 
       return {
 
+        // Duration of cliff, not allowed to withdraw
         cliffDuration: Number(value.cliffDuration),
 
-        initialAmount: new BigNumber(value.initialAmount).toFormat(),
+        // Amount of tokens which will be released at startTime
+        initialAmount: this.formatCurrency(value.initialAmount),
 
+        // Vesting interval (availability for the next unlock)
         interval: Number(value.interval),
 
+        // Starting time for unlocking (vesting)
         startTime: Number(value.startTime),
 
-        totalAmount: new BigNumber(value.totalAmount).toFormat(),
+        // Total locked amount, including the initialAmount
+        totalAmount: this.formatCurrency(value.totalAmount),
 
+        // Total duration of this vesting plan (in time)
         totalDuration: Number(value.totalDuration),
 
+        // True if vesting amount is accumulated during cliff duration
         vestingDuringCliff: Boolean(value.vestingDuringCliff)
 
       };
@@ -90,7 +101,7 @@ class ApiService {
           //
           // This is the only balance that matters in terms of most operations on tokens. It
           // alone is used to determine the balance when in the contract execution environment.
-          free: new BigNumber(res.data.free).toFormat(),
+          free: this.formatCurrency(res.data.free),
 
           // Balance which is reserved and may not be used at all.
           //
@@ -98,15 +109,15 @@ class ApiService {
           //
           // This balance is a 'reserve' balance that other subsystems use in order to set aside tokens
           // that are still 'owned' by the account holder, but which are suspendable.
-          reserved: new BigNumber(res.data.reserved).toFormat(),
+          reserved: this.formatCurrency(res.data.reserved),
 
           // The amount that `free` may not drop below when withdrawing for *anything except transaction
           // fee payment*.
-          miscFrozen: new BigNumber(res.data.miscFrozen).toFormat(),
+          miscFrozen: this.formatCurrency(res.data.miscFrozen),
 
           // The amount that `free` may not drop below when withdrawing specifically for transaction
           // fee payment.
-          feeFrozen: new BigNumber(res.data.feeFrozen).toFormat()
+          feeFrozen: this.formatCurrency(res.data.feeFrozen)
 
         }
 

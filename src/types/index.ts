@@ -11,7 +11,7 @@ export interface IAccount {
   }
 }
 
-export interface IVestingContract {
+export interface IVestingPlan {
   cliffDuration: number;
   initialAmount: string;
   interval: number;
