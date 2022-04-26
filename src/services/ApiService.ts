@@ -1,9 +1,11 @@
 import BigNumber from 'bignumber.js';
+import Keyring from '@polkadot/ui-keyring';
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import { mnemonicGenerate, mnemonicValidate } from '@polkadot/util-crypto';
 
 import type { IAccount, IVestingPlan } from '@/types';
-import type { ApiTypes } from '@polkadot/api-base/types';
-import type { ApiDecoration } from '@polkadot/api/types';
+import type { CreateResult } from '@polkadot/ui-keyring/types';
+import type { WordCount } from '@polkadot/util-crypto/mnemonic/generate';
 
 class ApiService {
 
@@ -26,16 +28,63 @@ class ApiService {
   private api: any;
 
   private formatCurrency(currency: any): string {
-    return new BigNumber(currency).shiftedBy(-18).toFormat();
+    return new BigNumber(currency).shiftedBy(-18).toFormat(BigNumber.ROUND_FLOOR);
   }
 
-  async init(): Promise<void> {
+  async loadApi(): Promise<void> {
     try {
       const provider = new WsProvider(this.env.development);
       this.api = await ApiPromise.create({ provider });
     } catch (error) {
       console.log('Unable to initiate an API service: ', error);
     }
+  }
+
+  // Must be initiated after *loadApi() call
+  // In terms to handle a Keyring api to load the plain account
+  loadKeyring(): void {
+    try {
+      Keyring.loadAll({
+        ss58Format: 42,
+        type: 'sr25519',
+        isDevelopment: true
+      });
+    } catch (error) {
+      console.error('Unable to load Keyring. ', error);
+    }
+  }
+
+  generateSeedPhrase(numWords: WordCount | undefined = 12): string {
+    return mnemonicGenerate(numWords);
+  }
+
+  validateSeedPhrase(seedPhrase: string): boolean {
+    return mnemonicValidate(seedPhrase);
+  }
+
+  testWordFromSeedPhrase(seedPhrase: string): { wordNum: number, word: string } {
+    const words: string[] = seedPhrase.split(' ');
+    const min = 0;
+    const max: number = words.length - 1;
+    const index: number = Math.floor(Math.random() * (max - min) + min);
+
+    return {
+
+      // Position of the word we're testing in seed phrase
+      wordNum: index + 1,
+
+      // One of the exact word of a seed phrase
+      word: words[index]
+
+    };
+  }
+
+  getOrCreateAccountWithSeedPhrase(seedPhrase: string): CreateResult | Error {
+    if (this.validateSeedPhrase(seedPhrase)) {
+      return Keyring.addUri(seedPhrase);
+    }
+
+    return Error(`The seed phrase "${seedPhrase}" is not valid`);
   }
 
   async getVestingPlan(address: string): Promise<IVestingPlan | undefined> {
@@ -71,7 +120,7 @@ class ApiService {
     }
   }
 
-  async getAccount(address: string): Promise<IAccount | undefined> {
+  async getAccountBalance(address: string): Promise<IAccount | undefined> {
     try {
       const res = await this.api.query.system.account(address);
 
