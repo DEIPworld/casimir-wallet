@@ -236,6 +236,42 @@ class ApiService {
     }
   }
 
+  subscribeToTransfers(address: string): void {
+    try {
+      this.api.rpc.chain.subscribeFinalizedHeads(
+        async (header: any) => {
+          const [{ block }, records] = await Promise.all([
+            this.api.rpc.chain.getBlock(header.hash),
+            this.api.query.system.events.at(header.hash)
+          ]);
+
+          block.extrinsics.forEach((extrinsic: any, index: any) => {
+            // Retrieve all events for this extrinsic
+            const events = records.filter(
+              ({ phase }: any) => phase.isApplyExtrinsic && phase.asApplyExtrinsic.eq(index)
+            );
+
+            // Search if it is a transfer
+            events.forEach(({ event }: any) => {
+              const [sender, recipient, amount] = event.data;
+
+              if (event.method === 'Transfer' && recipient.toString() === address) {
+                console.log({
+                  hash: extrinsic.hash.toString(),
+                  from: sender.toString(),
+                  date: new Date(),
+                  amount: this.formatCurrency(amount)
+                });
+              }
+            });
+          });
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 }
 
 export default new ApiService();

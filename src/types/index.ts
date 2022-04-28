@@ -23,7 +23,8 @@ export interface IVestingPlan {
 
 export interface ITransaction {
   hash: string;
-  to: string;
+  to?: string;
+  from?: string;
   date: Date;
-  amount: number;
+  amount: number | string;
 }
