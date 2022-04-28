@@ -3,7 +3,7 @@ import Keyring from '@polkadot/ui-keyring';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { mnemonicGenerate, mnemonicValidate } from '@polkadot/util-crypto';
 
-import type { IAccount, IVestingPlan } from '@/types';
+import type { IAccount, IVestingPlan, ITransaction } from '@/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { WordCount } from '@polkadot/util-crypto/mnemonic/generate';
 
@@ -219,13 +219,18 @@ class ApiService {
     recipient: string,
     account: CreateResult,
     amount: number
-  ): Promise<string | undefined> {
+  ): Promise<ITransaction | undefined> {
     try {
       const hash = await this.api.tx.balances
         .transfer(recipient, new BigNumber(amount).shiftedBy(18).toString())
         .signAndSend(account.pair);
 
-      return hash.toHex();
+      return {
+        hash: hash.toHex(),
+        to: recipient,
+        date: new Date(),
+        amount
+      };
     } catch (error) {
       console.log(error);
     }
