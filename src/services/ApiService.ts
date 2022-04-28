@@ -10,8 +10,14 @@ import type { WordCount } from '@polkadot/util-crypto/mnemonic/generate';
 class ApiService {
 
   private env = {
-    development: 'wss://gateway.testnet.octopus.network/deip/46v4p8ss613olf92p2scmsjud68mhzrr',
-    production: 'wss://gateway.mainnet.octopus.network/deip/b9e1ipeh3ejw2znrb4s2xd4tlf6gynq0'
+    development: {
+      network: 'wss://gateway.testnet.octopus.network/deip/46v4p8ss613olf92p2scmsjud68mhzrr',
+      subscan: 'https://polkadot.api.subscan.io/api/scan/transfers'
+    },
+    production: {
+      network: 'wss://gateway.mainnet.octopus.network/deip/b9e1ipeh3ejw2znrb4s2xd4tlf6gynq0',
+      subscan: 'WIP'
+    }
   };
 
   // this.api.consts
@@ -24,7 +30,7 @@ class ApiService {
   //
   // this.api.tx
   // All extrinsics, e.g. this.api.tx.balances.transfer(accountId, value).
-  // private api: ApiDecoration<ApiTypes> | any = {};
+  // private api: ApiDecoration<ApiTypes> | any;
   private api: any;
 
   private formatCurrency(currency: any): string {
@@ -33,7 +39,7 @@ class ApiService {
 
   async loadApi(): Promise<void> {
     try {
-      const provider = new WsProvider(this.env.development);
+      const provider = new WsProvider(this.env.development.network);
       this.api = await ApiPromise.create({ provider });
     } catch (error) {
       console.log('Unable to initiate an API service: ', error);
@@ -171,6 +177,55 @@ class ApiService {
         }
 
       };
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getTransactions(address: string): Promise<any> {
+    try {
+      const res = await fetch(this.env.development.subscan, {
+        method: 'POST',
+        headers: {
+          'X-API-Key': 'add1eafb458177af01a7f2ea9baff12a',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ row: 10, page: 1, address })
+      });
+
+      return res.json();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getTransactionFee(
+    recipient: string,
+    address: string,
+    amount: number
+  ): Promise<string | undefined> {
+    try {
+      const { partialFee } = await this.api.tx.balances
+        .transfer(recipient, amount)
+        .paymentInfo(address);
+
+      return this.formatCurrency(partialFee);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async makeTransaction(
+    recipient: string,
+    account: CreateResult,
+    amount: number
+  ): Promise<string | undefined> {
+    try {
+      const hash = await this.api.tx.balances
+        .transfer(recipient, new BigNumber(amount).shiftedBy(18).toString())
+        .signAndSend(account.pair);
+
+      return hash.toHex();
     } catch (error) {
       console.log(error);
     }
