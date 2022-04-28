@@ -255,7 +255,7 @@ class ApiService {
             events.forEach(({ event }: any) => {
               const [sender, recipient, amount] = event.data;
 
-              if (event.method === 'Transfer' && recipient.toString() === address) {
+              if (event.method === 'Transfer' && recipient && recipient.toString() === address) {
                 console.log({
                   hash: extrinsic.hash.toString(),
                   from: sender.toString(),
