@@ -20,3 +20,10 @@ export interface IVestingPlan {
   totalDuration: number;
   vestingDuringCliff: boolean;
 }
+
+export interface ITransaction {
+  hash: string;
+  to: string;
+  date: Date;
+  amount: number;
+}
