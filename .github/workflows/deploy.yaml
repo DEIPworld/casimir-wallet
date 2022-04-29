@@ -29,6 +29,6 @@ jobs:
           path: ./src/dist
           remote_path: /var/www/wallet/
           remote_host: ec2-3-124-116-65.eu-central-1.compute.amazonaws.com
-          remote_user: ec2-user
+          remote_user: root
           remote_key: "${{ secrets.SSH_PRIVATE_KEY }}"
 
