@@ -2,8 +2,6 @@
 @use 'sass:map';
 @use 'sass:list';
 
-@use '../../assets/styles/tools/generators';
-
 @function strip-units($number) {
   @return math.div($number, ($number * 0 + 1));
 }
@@ -16,6 +14,12 @@
     left: 100vw * (math.div(strip-units($left), $base-width)),
     top: 100vh * (math.div(strip-units($top), $base-height))
   );
+}
+
+@mixin gen-props($map) {
+  @each $prop, $value in $map {
+    #{$prop}: $value
+  }
 }
 
 $orbs: (
@@ -83,7 +87,7 @@ $orbs: (
     $anim-steps: map.set($anim-steps, '100%', list.nth($anim, 1));
 
     &__orb-#{$index} {
-      @include generators.props(list.nth($anim, 1));
+      @include gen-props(list.nth($anim, 1));
 
       position: absolute;
       background: map.get($params, color);
@@ -92,17 +96,17 @@ $orbs: (
       opacity: $opacity;
       filter: blur(math.div($size, 2));
 
-      .body-overlay--animated & {
-        animation: #{$anim-name} 3s linear infinite;
-      }
+      //.body-overlay--animated & {
+      //  animation: #{$anim-name} 3s linear infinite;
+      //}
     }
 
-    @keyframes #{$anim-name} {
-      @each $key, $props in $anim-steps {
-        #{$key} {
-          @include generators.props($props)
-        }
-      }
-    }
+    //@keyframes #{$anim-name} {
+    //  @each $key, $props in $anim-steps {
+    //    #{$key} {
+    //      @include props($props)
+    //    }
+    //  }
+    //}
   }
 }
