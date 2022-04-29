@@ -1,28 +1,32 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import { HomeView } from '@/components/HomeView';
+// import { HomeView } from '@/components/HomeView';
+// import { WalletView } from '@/components/WalletView';
 
 import { AccountCreate } from '@/components/AccountCreate';
 import { AccountImport } from '@/components/AccountImport';
-import { WalletView } from '@/components/WalletView';
 import { WalletBalances } from '@/components/WalletBalances';
 import { WalletTransactions } from '@/components/WalletTransactions';
 import { AccountView } from '@/components/AccountView';
 import { VestingView } from '@/components/VestingView';
 import { VestingDetails } from '@/components/VestingDetails';
+import { DepositView } from '@/components/DepositView';
+import { SendView } from '@/components/SendView';
+import { MainView } from '@/components/MainView';
 
-const isLoggedIn = () => {
-  const storageData = localStorage.getItem('DEIP:account');
-  const accountData = storageData ? JSON.parse(storageData) : storageData;
-  return !!accountData?.account?.json?.address;
-};
+// const isLoggedIn = () => {
+//   const storageData = localStorage.getItem('DEIP:account');
+//   const accountData = storageData ? JSON.parse(storageData) : storageData;
+//   return !!accountData?.account?.json?.address;
+// };
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      component: isLoggedIn() ? WalletView : HomeView,
+      component: MainView,
+
       children: [
         {
           path: '',
@@ -35,6 +39,18 @@ const router = createRouter({
           component: WalletTransactions
         }
       ]
+    },
+
+    {
+      path: '/deposit',
+      name: 'wallet.deposit',
+      component: DepositView
+    },
+
+    {
+      path: '/send',
+      name: 'wallet.send',
+      component: SendView
     },
 
     {

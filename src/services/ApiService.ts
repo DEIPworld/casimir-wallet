@@ -82,6 +82,7 @@ export class ApiService {
 
   getOrCreateAccountWithSeedPhrase(seedPhrase: string): CreateResult {
     if (this.validateSeedPhrase(seedPhrase)) {
+      console.log(Keyring.addUri(seedPhrase));
       return Keyring.addUri(seedPhrase);
     }
 
@@ -217,6 +218,12 @@ export class ApiService {
     account: CreateResult,
     amount: number
   ): Promise<ITransaction | undefined> {
+    console.log(
+      recipient,
+      account.pair,
+      amount
+    );
+
     try {
       const hash = await this.api.tx.balances
         .transfer(recipient, new BigNumber(amount).shiftedBy(18).toString())
