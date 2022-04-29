@@ -1,24 +1,32 @@
 import { computed, defineComponent, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import { VBtn, VSpacer, VRow, VCol, VTextField, VDivider } from 'vuetify/components';
+import {
+  VBtn, VSpacer, VRow, VCol, VTextField, VTextarea, VDivider, VSnackbar
+} from 'vuetify/components';
 
 import { useAccountStore } from '@/stores/account';
 import { InnerContainer } from '@/components/InnerContainer';
 import { useWalletStore } from '@/stores/wallet';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
+import { useNotify } from '@/composable/notify';
+import { useRouter } from 'vue-router';
 
 export const SendView = defineComponent({
   setup() {
-
     const accountStore = useAccountStore();
-    const { address, account } = storeToRefs(accountStore);
+    const router = useRouter();
+    const { address } = storeToRefs(accountStore);
+    const { getAccount } = accountStore;
 
     const { getTransactionFee, makeTransaction } = useWalletStore();
+    const { notify, notifyIsActive, showNotify } = useNotify();
 
 
     const recipient = ref<string>('');
     const amount = ref<number>();
     const fee = ref<string>('0');
+
+    const seedPhrase = ref<string>('');
 
     const totalSend = computed(() => {
       if (amount.value) {
@@ -27,6 +35,12 @@ export const SendView = defineComponent({
 
       return 0;
     });
+
+    const goToWallet = () => {
+      router.push({
+        name: 'wallet'
+      });
+    };
 
     watch(
       () => ({
@@ -45,11 +59,13 @@ export const SendView = defineComponent({
     );
 
     const transfer = () => {
+      const account = getAccount(seedPhrase.value, false);
       makeTransaction(
         recipient.value,
-        account.value as CreateResult,
+        account as CreateResult,
         amount.value as number
       );
+      showNotify('Successfully sent');
     };
 
     const transferIsDisabled = computed(() => !(recipient.value && amount.value));
@@ -94,6 +110,13 @@ export const SendView = defineComponent({
           <VCol class="text-right">{totalSend.value } DEIP</VCol>
         </VRow>
 
+        <VTextarea
+          label="Passphrase (12 words)"
+          v-model={seedPhrase.value}
+          rows={2}
+          class="mt-6"
+        />
+
         <div class="d-flex mt-12">
           <VSpacer/>
           <VBtn
@@ -104,12 +127,21 @@ export const SendView = defineComponent({
           </VBtn>
           <VBtn
             onClick={transfer}
-            disabled={transferIsDisabled.value}
             class="ml-4"
+            disabled={transferIsDisabled.value}
           >
             Confirm
           </VBtn>
         </div>
+
+        <VSnackbar
+          v-model={notifyIsActive.value}
+          color={notify.color}
+          timeout={1000}
+          onUpdate:modelValue={goToWallet}
+        >
+          {notify.message}
+        </VSnackbar>
       </InnerContainer>
     );
   }

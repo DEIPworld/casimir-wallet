@@ -27,7 +27,7 @@ export const AccountCreate = defineComponent({
 
     const accountStore = useAccountStore();
     const { address } = storeToRefs(accountStore);
-    const { generateSeedPhrase, getOrCreateAccount } = accountStore;
+    const { generateSeedPhrase, getAccount } = accountStore;
 
     const currentsStep = ref<Steps>('start');
     const checkWordNumber = ref<number>(0);
@@ -77,7 +77,7 @@ export const AccountCreate = defineComponent({
 
       if (isValid) {
         try {
-          getOrCreateAccount(seedPhrase.value);
+          getAccount(seedPhrase.value);
           setStep('finish');
         } catch (err) {
           let errMessage = 'Unknown Error';
