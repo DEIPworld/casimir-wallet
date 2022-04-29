@@ -38,8 +38,21 @@ export const WalletView = defineComponent({
           </VTabs>
 
           <div>
-            <VBtn size="small" color={'primary'} to={{ name: 'wallet.deposit' }}>deposit</VBtn>
-            <VBtn size="small" color={'secondary-btn'} class={'ml-4'}>send</VBtn>
+            <VBtn
+              size="small"
+              color={'primary'}
+              to={{ name: 'wallet.deposit' }}
+            >
+              deposit
+            </VBtn>
+            <VBtn
+              size="small"
+              color={'secondary-btn'}
+              to={{ name: 'wallet.send' }}
+              class={'ml-4'}
+            >
+              send
+            </VBtn>
           </div>
         </div>
 

@@ -22,7 +22,7 @@ export const AccountImport = defineComponent({
     const { currentsStep, setStep } = useMultistep<Steps>('start');
 
     const accountStore = useAccountStore();
-    const { getOrCreateAccount } = accountStore;
+    const { getAccount } = accountStore;
 
     const goToSeedEnter = () => {
       setStep('seedEnter');
@@ -30,7 +30,7 @@ export const AccountImport = defineComponent({
 
     const makeImport = (seedPhrase: string) => {
       try {
-        getOrCreateAccount(seedPhrase);
+        getAccount(seedPhrase);
         setStep('success');
       } catch (e) {
         setStep('error');
