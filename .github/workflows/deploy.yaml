@@ -22,15 +22,13 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Deploy App
-        run: |
-          aws s3 sync ./src/dist s3://$AWS_S3_BUCKET --delete --acl public-read
-        env:
-          AWS_S3_BUCKET: ${{secrets.AWS_S3_BUCKET}}
-
-      # - name: Update CloudFront Destribution
-      #   run: |
-      #     aws cloudfront create-invalidation --distribution-id $DESTRIBUTION_ID --paths "/*"
-      #   env:
-      #     DESTRIBUTION_ID: ${{secrets.DESTRIBUTION}}
+      - name: rsync deployments
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          switches: -avzr --delete
+          path: ./src/dist
+          remote_path: /var/www/wallet/
+          remote_host: ec2-3-124-116-65.eu-central-1.compute.amazonaws.com
+          remote_user: ec2-user
+          remote_key: "${{ secrets.SSH_PRIVATE_KEY }}"
 
