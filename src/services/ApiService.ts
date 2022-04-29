@@ -3,11 +3,13 @@ import Keyring from '@polkadot/ui-keyring';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { mnemonicGenerate, mnemonicValidate } from '@polkadot/util-crypto';
 
-import type { IAccount, IVestingPlan, ITransaction } from '@/types';
+import type { IAccount, IVestingPlan, ITransaction } from '../../types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { WordCount } from '@polkadot/util-crypto/mnemonic/generate';
 
-class ApiService {
+import { singleton } from '@/utils/singleton';
+
+export class ApiService {
 
   private env = {
     development: {
@@ -33,8 +35,10 @@ class ApiService {
   // private api: ApiDecoration<ApiTypes> | any;
   private api: any;
 
-  private formatCurrency(currency: any): string {
-    return new BigNumber(currency).shiftedBy(-18).toFormat(BigNumber.ROUND_FLOOR);
+  private static formatCurrency(currency: number): string {
+    return new BigNumber(currency)
+      .shiftedBy(-18)
+      .toFormat(BigNumber.ROUND_FLOOR);
   }
 
   async loadApi(): Promise<void> {
@@ -60,6 +64,13 @@ class ApiService {
     }
   }
 
+  async init(): Promise<void> {
+    await this.loadApi();
+    this.loadKeyring();
+  }
+
+  // ////////////////////////
+
   generateSeedPhrase(numWords: WordCount | undefined = 12): string {
     return mnemonicGenerate(numWords);
   }
@@ -68,30 +79,15 @@ class ApiService {
     return mnemonicValidate(seedPhrase);
   }
 
-  testWordFromSeedPhrase(seedPhrase: string): { wordNum: number, word: string } {
-    const words: string[] = seedPhrase.split(' ');
-    const min = 0;
-    const max: number = words.length - 1;
-    const index: number = Math.floor(Math.random() * (max - min) + min);
-
-    return {
-
-      // Position of the word we're testing in seed phrase
-      wordNum: index + 1,
-
-      // One of the exact word of a seed phrase
-      word: words[index]
-
-    };
-  }
-
-  getOrCreateAccountWithSeedPhrase(seedPhrase: string): CreateResult | Error {
+  getOrCreateAccountWithSeedPhrase(seedPhrase: string): CreateResult {
     if (this.validateSeedPhrase(seedPhrase)) {
       return Keyring.addUri(seedPhrase);
     }
 
-    return Error(`The seed phrase "${seedPhrase}" is not valid`);
+    throw new Error(`The seed phrase "${seedPhrase}" is not valid`);
   }
+
+  // ////////////////////////
 
   async getVestingPlan(address: string): Promise<IVestingPlan | undefined> {
     try {
@@ -103,7 +99,7 @@ class ApiService {
         cliffDuration: Number(value.cliffDuration),
 
         // Amount of tokens which will be released at startTime
-        initialAmount: this.formatCurrency(value.initialAmount),
+        initialAmount: ApiService.formatCurrency(value.initialAmount),
 
         // Vesting interval (availability for the next unlock)
         interval: Number(value.interval),
@@ -112,7 +108,7 @@ class ApiService {
         startTime: Number(value.startTime),
 
         // Total locked amount, including the initialAmount
-        totalAmount: this.formatCurrency(value.totalAmount),
+        totalAmount: ApiService.formatCurrency(value.totalAmount),
 
         // Total duration of this vesting plan (in time)
         totalDuration: Number(value.totalDuration),
@@ -156,7 +152,7 @@ class ApiService {
           //
           // This is the only balance that matters in terms of most operations on tokens. It
           // alone is used to determine the balance when in the contract execution environment.
-          free: this.formatCurrency(res.data.free),
+          free: ApiService.formatCurrency(res.data.free),
 
           // Balance which is reserved and may not be used at all.
           //
@@ -164,15 +160,15 @@ class ApiService {
           //
           // This balance is a 'reserve' balance that other subsystems use in order to set aside tokens
           // that are still 'owned' by the account holder, but which are suspendable.
-          reserved: this.formatCurrency(res.data.reserved),
+          reserved: ApiService.formatCurrency(res.data.reserved),
 
           // The amount that `free` may not drop below when withdrawing for *anything except transaction
           // fee payment*.
-          miscFrozen: this.formatCurrency(res.data.miscFrozen),
+          miscFrozen: ApiService.formatCurrency(res.data.miscFrozen),
 
           // The amount that `free` may not drop below when withdrawing specifically for transaction
           // fee payment.
-          feeFrozen: this.formatCurrency(res.data.feeFrozen)
+          feeFrozen: ApiService.formatCurrency(res.data.feeFrozen)
 
         }
 
@@ -209,7 +205,7 @@ class ApiService {
         .transfer(recipient, amount)
         .paymentInfo(address);
 
-      return this.formatCurrency(partialFee);
+      return ApiService.formatCurrency(partialFee);
     } catch (error) {
       console.log(error);
     }
@@ -260,7 +256,7 @@ class ApiService {
                   hash: extrinsic.hash.toString(),
                   from: sender.toString(),
                   date: new Date(),
-                  amount: this.formatCurrency(amount)
+                  amount: ApiService.formatCurrency(amount)
                 });
               }
             });
@@ -272,6 +268,6 @@ class ApiService {
     }
   }
 
-}
+  static readonly getInstance = singleton(() => new ApiService());
 
-export default new ApiService();
+}

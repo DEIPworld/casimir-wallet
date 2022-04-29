@@ -1,0 +1,1 @@
+export { VestingDetails } from './VestingDetails';
