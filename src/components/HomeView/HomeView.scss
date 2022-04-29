@@ -1,0 +1,27 @@
+.home-view {
+  width: 100%;
+  display: flex;
+  position: relative;
+  align-self: stretch;
+
+  &__info {
+    flex: 1;
+    align-self: center;
+  }
+
+  &__screen {
+    flex: 1;
+    position: relative;
+  }
+
+  &__screen-img {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: #000;
+    border-radius: 20px;
+    width: 100%;
+    padding-top: 120%;
+    transform: rotate(15deg) translate(80px, 24px);
+  }
+}

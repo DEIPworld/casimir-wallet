@@ -1,168 +1,175 @@
-/* color palette from <https://github.com/vuejs/theme> */
-:root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
+//@use 'generic';
+$body-font-family: 'Roboto', sans-serif;
+$heading-font-family: $body-font-family;
 
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
+@use 'vuetify/styles/main' with (
+  $spacers-steps: 24,
 
-  --vt-c-indigo: #2c3e50;
+  $typography: (
+    'h1': (
+      'size': 80px,
+      'weight': 600,
+      'line-height': 94px,
+      'letter-spacing': normal,
+      'font-family': $heading-font-family,
+      'text-transform': none
+    ),
+    'h2': (
+      'weight': 700,
+      'size': 60px,
+      'line-height': 72px,
+      'letter-spacing': -0.5px,
+      'font-family': $heading-font-family,
+      'text-transform': none
+    ),
+    'h3': (
+      'weight': 700,
+      'size': 36px,
+      'line-height': 42px,
+      'letter-spacing': 0.25px,
+      'font-family': $heading-font-family,
+      'text-transform': none
+    ),
+    'h4': (
+      'weight': 500,
+      'size': 32px,
+      'line-height': 38px,
+      'letter-spacing': 0.25px,
+      'font-family': $heading-font-family,
+      'text-transform': none
+    ),
+    'h5': (
+      'weight': 400,
+      'size': 24px,
+      'line-height': 36px,
+      'letter-spacing': normal,
+      'font-family': $heading-font-family,
+      'text-transform': none
+    ),
+    'h6': (
+      'weight': 500,
+      'size': 20px,
+      'line-height': 24px,
+      'letter-spacing': 0.15px,
+      'font-family': $heading-font-family,
+      'text-transform': none
+    ),
+    'subtitle-1': (
+      'weight': 400,
+      'size': 20px,
+      'line-height': 24px,
+      'letter-spacing': 0.15px,
+      'font-family': $body-font-family,
+      'text-transform': none
+    ),
+    'subtitle-2': (
+      'weight': 500,
+      'size': 14px,
+      'line-height': 24px,
+      'letter-spacing': 0.1px,
+      'font-family': $body-font-family,
+      'text-transform': none
+    ),
+    'body-1': (
+      'weight': 400,
+      'size': 16px,
+      'line-height': 24px,
+      'letter-spacing': .03125em,
+      'font-family': $body-font-family,
+      'text-transform': none
+    ),
+    'body-2': (
+      'weight': 400,
+      'size': 14px,
+      'line-height': 20px,
+      'letter-spacing': .0178571429em,
+      'font-family': $body-font-family,
+      'text-transform': none
+    ),
+    'button': (
+      'weight': 500,
+      'size': 16px,
+      'line-height': 24px,
+      'letter-spacing': 1.35px,
+      'font-family': $body-font-family,
+      'text-transform': uppercase
+    ),
+    'button-small': (
+      'weight': 500,
+      'size': 14px,
+      'line-height': 16px,
+      'letter-spacing': 1.25px,
+      'font-family': $body-font-family,
+      'text-transform': uppercase
+    ),
+    'caption': (
+      'weight': 400,
+      'size': 12px,
+      'line-height': 16px,
+      'letter-spacing': 0.4px,
+      'font-family': $body-font-family,
+      'text-transform': none
+    ),
+    'overline': (
+      'weight': 500,
+      'size': 14px,
+      'line-height': 16px,
+      'letter-spacing': 1.5px,
+      'font-family': $body-font-family,
+      'text-transform': uppercase
+    )
+  ),
 
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+  $utilities: (
+    'flex': (
+        responsive: true,
+        property: flex,
+        values: (
+          fill: 1 1 auto,
+          fit: 1
+        )
+      ),
+  ),
 
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+  $button-sizes: (
+    height: 48px
+  ),
+
+  $rounded: (
+    'xl': 16px
+  )
+);
+
+.bg-secondary-btn {
+  --v-theme-overlay-multiplier: var(--v-theme-secondary-overlay-multiplier);
+  background: rgba(var(--v-theme-secondary), .1) !important;
+  color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity)) !important;
 }
 
-/* semantic color variables for this project */
-:root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
+.text-secondary-bt {
+  color: rgba(var(--v-theme-secondary), .1) !important;
 
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
-
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
-
-  --section-gap: 160px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
+  .v-icon {
+    color: rgb(var(--v-theme-secondary));
   }
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  position: relative;
-  font-weight: normal;
+.border-outline {
+  border-color: rgba(var(--v-theme-secondary), .1);
 }
 
-body {
-  min-height: 100vh;
-  color: var(--color-text);
-  background: var(--color-background);
-  transition: color 0.5s, background-color 0.5s;
-  line-height: 1.6;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  font-size: 15px;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.bg-card {
+  --v-theme-overlay-multiplier: var(--v-theme-secondary-overlay-multiplier);
+  background: rgba(var(--v-theme-secondary), .15) !important;
+  color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity)) !important;
 }
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-
-  font-weight: normal;
+.v-checkbox {
+  --v-medium-emphasis-opacity: 1;
 }
 
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+.v-field--variant-filled.v-field--focused .v-field__overlay {
+  --v-theme-overlay-multiplier: 0 !important;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
+@media (prefers-color-scheme: dark) { }

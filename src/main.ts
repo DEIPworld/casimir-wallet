@@ -1,21 +1,24 @@
 import '@/assets/styles/base.scss';
 
+import { ApiService } from '@/services/ApiService';
+
 import { createApp } from 'vue';
-import { createPinia } from 'pinia';
-
-import ApiService from '@/services/ApiService';
-
 import { App } from './App';
-import router from './router';
+
+import { vuetify } from './plugins/vuetify';
+import { pinia } from './plugins/pinia';
+
+import { router } from './router';
+
+const apiService = ApiService.getInstance();
 
 const app = createApp(App);
 
-app.use(createPinia());
+app.use(pinia);
 app.use(router);
+app.use(vuetify);
 
-ApiService.loadApi()
+apiService.init()
   .then(async () => {
-    ApiService.loadKeyring();
-
     app.mount('#app');
   });
