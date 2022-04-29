@@ -27,7 +27,7 @@ export const App = defineComponent({
     const { isLoggedIn } = storeToRefs(accountStore);
 
     const hideNavigation = computed(() => {
-      const routeName = route.name as string;
+      const routeName = route.name as string || '';
       const hideOnRoutes = ['account.import', 'account.create'].includes(routeName);
       const hideOnWallet = routeName.includes('wallet') && !isLoggedIn.value;
 
