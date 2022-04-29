@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { ApiService } from '@/services/ApiService';
 import type { IAccount } from '../../types';
 import { emitter } from '@/utils/eventBus';
+import type { CreateResult } from '@polkadot/ui-keyring/types';
 
 const apiService = ApiService.getInstance();
 
@@ -26,11 +27,8 @@ export const useWalletStore = defineStore('balance', () => {
 
   const subscribeToTransfers = (address: string) => {
     apiService.subscribeToTransfers(address);
-    console.log('subscribeToTransfers');
-
     emitter.on('transaction', (data: Record<string, string>) => {
       transactions.value.push(data);
-      console.log('subscribeToTransfers: push');
     });
   };
 
@@ -39,11 +37,37 @@ export const useWalletStore = defineStore('balance', () => {
     subscribeToTransfers(address);
   };
 
+  const getTransactionFee = async (
+    recipient: string,
+    address: string,
+    amount: number
+  ) => {
+    return await apiService.getTransactionFee(
+      recipient,
+      address,
+      amount
+    );
+  };
+
+  const makeTransaction = async (
+    recipient: string,
+    account: CreateResult,
+    amount: number
+  ) => {
+    return await apiService.makeTransaction(
+      recipient,
+      account,
+      amount
+    );
+  };
+
   return {
     balance,
     transactions,
 
     getAccountBalance,
+    getTransactionFee,
+    makeTransaction,
 
     subscribeToUpdates,
     subscribeToBalance,

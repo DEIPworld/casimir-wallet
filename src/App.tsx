@@ -1,6 +1,6 @@
 import { RouterView, RouterLink } from 'vue-router';
 import { BodyOverlay } from '@/components/BodyOverlay';
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, watch } from 'vue';
 
 import {
   VApp,
@@ -34,9 +34,9 @@ export const App = defineComponent({
       return hideOnRoutes || hideOnWallet;
     });
 
-    if(isLoggedIn) {
-      walletStore.subscribeToUpdates(accountStore.address);
-    }
+    watch(isLoggedIn, (val) => {
+      if (val) walletStore.subscribeToUpdates(accountStore.address);
+    });
 
     const renderNavigation = () => (
       <VTabs optional>
