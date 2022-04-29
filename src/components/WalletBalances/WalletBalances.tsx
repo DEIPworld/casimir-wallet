@@ -2,14 +2,14 @@ import { defineComponent, onMounted } from 'vue';
 import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
 import { VSheet } from 'vuetify/components';
-import { useBalanceStore } from '@/stores/balance';
+import { useWalletStore } from '@/stores/wallet';
 
 export const WalletBalances = defineComponent({
   setup() {
     const accountStore = useAccountStore();
     const { address } = storeToRefs(accountStore);
 
-    const balanceStore = useBalanceStore();
+    const balanceStore = useWalletStore();
     const { balance } = storeToRefs(balanceStore);
     const { getAccountBalance } = balanceStore;
 

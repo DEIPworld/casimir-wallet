@@ -14,8 +14,7 @@ import { VestingDetails } from '@/components/VestingDetails';
 const isLoggedIn = () => {
   const storageData = localStorage.getItem('DEIP:account');
   const accountData = storageData ? JSON.parse(storageData) : storageData;
-console.log(accountData?.address);
-  return !!accountData?.address;
+  return !!accountData?.account?.json?.address;
 };
 
 const router = createRouter({

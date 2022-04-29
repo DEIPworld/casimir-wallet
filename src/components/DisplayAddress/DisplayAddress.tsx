@@ -30,7 +30,7 @@ export const DisplayAddress = defineComponent({
     };
 
     const renderDefaultVariant = () => (
-      <VSheet maxWidth={140} class="d-flex align-center">
+      <VSheet maxWidth={200} class="d-flex align-center">
         <div class="text-subtitle-1 text-truncate">{props.address}</div>
         <VBtn
           icon

@@ -47,7 +47,7 @@ export const AccountImport = defineComponent({
       <>
         <VWindow
           v-model={currentsStep.value}
-          class="pa-12"
+          class="pa-12 ma-n12"
         >
           <VWindowItem value="start">
             <AccountImportStart

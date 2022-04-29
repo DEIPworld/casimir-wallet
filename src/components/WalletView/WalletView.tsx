@@ -2,7 +2,7 @@ import { defineComponent } from 'vue';
 import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
 import { VBtn, VTab, VTabs } from 'vuetify/components';
-import { useBalanceStore } from '@/stores/balance';
+import { useWalletStore } from '@/stores/wallet';
 import { RouterView } from 'vue-router';
 import { InnerContainer } from '@/components/InnerContainer';
 import { DisplayAddress } from '@/components/DisplayAddress/DisplayAddress';
@@ -12,7 +12,7 @@ export const WalletView = defineComponent({
     const accountStore = useAccountStore();
     const { address } = storeToRefs(accountStore);
 
-    const balanceStore = useBalanceStore();
+    const balanceStore = useWalletStore();
     const { balance } = storeToRefs(balanceStore);
 
 

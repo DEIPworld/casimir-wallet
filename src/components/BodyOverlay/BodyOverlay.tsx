@@ -16,7 +16,7 @@ export const BodyOverlay = defineComponent({
     }));
 
     const genOrb = (idx: number) => (
-      <div class={`dw-body-overlay__orb-${idx + 1}`}/>
+      <div class={`body-overlay__orb-${idx + 1}`}/>
     );
 
     const genOrbs = () => new Array(4)

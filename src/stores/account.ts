@@ -1,19 +1,16 @@
-import type { EncryptedJsonDescriptor } from '@polkadot/util-crypto/json/types';
-import type { KeyringPair$Meta } from '@polkadot/keyring/types';
-import type { HexString } from '@polkadot/util/types';
 
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { ApiService } from '@/services/ApiService';
+import type { CreateResult } from '@polkadot/ui-keyring/types';
 
 const apiService = ApiService.getInstance();
 
 export const useAccountStore = defineStore('account', () => {
-  const address = ref<string | HexString>();
-  const encoded = ref<string | HexString>();
-  const encoding = ref<EncryptedJsonDescriptor>();
-  const meta = ref<KeyringPair$Meta>();
 
+  const account = ref<CreateResult>();
+
+  const address = computed(() => account?.value?.json?.address || '');
   const isLoggedIn = computed(() => !!address.value);
 
   function generateSeedPhrase(): string {
@@ -21,19 +18,12 @@ export const useAccountStore = defineStore('account', () => {
   }
 
   function getOrCreateAccount(seed: string): void {
-    const { json } = apiService.getOrCreateAccountWithSeedPhrase(seed);
-
-    address.value = json.address;
-    encoded.value = json.encoded;
-    encoding.value = json.encoding;
-    meta.value = json.meta;
+    account.value = apiService.getOrCreateAccountWithSeedPhrase(seed);
   }
 
   return {
+    account,
     address,
-    encoded,
-    encoding,
-    meta,
 
     isLoggedIn,
 

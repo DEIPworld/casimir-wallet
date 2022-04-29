@@ -8,6 +8,7 @@ import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { WordCount } from '@polkadot/util-crypto/mnemonic/generate';
 
 import { singleton } from '@/utils/singleton';
+import { emitter } from '@/utils/eventBus';
 
 export class ApiService {
 
@@ -252,7 +253,7 @@ export class ApiService {
               const [sender, recipient, amount] = event.data;
 
               if (event.method === 'Transfer' && recipient && recipient.toString() === address) {
-                console.log({
+                emitter.emit('transaction', {
                   hash: extrinsic.hash.toString(),
                   from: sender.toString(),
                   date: new Date(),

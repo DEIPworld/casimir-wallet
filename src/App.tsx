@@ -14,13 +14,14 @@ import {
 import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
 import { useRoute } from 'vue-router';
+import { useWalletStore } from '@/stores/wallet';
 
 export const App = defineComponent({
   nane: 'App',
 
   setup() {
-
     const accountStore = useAccountStore();
+    const walletStore = useWalletStore();
     const route = useRoute();
 
     const { isLoggedIn } = storeToRefs(accountStore);
@@ -32,6 +33,10 @@ export const App = defineComponent({
 
       return hideOnRoutes || hideOnWallet;
     });
+
+    if(isLoggedIn) {
+      walletStore.subscribeToUpdates(accountStore.address);
+    }
 
     const renderNavigation = () => (
       <VTabs optional>
