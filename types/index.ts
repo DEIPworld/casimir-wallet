@@ -16,6 +16,7 @@ export interface IVestingPlan {
   initialAmount: string;
   interval: number;
   startTime: number;
+  endTime: number;
   totalAmount: string;
   totalDuration: number;
   vestingDuringCliff: boolean;

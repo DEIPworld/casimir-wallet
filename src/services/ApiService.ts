@@ -42,6 +42,10 @@ export class ApiService {
       .toFormat(BigNumber.ROUND_FLOOR);
   }
 
+  private static millisecondsToMonth(milliseconds: number): number {
+    return Math.floor(milliseconds / 2.628e+9);
+  }
+
   async loadApi(): Promise<void> {
     try {
       const provider = new WsProvider(this.env.development.network);
@@ -91,29 +95,32 @@ export class ApiService {
 
   // ////////////////////////
 
-  async getVestingPlan(address: string): Promise<IVestingPlan | undefined> {
+  async getVestingPlan(address: string): Promise<IVestingPlan> {
     try {
       const { value } = await this.api.query.deipVesting.vestingPlans(address);
 
       return {
 
         // Duration of cliff, not allowed to withdraw
-        cliffDuration: Number(value.cliffDuration),
+        cliffDuration: ApiService.millisecondsToMonth(Number(value.cliffDuration)),
 
         // Amount of tokens which will be released at startTime
         initialAmount: ApiService.formatCurrency(value.initialAmount),
 
         // Vesting interval (availability for the next unlock)
-        interval: Number(value.interval),
+        interval: ApiService.millisecondsToMonth(Number(value.interval)),
 
         // Starting time for unlocking (vesting)
         startTime: Number(value.startTime),
+
+        // End time of vesting period
+        endTime: Number(value.startTime) + Number(value.totalDuration),
 
         // Total locked amount, including the initialAmount
         totalAmount: ApiService.formatCurrency(value.totalAmount),
 
         // Total duration of this vesting plan (in time)
-        totalDuration: Number(value.totalDuration),
+        totalDuration: ApiService.millisecondsToMonth(Number(value.totalDuration)),
 
         // True if vesting amount is accumulated during cliff duration
         vestingDuringCliff: Boolean(value.vestingDuringCliff)
@@ -121,10 +128,24 @@ export class ApiService {
       };
     } catch (error) {
       console.log(error);
+      return error as any;
     }
   }
 
-  async getAccountBalance(address: string): Promise<IAccount | undefined> {
+  async claimVesting(account: CreateResult): Promise<string> {
+    try {
+      const hash = await this.api.tx.deipVesting
+        .unlock()
+        .signAndSend(account.pair);
+
+      return hash.toString();
+    } catch (error) {
+      console.log(error);
+      return error as any;
+    }
+  }
+
+  async getAccountBalance(address: string): Promise<IAccount> {
     try {
       const res = await this.api.query.system.account(address);
 
@@ -177,6 +198,7 @@ export class ApiService {
       };
     } catch (error) {
       console.log(error);
+      return error as any;
     }
   }
 
@@ -201,7 +223,7 @@ export class ApiService {
     recipient: string,
     address: string,
     amount: number
-  ): Promise<string | undefined> {
+  ): Promise<string> {
     try {
       const { partialFee } = await this.api.tx.balances
         .transfer(recipient, amount)
@@ -210,6 +232,7 @@ export class ApiService {
       return ApiService.formatCurrency(partialFee);
     } catch (error) {
       console.log(error);
+      return error as any;
     }
   }
 
@@ -217,7 +240,7 @@ export class ApiService {
     recipient: string,
     account: CreateResult,
     amount: number
-  ): Promise<ITransaction | undefined> {
+  ): Promise<ITransaction> {
     console.log(
       recipient,
       account.pair,
@@ -237,6 +260,7 @@ export class ApiService {
       };
     } catch (error) {
       console.log(error);
+      return error as any;
     }
   }
 

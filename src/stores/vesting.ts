@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { ApiService } from '@/services/ApiService';
 import type { IVestingPlan } from '../../types';
+import type { CreateResult } from '@polkadot/ui-keyring/types';
 
 const apiService = ApiService.getInstance();
 
@@ -15,10 +16,15 @@ export const useVestingStore = defineStore('vesting', () => {
     }
   };
 
+  const claimVesting = async (account: CreateResult) => {
+    return await apiService.claimVesting(account);
+  };
+
   return {
     vesting,
 
-    getVestingPlan
+    getVestingPlan,
+    claimVesting
   };
 }, {
   persistedState: {
