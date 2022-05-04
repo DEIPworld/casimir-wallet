@@ -1,21 +1,13 @@
-import { defineComponent, onMounted, ref } from 'vue';
-import { useAccountStore } from '@/stores/account';
+import { defineComponent } from 'vue';
 import { storeToRefs } from 'pinia';
 import { VSheet } from 'vuetify/components';
 import { useVestingStore } from '@/stores/vesting';
+import { format } from 'date-fns';
 
 export const VestingDetails = defineComponent({
   setup() {
-    const accountStore = useAccountStore();
-    const { address } = storeToRefs(accountStore);
-
     const vestingStore = useVestingStore();
     const { vesting } = storeToRefs(vestingStore);
-    const { getVestingPlan } = vestingStore;
-
-    onMounted(async () => {
-      await getVestingPlan(address.value);
-    });
 
     const renderRow = (label: string, data: any) => (
       <VSheet
@@ -30,13 +22,16 @@ export const VestingDetails = defineComponent({
 
     return () => (
       <>
-        {renderRow('cliffDuration', vesting.value?.cliffDuration)}
-        {renderRow('initialAmount', vesting.value?.initialAmount)}
-        {renderRow('interval', vesting.value?.interval)}
-        {renderRow('startTime', vesting.value?.startTime)}
-        {renderRow('totalAmount', vesting.value?.totalAmount)}
-        {renderRow('totalDuration', vesting.value?.totalDuration)}
-        {renderRow('vestingDuringCliff', vesting.value?.vestingDuringCliff)}
+        {renderRow('Total vested tokens', `${vesting.value?.totalAmount} DEIP`)}
+        {
+          vesting.value?.startTime ? renderRow(
+            'Start vesting contract',
+            `${format(vesting.value?.startTime, 'dd MMMM yyyy')}`
+          ) : null
+        }
+        {renderRow('Vesting interval', `${vesting.value?.interval} month`)}
+        {renderRow('Cliff vesting', `${vesting.value?.cliffDuration} month`)}
+        {renderRow('Total vesting period', `${vesting.value?.totalDuration} month`)}
       </>
     );
   }
