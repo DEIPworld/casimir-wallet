@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted } from 'vue';
 import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
 import { VBtn } from 'vuetify/components';
@@ -15,7 +15,11 @@ export const VestingView = defineComponent({
 
     const vestingStore = useVestingStore();
     const { vesting } = storeToRefs(vestingStore);
+    const { getVestingPlan } = vestingStore;
 
+    onMounted(async () => {
+      await getVestingPlan(address.value);
+    });
 
     return () => (
       <InnerContainer>
@@ -25,13 +29,21 @@ export const VestingView = defineComponent({
             <DisplayAddress address={address.value} />
           </div>
 
-          <div class="text-right">
-            <VBtn size="small" color={'primary'}>claim</VBtn>
-            <div class="text-body-1">Next claim available on 22.12.2022</div>
-          </div>
+          {
+            vesting.value?.startTime ? (
+              <div class="text-right">
+                <VBtn size="small" color="primary">claim</VBtn>
+                {/*<div class="text-body-1">Next claim available on 22.12.2022</div>*/}
+              </div>
+            ) : null
+          }
         </div>
 
-        <RouterView/>
+        {
+          vesting.value?.startTime ?
+            <RouterView /> :
+            'There\'s no vesting contract assigned to the account.'
+        }
       </InnerContainer>
     );
   }
