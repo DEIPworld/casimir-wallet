@@ -28,7 +28,9 @@ jobs:
           playbook: deploy-playbook.yaml 
           directory: ./ansible
           key: ${{ secrets.SSH_PRIVATE_KEY }} 
-          inventory: ./hosts.txt
+          inventory: |
+            [production_server]
+            linux2 ansible_host=${{ secrets.ANSIBLE_HOST }}  ansible_user=ec2-user 
 
 
 
