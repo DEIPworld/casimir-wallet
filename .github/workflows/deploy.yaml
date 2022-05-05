@@ -25,7 +25,7 @@ jobs:
       - name: Run Ansible playbook
         uses: dawidd6/action-ansible-playbook@v2.5.0
         with:
-          playbook: deploy-playbook.yml 
+          playbook: deploy-playbook.yaml 
           directory: ./ansible
           key: ${{ secrets.SSH_PRIVATE_KEY }} 
           inventory: ./hosts.txt
