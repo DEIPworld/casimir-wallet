@@ -16,7 +16,7 @@
       group: nginx
       mode: '0644'
 
-  # - name: Reload service Nginx, in all cases
-  #   ansible.builtin.service:
-  #     name: nginx
-  #     state: reloaded
+  - name: Reload service Nginx, in all cases
+    ansible.builtin.service:
+      name: nginx
+      state: reloaded
