@@ -1,2 +1,0 @@
-[production_server]
-linux2 ansible_host=ec2-3-124-116-65.eu-central-1.compute.amazonaws.com ansible_user=ec2-user 
