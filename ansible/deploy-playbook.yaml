@@ -8,13 +8,13 @@
   - name: Ping servers
     ping:
 
-  # - name: Copy built application files to server
-  #   ansible.builtin.copy:
-  #     src: /home/deip-wallet/src/dist/
-  #     dest: /sites/wallet/
-  #     owner: nginx
-  #     group: nginx
-  #     mode: '0644'
+  - name: Copy built application files to server
+    ansible.builtin.copy:
+      src: /home/deip-wallet/src/dist/
+      dest: /sites/wallet/
+      owner: nginx
+      group: nginx
+      mode: '0644'
 
   # - name: Reload service Nginx, in all cases
   #   ansible.builtin.service:
