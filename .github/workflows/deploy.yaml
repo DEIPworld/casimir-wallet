@@ -22,13 +22,13 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: rsync deployments
-        uses: burnett01/rsync-deployments@5.1
+      - name: Run Ansible playbook
+        uses: dawidd6/action-ansible-playbook@v2.5.0
         with:
-          switches: -avzr --delete
-          path: ./src/dist
-          remote_path: /var/www/wallet/
-          remote_host: ec2-3-124-116-65.eu-central-1.compute.amazonaws.com
-          remote_user: root
-          remote_key: "${{ secrets.SSH_PRIVATE_KEY }}"
+          playbook: deploy-playbook.yml 
+          directory: ./ansible
+          key: ${{ secrets.SSH_PRIVATE_KEY }} 
+          inventory: ./hosts.txt
+
+
 
