@@ -5,6 +5,7 @@ import { mnemonicGenerate, mnemonicValidate } from '@polkadot/util-crypto';
 
 import type { IAccount, IVestingPlan, ITransaction } from '../../types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
+import type { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
 import type { WordCount } from '@polkadot/util-crypto/mnemonic/generate';
 
 import { singleton } from '@/utils/singleton';
@@ -84,13 +85,22 @@ export class ApiService {
     return mnemonicValidate(seedPhrase);
   }
 
-  getOrCreateAccountWithSeedPhrase(seedPhrase: string): CreateResult {
+  getOrCreateAccountWithSeedPhrase(seedPhrase: string, password: string): CreateResult {
     if (this.validateSeedPhrase(seedPhrase)) {
       console.log(Keyring.addUri(seedPhrase));
-      return Keyring.addUri(seedPhrase);
+      return Keyring.addUri(seedPhrase, password);
     }
 
     throw new Error(`The seed phrase "${seedPhrase}" is not valid`);
+  }
+
+  restoreAccount(json: KeyringPair$Json, password: string): CreateResult {
+    const pair: KeyringPair = Keyring.restoreAccount(json, password);
+
+    return {
+      json,
+      pair
+    };
   }
 
   // ////////////////////////
