@@ -18,15 +18,20 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Run Ansible playbook
-        uses: dawidd6/action-ansible-playbook@v2.5.0
-        with:
-          playbook: deploy-playbook.yaml 
-          directory: ./ansible
-          key: ${{ secrets.SSH_PRIVATE_KEY }} 
-          inventory: |
-            [production_server]
-            linux2 ansible_host=${{ secrets.ANSIBLE_HOST }}  ansible_user=ec2-user 
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+          ls ${{ github.workspace }}/src
+
+      # - name: Run Ansible playbook
+      #   uses: dawidd6/action-ansible-playbook@v2.5.0
+      #   with:
+      #     playbook: deploy-playbook.yaml 
+      #     directory: ./ansible
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }} 
+      #     inventory: |
+      #       [production_server]
+      #       linux2 ansible_host=${{ secrets.ANSIBLE_HOST }}  ansible_user=ec2-user 
 
 
 
