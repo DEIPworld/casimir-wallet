@@ -1,12 +1,12 @@
 import { defineComponent, ref } from 'vue';
-import { VBtn, VCheckbox, VSpacer } from 'vuetify/components';
+import { VBtn, VCheckbox, VDivider, VSpacer } from 'vuetify/components';
 
 export const AccountCreateStart = defineComponent({
   name: 'WalletCreateStart',
 
   emits: [
-    'click:restoreWallet',
-    'click:next'
+    'click:restore',
+    'click:start'
   ],
 
   setup(props, { emit }) {
@@ -41,13 +41,13 @@ export const AccountCreateStart = defineComponent({
 
           <VBtn
             color="secondary-btn"
-            onClick={() => emit('click:restoreWallet')}
+            onClick={() => emit('click:restore')}
           >Restore access</VBtn>
 
           <VBtn
             class="ml-4"
             disabled={!confirm.value}
-            onClick={() => emit('click:next')}
+            onClick={() => emit('click:start')}
           >
             Get Started
           </VBtn>

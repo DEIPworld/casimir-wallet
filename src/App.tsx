@@ -1,6 +1,8 @@
-import { RouterView, RouterLink } from 'vue-router';
+import { RouterView } from 'vue-router';
 import { BodyOverlay } from '@/components/BodyOverlay';
-import { computed, defineComponent, watch } from 'vue';
+import { computed, defineComponent, watchEffect } from 'vue';
+
+import logoUrl from '@/assets/deip-logo.svg';
 
 import {
   VApp,
@@ -24,7 +26,7 @@ export const App = defineComponent({
     const walletStore = useWalletStore();
     const route = useRoute();
 
-    const { isLoggedIn } = storeToRefs(accountStore);
+    const { isLoggedIn, address } = storeToRefs(accountStore);
 
     const hideNavigation = computed(() => {
       const routeName = route.name as string || '';
@@ -34,8 +36,8 @@ export const App = defineComponent({
       return hideOnRoutes || hideOnWallet;
     });
 
-    watch(isLoggedIn, (val) => {
-      if (val) walletStore.subscribeToUpdates(accountStore.address);
+    watchEffect( () => {
+      if (address.value) walletStore.subscribeToUpdates(address.value);
     });
 
     const renderNavigation = () => (
@@ -53,7 +55,7 @@ export const App = defineComponent({
           class={'pl-18 pr-18'}
         >
           <VAppBarTitle style={'flex: none'} class={'mr-18'}>
-            <img src="/assets/deip-logo.svg" alt="DEIP Wallet" height="24" class="d-block"/>
+            <img src={logoUrl} alt="DEIP Wallet" height="24" class="d-block"/>
           </VAppBarTitle>
 
           {!hideNavigation.value && renderNavigation()}

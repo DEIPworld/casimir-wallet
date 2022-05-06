@@ -172,4 +172,13 @@ $heading-font-family: $body-font-family;
   --v-theme-overlay-multiplier: 0 !important;
 }
 
+// temp fix
+.v-input--density-comfortable .v-field--variant-filled.v-field--single-line {
+ --v-input-padding-top: -8px;
+
+  .v-label.v-field-label {
+    padding-top: 12px;
+  }
+}
+
 @media (prefers-color-scheme: dark) { }

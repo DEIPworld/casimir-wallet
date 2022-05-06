@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { ApiService } from '@/services/ApiService';
 import type { IAccount } from '../../types';
 import { emitter } from '@/utils/eventBus';
+import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 
 const apiService = ApiService.getInstance();
@@ -51,12 +52,22 @@ export const useWalletStore = defineStore('balance', () => {
 
   const makeTransaction = async (
     recipient: string,
-    account: CreateResult,
+    sender: {
+      account: KeyringPair$Json,
+      password: string,
+    },
     amount: number
   ) => {
+    const {
+      account,
+      password
+    } = sender;
+
+    const restoredAccount: CreateResult = apiService.restoreAccount(account, password);
+
     return await apiService.makeTransaction(
       recipient,
-      account,
+      restoredAccount,
       amount
     );
   };

@@ -11,8 +11,9 @@ import { AccountImportSuccess } from '@/components/AccountImport/AccountImportSu
 import { AccountImportError } from '@/components/AccountImport/AccountImportError';
 import { useAccountStore } from '@/stores/account';
 import { useRouter } from 'vue-router';
+import { AccountCreatePassword } from '@/components/AccountCreate/AccountCreatePassword';
 
-type Steps = 'start' | 'seedEnter' | 'success' | 'error';
+type Steps = 'start' | 'seedEnter' | 'setPassword' | 'success' | 'error';
 
 export const AccountImport = defineComponent({
 
@@ -21,21 +22,10 @@ export const AccountImport = defineComponent({
 
     const { currentsStep, setStep } = useMultistep<Steps>('start');
 
-    const accountStore = useAccountStore();
-    const { getAccount } = accountStore;
-
-    const goToSeedEnter = () => {
-      setStep('seedEnter');
-    };
-
-    const makeImport = (seedPhrase: string) => {
-      try {
-        getAccount(seedPhrase);
-        setStep('success');
-      } catch (e) {
-        setStep('error');
-      }
-    };
+    const goToSeedEnter = () => setStep('seedEnter');
+    const goToPasswordSet = (): void => setStep('setPassword');
+    const goToSuccess = (): void => setStep('success');
+    const goToError = (): void => setStep('success');
 
     const goToWallet = () => {
       router.push({
@@ -51,12 +41,22 @@ export const AccountImport = defineComponent({
         >
           <VWindowItem value="start">
             <AccountImportStart
-              onClick:next={goToSeedEnter}
+              onClick:start={goToSeedEnter}
             />
           </VWindowItem>
+
           <VWindowItem value="seedEnter">
             <AccountImportSeedEnter
-              onClick:next={makeImport}
+              onClick:next={goToPasswordSet}
+            />
+          </VWindowItem>
+
+          <VWindowItem value="setPassword">
+            <AccountCreatePassword
+              onClick:restart={goToSeedEnter}
+
+              onAccountCreated={goToSuccess}
+              onAccountFailed={goToError}
             />
           </VWindowItem>
 
@@ -67,7 +67,7 @@ export const AccountImport = defineComponent({
           </VWindowItem>
           <VWindowItem value="error">
             <AccountImportError
-              onClick:next={goToWallet}
+              onClick:next={goToSeedEnter}
             />
           </VWindowItem>
         </VWindow>
