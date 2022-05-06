@@ -5,14 +5,64 @@
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <title>DEIP.Wallet</title>
+
+    <style>
+      body {
+        background: #000;
+      }
+      .base-loader {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .base-loader::after {
+        content: '';
+        height: 2px;
+        border-radius: 2px;
+        width: 100%;
+        background-color: rgba(255,255,255,.5);
+        display: block;
+        animation: loader-4 0.8s cubic-bezier(0, 0, 0.03, 0.9) infinite;
+        margin-top: 8px;
+      }
+
+      .base-loader img {
+        display: block;
+      }
+
+      @keyframes loader-4 {
+        0%, 44%, 88.1%, 100% {
+          transform-origin: left;
+        }
+
+        0%, 100%, 88% {
+          transform: scaleX(0);
+        }
+
+        44.1%, 88% {
+          transform-origin: right;
+        }
+
+        33%, 44% {
+          transform: scaleX(1);
+        }
+      }
+    </style>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <title>Vite App</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <div class="base-loader">
+        <img src="/assets/deip-logo.svg" alt="DEIP Wallet" height="24" width="91"/>
+      </div>
+    </div>
     <script type="module" src="/main.ts"></script>
   </body>
 </html>

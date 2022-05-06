@@ -37,10 +37,11 @@ export class ApiService {
   // private api: ApiDecoration<ApiTypes> | any;
   private api: any;
 
-  private static formatCurrency(currency: number): string {
-    return new BigNumber(currency)
-      .shiftedBy(-18)
-      .toFormat(BigNumber.ROUND_FLOOR);
+  private static formatCurrency(currency: number, negated = false): string {
+    const rawNum = new BigNumber(currency).shiftedBy(-18);
+    const resNum = negated ? rawNum.negated() : rawNum;
+
+    return resNum.toFormat(BigNumber.ROUND_FLOOR);
   }
 
   private static millisecondsToMonth(milliseconds: number): number {
@@ -85,9 +86,8 @@ export class ApiService {
     return mnemonicValidate(seedPhrase);
   }
 
-  getOrCreateAccountWithSeedPhrase(seedPhrase: string, password: string): CreateResult {
+  addAccount(seedPhrase: string, password: string): CreateResult {
     if (this.validateSeedPhrase(seedPhrase)) {
-      console.log(Keyring.addUri(seedPhrase));
       return Keyring.addUri(seedPhrase, password);
     }
 
@@ -248,11 +248,6 @@ export class ApiService {
     account: CreateResult,
     amount: number
   ): Promise<ITransaction> {
-    console.log(
-      recipient,
-      account.pair,
-      amount
-    );
 
     try {
       const hash = await this.api.tx.balances
@@ -266,7 +261,7 @@ export class ApiService {
         amount
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return error as any;
     }
   }
@@ -275,6 +270,7 @@ export class ApiService {
     try {
       this.api.rpc.chain.subscribeFinalizedHeads(
         async (header: any) => {
+
           const [{ block }, records] = await Promise.all([
             this.api.rpc.chain.getBlock(header.hash),
             this.api.query.system.events.at(header.hash)
@@ -290,12 +286,19 @@ export class ApiService {
             events.forEach(({ event }: any) => {
               const [sender, recipient, amount] = event.data;
 
-              if (event.method === 'Transfer' && recipient && recipient.toString() === address) {
+              const isDeposit = recipient && recipient.toString() === address;
+              const isWithdraw = sender && sender.toString() === address;
+
+              const relatedTransfer = isDeposit || isWithdraw;
+
+              if (event.method === 'Transfer' && relatedTransfer) {
+                const x = { ...amount, negative: 1 };
+                console.log(amount, x.toString());
                 emitter.emit('transaction', {
                   hash: extrinsic.hash.toString(),
                   from: sender.toString(),
-                  date: new Date(),
-                  amount: ApiService.formatCurrency(amount)
+                  date: new Date().toISOString(),
+                  amount: ApiService.formatCurrency(amount, isWithdraw)
                 });
               }
             });

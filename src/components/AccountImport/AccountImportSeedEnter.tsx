@@ -1,5 +1,7 @@
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { VBtn, VTextarea, VSpacer } from 'vuetify/components';
+import { storeToRefs } from 'pinia';
+import { useAccountStore } from '@/stores/account';
 
 export const AccountImportSeedEnter = defineComponent({
   emits: [
@@ -8,6 +10,12 @@ export const AccountImportSeedEnter = defineComponent({
 
   setup(props, { emit }) {
     const seedPhrase = ref<string>('');
+
+    const { tempSeed } = storeToRefs(useAccountStore());
+    const disabled = computed(() => {
+      const  length = tempSeed.value.split(' ').filter((v) => !!v).length;
+      return length !== 12;
+    });
 
     return () => (
       <>
@@ -23,7 +31,7 @@ export const AccountImportSeedEnter = defineComponent({
 
         <VTextarea
           label="Passphrase (12 words)"
-          v-model={seedPhrase.value}
+          v-model={tempSeed.value}
           rows={2}
         />
 
@@ -32,9 +40,10 @@ export const AccountImportSeedEnter = defineComponent({
 
           <VBtn
             class="ml-4"
+            disabled={disabled.value}
             onClick={() => emit('click:next', seedPhrase.value)}
           >
-            Recover account
+            Next
           </VBtn>
         </div>
       </>

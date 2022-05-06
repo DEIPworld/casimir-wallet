@@ -3,6 +3,8 @@ import { VBtn, VSheet, VSpacer } from 'vuetify/components';
 
 import VueQrcode from '@chenfengyuan/vue-qrcode';
 import { DisplayAddress } from '@/components/DisplayAddress/DisplayAddress';
+import { useAccountStore } from '@/stores/account';
+import { storeToRefs } from 'pinia';
 
 export const AccountCreateFinish = defineComponent({
   name: 'WalletCreateFinish',
@@ -12,14 +14,9 @@ export const AccountCreateFinish = defineComponent({
     'click:next'
   ],
 
-  props: {
-    address: {
-      type: String,
-      default: ''
-    }
-  },
-
   setup(props, { emit }) {
+
+    const { address } = storeToRefs(useAccountStore());
 
     return () => (
       <>
@@ -33,11 +30,11 @@ export const AccountCreateFinish = defineComponent({
         </div>
 
         <VSheet maxWidth={240} class="mx-auto">
-          <VueQrcode value={props.address} tag="svg" />
+          <VueQrcode value={address.value} tag="svg" />
         </VSheet>
 
         <div class="d-flex mt-12">
-          <DisplayAddress address={props.address} variant="accent" />
+          <DisplayAddress address={address.value} variant="accent" />
           <VSpacer/>
           <VBtn
             color="secondary-btn"

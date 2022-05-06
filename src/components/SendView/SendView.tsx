@@ -7,7 +7,6 @@ import {
 import { useAccountStore } from '@/stores/account';
 import { InnerContainer } from '@/components/InnerContainer';
 import { useWalletStore } from '@/stores/wallet';
-import type { CreateResult } from '@polkadot/ui-keyring/types';
 import { useNotify } from '@/composable/notify';
 import { useRouter } from 'vue-router';
 
@@ -15,32 +14,24 @@ export const SendView = defineComponent({
   setup() {
     const accountStore = useAccountStore();
     const router = useRouter();
-    const { address } = storeToRefs(accountStore);
-    const { getAccount } = accountStore;
+
+    const { address, accountJson } = storeToRefs(accountStore);
+    const password = ref('111111');
 
     const { getTransactionFee, makeTransaction } = useWalletStore();
     const { notify, notifyIsActive, showNotify } = useNotify();
 
 
-    const recipient = ref<string>('');
-    const amount = ref<number>();
+    const recipient = ref<string>('5C8CBGMYgChsA5AoyvyrV4VkxK8hntMvMF22eBQoxAPVnXuV');
+    const amount = ref<number>(10);
     const fee = ref<string>('0');
-
-    const seedPhrase = ref<string>('');
 
     const totalSend = computed(() => {
       if (amount.value) {
         return amount.value + parseFloat(fee.value);
       }
-
       return 0;
     });
-
-    const goToWallet = () => {
-      router.push({
-        name: 'wallet'
-      });
-    };
 
     watch(
       () => ({
@@ -48,7 +39,7 @@ export const SendView = defineComponent({
         amount: amount.value || 0
       }),
       async ({ recipient, amount }) => {
-        if (recipient && amount) {
+        if (recipient && amount && address.value) {
           fee.value = await getTransactionFee(
             recipient,
             address.value,
@@ -58,13 +49,19 @@ export const SendView = defineComponent({
       }
     );
 
+    const goToWallet = () => {
+      router.push({
+        name: 'wallet'
+      });
+    };
+
     const transfer = () => {
-      const account = getAccount(seedPhrase.value, false);
-      makeTransaction(
+      accountJson.value && makeTransaction(
         recipient.value,
-        account as CreateResult,
+        { account: accountJson.value, password: password.value },
         amount.value as number
       );
+
       showNotify('Successfully sent');
     };
 
@@ -76,7 +73,7 @@ export const SendView = defineComponent({
           Send DEIP
         </div>
 
-        <VRow>
+        <VRow class="mb-6">
           <VCol>
             <VTextField
               label="To address"
@@ -110,16 +107,17 @@ export const SendView = defineComponent({
           <VCol class="text-right">{totalSend.value } DEIP</VCol>
         </VRow>
 
-        <VTextarea
-          label="Passphrase (12 words)"
-          v-model={seedPhrase.value}
-          rows={2}
-          class="mt-6"
-        />
-
-        <div class="d-flex mt-12">
-          <VSpacer/>
+        <div class="d-flex mt-12 align-center">
+          <VTextField
+            singleLine
+            density="comfortable"
+            class="spacer"
+            label="Password"
+            v-model={password.value}
+            hideDetails
+          />
           <VBtn
+            class="ml-4"
             to={{ name: 'wallet' }}
             color="secondary-btn"
           >

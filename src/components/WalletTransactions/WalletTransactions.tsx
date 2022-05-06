@@ -51,7 +51,7 @@ export const WalletTransactions = defineComponent({
           <VSpacer />
           <div>
             <div class="text-h6">
-              {isPositive ? '+' : '-'}
+              {isPositive && '+'}
               {data.amount} DEIP
             </div>
             {/*(+$100.00)*/}

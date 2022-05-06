@@ -3,7 +3,7 @@ import { VBtn, VSpacer } from 'vuetify/components';
 
 export const AccountImportStart = defineComponent({
   emits: [
-    'click:next'
+    'click:start'
   ],
 
   setup(props, { emit }) {
@@ -25,7 +25,7 @@ export const AccountImportStart = defineComponent({
 
           <VBtn
             class="ml-4"
-            onClick={() => emit('click:next')}
+            onClick={() => emit('click:start')}
           >
             Get Started
           </VBtn>

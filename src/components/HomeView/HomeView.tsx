@@ -23,14 +23,14 @@ export const HomeView = defineComponent({
             create an account
           </VBtn>
           <VBtn
-            color={'secondary'}
+            color={'secondary-btn'}
             to={{ name: 'account.import' }}
             class={'ml-4'}>
             import an existing account
           </VBtn>
         </VSheet>
         <VSheet class={'flex-fit position-relative'} color={'transparent'}>
-          <div class={'home-view__screen-img'}/>
+          {/*<div class={'home-view__screen-img'}/>*/}
         </VSheet>
       </VSheet>
     );

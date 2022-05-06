@@ -13,12 +13,8 @@ import { VestingDetails } from '@/components/VestingDetails';
 import { DepositView } from '@/components/DepositView';
 import { SendView } from '@/components/SendView';
 import { MainView } from '@/components/MainView';
-
-const isAuthenticated = () => {
-  const storageData = localStorage.getItem('DEIP:account');
-  const accountData = storageData ? JSON.parse(storageData) : storageData;
-  return !!accountData?.address;
-};
+import { useAccountStore } from '@/stores/account';
+import { storeToRefs } from 'pinia';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -87,9 +83,12 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+  const accountStore = useAccountStore();
+  const { isLoggedIn } = storeToRefs(accountStore);
+
   const guestAllowed = ['wallet', 'account.create', 'account.import'];
 
-  if ( !isAuthenticated()) {
+  if ( !isLoggedIn) {
     if (guestAllowed.includes(to.name as string)) next();
     next({ name: 'wallet' });
   } else {
