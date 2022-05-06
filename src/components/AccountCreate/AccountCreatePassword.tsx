@@ -2,6 +2,7 @@ import { computed, defineComponent, ref } from 'vue';
 import { VBtn, VTextField, VSpacer, VRow, VCol } from 'vuetify/components';
 import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
+import { useNotify } from '@/composable/notify';
 
 export const AccountCreatePassword = defineComponent({
   emits: [
@@ -15,6 +16,7 @@ export const AccountCreatePassword = defineComponent({
     const accountStore = useAccountStore();
     const { addAccount } = accountStore;
     const { tempSeed } = storeToRefs(accountStore);
+    const { showError, showSuccess } = useNotify();
 
     const password = ref('');
     const passwordRepeat = ref('');
@@ -37,6 +39,7 @@ export const AccountCreatePassword = defineComponent({
         addAccount(tempSeed.value, password.value);
 
         emit('accountCreated');
+        showSuccess('Account succesfuly created');
 
         tempSeed.value = '';
 
@@ -44,8 +47,8 @@ export const AccountCreatePassword = defineComponent({
         let errMessage = 'Unknown Error';
         if (err instanceof Error) errMessage = err.message;
 
-        console.error(errMessage);
         emit('accountFailed');
+        showError(errMessage);
       }
     };
 

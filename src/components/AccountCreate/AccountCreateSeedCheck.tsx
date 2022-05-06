@@ -2,6 +2,7 @@ import { defineComponent, ref, watchEffect } from 'vue';
 import { VBtn, VSpacer, VTextField } from 'vuetify/components';
 import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
+import { useNotify } from '@/composable/notify';
 
 export const AccountCreateSeedCheck = defineComponent({
   name: 'WalletCreateSeedCheck',
@@ -22,6 +23,8 @@ export const AccountCreateSeedCheck = defineComponent({
   setup(props, { emit }) {
     const { tempSeed } = storeToRefs(useAccountStore());
 
+    const { showError } = useNotify();
+
     const word = ref<string>('');
     const checkWord = ref<string>('');
     const checkWordNum = ref<number>(0);
@@ -41,7 +44,7 @@ export const AccountCreateSeedCheck = defineComponent({
       if (isValid) {
         emit('seedChecked');
       } else {
-        console.error('not valid');
+        showError('Check word is incorrect');
       }
     };
 

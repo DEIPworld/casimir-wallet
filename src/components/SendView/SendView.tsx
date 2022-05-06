@@ -16,14 +16,14 @@ export const SendView = defineComponent({
     const router = useRouter();
 
     const { address, accountJson } = storeToRefs(accountStore);
-    const password = ref('111111');
+    const password = ref('');
 
     const { getTransactionFee, makeTransaction } = useWalletStore();
-    const { notify, notifyIsActive, showNotify } = useNotify();
+    const { showError, showSuccess } = useNotify();
 
 
-    const recipient = ref<string>('5C8CBGMYgChsA5AoyvyrV4VkxK8hntMvMF22eBQoxAPVnXuV');
-    const amount = ref<number>(10);
+    const recipient = ref<string>('');
+    const amount = ref<number>();
     const fee = ref<string>('0');
 
     const totalSend = computed(() => {
@@ -49,12 +49,6 @@ export const SendView = defineComponent({
       }
     );
 
-    const goToWallet = () => {
-      router.push({
-        name: 'wallet'
-      });
-    };
-
     const transfer = () => {
       accountJson.value && makeTransaction(
         recipient.value,
@@ -62,7 +56,7 @@ export const SendView = defineComponent({
         amount.value as number
       );
 
-      showNotify('Successfully sent');
+      showSuccess('Successfully sent');
     };
 
     const transferIsDisabled = computed(() => !(recipient.value && amount.value));
@@ -131,15 +125,6 @@ export const SendView = defineComponent({
             Confirm
           </VBtn>
         </div>
-
-        <VSnackbar
-          v-model={notifyIsActive.value}
-          color={notify.color}
-          timeout={1000}
-          onUpdate:modelValue={goToWallet}
-        >
-          {notify.message}
-        </VSnackbar>
       </InnerContainer>
     );
   }

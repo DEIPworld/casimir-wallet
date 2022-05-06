@@ -17,6 +17,7 @@ import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
 import { useRoute } from 'vue-router';
 import { useWalletStore } from '@/stores/wallet';
+import { AppNotify } from '@/components/AppNotify/AppNotify';
 
 export const App = defineComponent({
   nane: 'App',
@@ -67,6 +68,8 @@ export const App = defineComponent({
           <RouterView />
         </VMain>
         <BodyOverlay />
+
+        <AppNotify />
       </VApp>
     );
   }

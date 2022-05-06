@@ -1,22 +1,26 @@
-import { reactive, ref } from 'vue';
+import { emitter } from '@/utils/eventBus';
+
+type Opts = {
+  color: string,
+  message: string
+}
 
 export function useNotify() {
-  const notify = reactive({
-    color: '',
-    message: ''
-  });
+  const show = (opts: Opts) => {
+    emitter.emit('notify.show', opts);
+  };
 
-  const notifyIsActive = ref<boolean>(false);
+  const showSuccess = (message: string) => {
+    emitter.emit('notify.showSuccess', message);
+  };
 
-  const showNotify = (message: string, color = 'success'): void => {
-    notifyIsActive.value = true;
-    notify.color = color;
-    notify.message = message;
+  const showError = (message: string) => {
+    emitter.emit('notify.showError', message);
   };
 
   return {
-    notify,
-    notifyIsActive,
-    showNotify
+    show,
+    showSuccess,
+    showError
   };
 }
