@@ -12,18 +12,6 @@ import { singleton } from '@/utils/singleton';
 import { emitter } from '@/utils/eventBus';
 
 export class ApiService {
-
-  private env = {
-    development: {
-      network: 'wss://gateway.testnet.octopus.network/deip/46v4p8ss613olf92p2scmsjud68mhzrr',
-      subscan: 'https://polkadot.api.subscan.io/api/scan/transfers'
-    },
-    production: {
-      network: 'wss://gateway.mainnet.octopus.network/deip/b9e1ipeh3ejw2znrb4s2xd4tlf6gynq0',
-      subscan: 'WIP'
-    }
-  };
-
   // this.api.consts
   // All runtime constants, e.g. this.api.consts.balances.existentialDeposit.
   // These are not functions, rather accessing the endpoint immediately
@@ -50,7 +38,7 @@ export class ApiService {
 
   async loadApi(): Promise<void> {
     try {
-      const provider = new WsProvider(this.env.development.network);
+      const provider = new WsProvider(import.meta.env.VITE_NETWORK);
       this.api = await ApiPromise.create({ provider });
     } catch (error) {
       console.log('Unable to initiate an API service: ', error);
@@ -64,7 +52,7 @@ export class ApiService {
       Keyring.loadAll({
         ss58Format: 42,
         type: 'sr25519',
-        isDevelopment: true
+        isDevelopment: import.meta.env.DEV
       });
     } catch (error) {
       console.error('Unable to load Keyring. ', error);
@@ -211,10 +199,10 @@ export class ApiService {
 
   async getTransactions(address: string): Promise<any> {
     try {
-      const res = await fetch(this.env.development.subscan, {
+      const res = await fetch('', {
         method: 'POST',
         headers: {
-          'X-API-Key': 'add1eafb458177af01a7f2ea9baff12a',
+          'X-API-Key': '',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ row: 10, page: 1, address })

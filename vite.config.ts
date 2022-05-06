@@ -8,6 +8,7 @@ import vuetify from '@vuetify/vite-plugin';
 
 export default defineConfig({
   root: 'src',
+  envDir: '../',
   plugins: [
     vue(),
     vueJsx(),

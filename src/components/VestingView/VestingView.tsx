@@ -7,7 +7,6 @@ import { InnerContainer } from '@/components/InnerContainer';
 import { useVestingStore } from '@/stores/vesting';
 import { DisplayAddress } from '@/components/DisplayAddress/DisplayAddress';
 
-
 export const VestingView = defineComponent({
   setup() {
     const accountStore = useAccountStore();
@@ -17,7 +16,7 @@ export const VestingView = defineComponent({
     const { vesting } = storeToRefs(vestingStore);
     const { getVestingPlan, claimVesting } = vestingStore;
 
-    const password = ref('111111');
+    const password = ref('');
     const isConfirmActive = ref(false);
 
     const isActive = computed(() => vesting.value?.startTime);
@@ -66,7 +65,7 @@ export const VestingView = defineComponent({
             />
             <VBtn
               class="ml-4"
-              onClick={() => accountJson.value && claimVesting(accountJson.value, '111111')}
+              onClick={() => accountJson.value && claimVesting(accountJson.value, '')}
             >
               Confirm
             </VBtn>
@@ -74,7 +73,7 @@ export const VestingView = defineComponent({
         );
       }
 
-      return 'There\'s no vesting contract assigned to the account.';
+      return null;
     };
 
     const renderView = () => {
