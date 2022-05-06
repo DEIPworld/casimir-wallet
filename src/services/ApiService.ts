@@ -97,10 +97,7 @@ export class ApiService {
   restoreAccount(json: KeyringPair$Json, password: string): CreateResult {
     const pair: KeyringPair = Keyring.restoreAccount(json, password);
 
-    return {
-      json,
-      pair
-    };
+    return Keyring.addPair(pair, password);
   }
 
   // ////////////////////////
