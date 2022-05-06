@@ -65,7 +65,7 @@ export const VestingView = defineComponent({
             />
             <VBtn
               class="ml-4"
-              onClick={() => accountJson.value && claimVesting(accountJson.value, '')}
+              onClick={() => accountJson.value && claimVesting(accountJson.value, password.value)}
             >
               Confirm
             </VBtn>

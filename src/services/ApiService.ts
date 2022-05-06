@@ -197,23 +197,6 @@ export class ApiService {
     }
   }
 
-  async getTransactions(address: string): Promise<any> {
-    try {
-      const res = await fetch('', {
-        method: 'POST',
-        headers: {
-          'X-API-Key': '',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ row: 10, page: 1, address })
-      });
-
-      return res.json();
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   async getTransactionFee(
     recipient: string,
     address: string,
