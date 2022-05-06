@@ -1,6 +1,7 @@
 import { defineComponent } from 'vue';
 import { VBtn, VIcon, VSheet } from 'vuetify/components';
 import useClipboard from 'vue-clipboard3';
+import { useNotify } from '@/composable/notify';
 
 export const DisplayAddress = defineComponent({
   props: {
@@ -15,13 +16,13 @@ export const DisplayAddress = defineComponent({
   },
 
   setup(props) {
-
     const { toClipboard } = useClipboard();
+    const { showError, showSuccess } = useNotify();
 
     const copyAddress = async (): Promise<void> => {
       try {
         await toClipboard(props.address);
-        console.info('Successfully copied');
+        showSuccess('Successfully copied');
 
         // showNotify(successMessage);
       } catch (e) {

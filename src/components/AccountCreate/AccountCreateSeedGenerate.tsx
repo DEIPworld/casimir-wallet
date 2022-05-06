@@ -3,6 +3,7 @@ import { VBtn, VSpacer, VCol, VRow, VSheet } from 'vuetify/components';
 import useClipboard from 'vue-clipboard3';
 import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
+import { useNotify } from '@/composable/notify';
 
 export const AccountCreateSeedGenerate = defineComponent({
   name: 'WalletCreateSeedGenerate',
@@ -20,6 +21,9 @@ export const AccountCreateSeedGenerate = defineComponent({
 
   setup(props, { emit }) {
     const { toClipboard } = useClipboard();
+    const { showSuccess } = useNotify();
+
+
     const accountStore = useAccountStore();
     const { generateSeedPhrase } = accountStore;
     const { tempSeed } = storeToRefs(accountStore);
@@ -39,7 +43,7 @@ export const AccountCreateSeedGenerate = defineComponent({
     const seedCopy = async (): Promise<void> => {
       try {
         await toClipboard(tempSeed.value);
-        // emit('seedCopy', 'Successfully copied');
+        showSuccess('Successfully copied');
       } catch (e) {
         console.error(e);
       }

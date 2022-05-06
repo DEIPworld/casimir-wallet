@@ -11,9 +11,6 @@ import { AccountCreateSeedGenerate } from './AccountCreateSeedGenerate';
 import { AccountCreateSeedCheck } from './AccountCreateSeedCheck';
 import { AccountCreateFinish } from './AccountCreateFinish';
 
-import { useAccountStore } from '@/stores/account';
-import { storeToRefs } from 'pinia';
-import { useNotify } from '@/composable/notify';
 import { useRouter } from 'vue-router';
 import { AccountCreatePassword } from '@/components/AccountCreate/AccountCreatePassword';
 
@@ -22,10 +19,6 @@ type Steps = 'start' | 'seedGenerate' | 'seedCheck' | 'setPassword' | 'finish';
 export const AccountCreate = defineComponent({
   setup() {
     const router = useRouter();
-    const { notify, notifyIsActive, showNotify } = useNotify();
-
-    const accountStore = useAccountStore();
-    const { address } = storeToRefs(accountStore);
 
     const currentsStep = ref<Steps>('start');
 
@@ -95,13 +88,6 @@ export const AccountCreate = defineComponent({
             />
           </VWindowItem>
         </VWindow>
-        <VSnackbar
-          v-model={notifyIsActive.value}
-          color={notify.color}
-          timeout={1000}
-        >
-          {notify.message}
-        </VSnackbar>
       </>
     );
   }
