@@ -194,26 +194,6 @@ export class ApiService {
     } catch (error) {
       console.log(error);
       return error as any;
-<<<<<<< HEAD
-    }
-  }
-
-  async getTransactions(address: string): Promise<any> {
-    try {
-      const res = await fetch(this.env.development.subscan, {
-        method: 'POST',
-        headers: {
-          'X-API-Key': 'add1eafb458177af01a7f2ea9baff12a',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ row: 10, page: 1, address })
-      });
-
-      return res.json();
-    } catch (error) {
-      console.log(error);
-=======
->>>>>>> 3042d42509675b0260814406276a725a8e0941bc
     }
   }
 
