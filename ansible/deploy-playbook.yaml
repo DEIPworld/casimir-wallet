@@ -1,0 +1,22 @@
+---
+- name: Deploy Application
+  hosts: all
+  become: yes
+
+  tasks:
+  
+  - name: Ping servers
+    ping:
+
+  - name: Copy built application files to server
+    ansible.builtin.copy:
+      src: /home/runner/work/deip-wallet/deip-wallet/dist/
+      dest: /sites/wallet/
+      owner: nginx
+      group: nginx
+      mode: '0644'
+
+  - name: Reload service Nginx, in all cases
+    ansible.builtin.service:
+      name: nginx
+      state: reloaded
