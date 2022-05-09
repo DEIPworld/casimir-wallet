@@ -12,18 +12,6 @@ import { singleton } from '@/utils/singleton';
 import { emitter } from '@/utils/eventBus';
 
 export class ApiService {
-
-  private env = {
-    development: {
-      network: 'wss://gateway.testnet.octopus.network/deip/46v4p8ss613olf92p2scmsjud68mhzrr',
-      subscan: 'https://polkadot.api.subscan.io/api/scan/transfers'
-    },
-    production: {
-      network: 'wss://gateway.mainnet.octopus.network/deip/b9e1ipeh3ejw2znrb4s2xd4tlf6gynq0',
-      subscan: 'WIP'
-    }
-  };
-
   // this.api.consts
   // All runtime constants, e.g. this.api.consts.balances.existentialDeposit.
   // These are not functions, rather accessing the endpoint immediately
@@ -50,7 +38,7 @@ export class ApiService {
 
   async loadApi(): Promise<void> {
     try {
-      const provider = new WsProvider(this.env.development.network);
+      const provider = new WsProvider(import.meta.env.VITE_NETWORK);
       this.api = await ApiPromise.create({ provider });
     } catch (error) {
       console.log('Unable to initiate an API service: ', error);
@@ -64,7 +52,7 @@ export class ApiService {
       Keyring.loadAll({
         ss58Format: 42,
         type: 'sr25519',
-        isDevelopment: true
+        isDevelopment: import.meta.env.DEV
       });
     } catch (error) {
       console.error('Unable to load Keyring. ', error);
@@ -206,6 +194,7 @@ export class ApiService {
     } catch (error) {
       console.log(error);
       return error as any;
+<<<<<<< HEAD
     }
   }
 
@@ -223,6 +212,8 @@ export class ApiService {
       return res.json();
     } catch (error) {
       console.log(error);
+=======
+>>>>>>> 3042d42509675b0260814406276a725a8e0941bc
     }
   }
 

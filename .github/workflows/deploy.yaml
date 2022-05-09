@@ -2,7 +2,7 @@ name: Deployment
 on:
   push:
     branches:
-      - release
+      - main
 
 jobs:
   build:
@@ -21,7 +21,7 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
-
+          
       - name: Run Ansible playbook
         uses: dawidd6/action-ansible-playbook@v2.5.0
         with:
@@ -30,7 +30,4 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }} 
           inventory: |
             [production_server]
-            linux2 ansible_host=${{ secrets.ANSIBLE_HOST }}  ansible_user=ec2-user 
-
-
-
+            linux2 ansible_host=${{ secrets.ANSIBLE_HOST }}  ansible_user=ec2-user

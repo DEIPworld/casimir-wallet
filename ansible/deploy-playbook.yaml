@@ -10,7 +10,7 @@
 
   - name: Copy built application files to server
     ansible.builtin.copy:
-      src: /home/runner/work/deip-wallet/deip-wallet/src/dist/
+      src: /home/runner/work/deip-wallet/deip-wallet/dist/
       dest: /sites/wallet/
       owner: nginx
       group: nginx
