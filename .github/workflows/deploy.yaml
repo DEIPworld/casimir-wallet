@@ -2,7 +2,7 @@ name: Deployment
 on:
   push:
     branches:
-      - main
+      - development
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
         run: npm install
 
       - name: Build
-        run: npm run build
+        run: npm run build:testnet
 
       - name: List files in the repository
         run: |
@@ -29,5 +29,5 @@ jobs:
           directory: ./ansible
           key: ${{ secrets.SSH_PRIVATE_KEY }} 
           inventory: |
-            [production_server]
-            linux2 ansible_host=${{ secrets.ANSIBLE_HOST }}  ansible_user=ec2-user
+            [development_server]
+            ubuntu ansible_host=${{ secrets.ANSIBLE_HOST_TESTNET }}  ansible_user=ubuntu
