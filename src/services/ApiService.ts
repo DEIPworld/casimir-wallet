@@ -8,8 +8,11 @@ import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
 import type { WordCount } from '@polkadot/util-crypto/mnemonic/generate';
 
+
 import { singleton } from '@/utils/singleton';
 import { emitter } from '@/utils/eventBus';
+import type { BN } from '@polkadot/util';
+import type { AccountInfo } from '@polkadot/types/interfaces/system/types';
 
 export class ApiService {
   // this.api.consts
@@ -25,8 +28,8 @@ export class ApiService {
   // private api: ApiDecoration<ApiTypes> | any;
   private api: any;
 
-  private static formatCurrency(currency: number, negated = false): string {
-    const rawNum = new BigNumber(currency).shiftedBy(-18);
+  private static formatCurrency(currency: number | BN, negated = false): string {
+    const rawNum = new BigNumber(currency as BigNumber.Value).shiftedBy(-18);
     const resNum = negated ? rawNum.negated() : rawNum;
 
     return resNum.toFormat(BigNumber.ROUND_FLOOR);
@@ -88,6 +91,21 @@ export class ApiService {
     return Keyring.addPair(pair, password);
   }
 
+  transformAccountInfo(data: AccountInfo) {
+    return {
+      nonce: data.nonce.toNumber(),
+      consumers: data.consumers.toNumber(),
+      providers: data.providers.toNumber(),
+      sufficients: data.sufficients.toNumber(),
+      data: {
+        free: ApiService.formatCurrency(data.data.free),
+        reserved: ApiService.formatCurrency(data.data.reserved),
+        miscFrozen: ApiService.formatCurrency(data.data.miscFrozen),
+        feeFrozen: ApiService.formatCurrency(data.data.feeFrozen)
+      }
+    };
+  }
+
   // ////////////////////////
 
   async getVestingPlan(address: string): Promise<IVestingPlan> {
@@ -122,7 +140,7 @@ export class ApiService {
 
       };
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return error as any;
     }
   }
@@ -135,7 +153,7 @@ export class ApiService {
 
       return hash.toString();
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return error as any;
     }
   }
@@ -144,55 +162,9 @@ export class ApiService {
     try {
       const res = await this.api.query.system.account(address);
 
-      return {
-
-        // The number of transactions this account has sent.
-        nonce: res.nonce.toNumber(),
-
-        // The number of other modules that currently depend on this account's existence. The account
-        // cannot be reaped until this is zero.
-        consumers: res.consumers.toNumber(),
-
-        // The number of other modules that allow this account to exist. The account may not be reaped
-        // until this and `sufficients` are both zero.
-        providers: res.providers.toNumber(),
-
-        // The number of modules that allow this account to exist for their own purposes only. The
-        // account may not be reaped until this and `providers` are both zero.
-        sufficients: res.sufficients.toNumber(),
-
-        // The additional data that belongs to this account. Used to store the balance(s) in a lot of
-        // chains.
-        data: {
-
-          // Non-reserved part of the balance. There may still be restrictions on this, but it is the
-          // total pool what may in principle be transferred, reserved and used for tipping.
-          //
-          // This is the only balance that matters in terms of most operations on tokens. It
-          // alone is used to determine the balance when in the contract execution environment.
-          free: ApiService.formatCurrency(res.data.free),
-
-          // Balance which is reserved and may not be used at all.
-          //
-          // This can still get slashed, but gets slashed last of all.
-          //
-          // This balance is a 'reserve' balance that other subsystems use in order to set aside tokens
-          // that are still 'owned' by the account holder, but which are suspendable.
-          reserved: ApiService.formatCurrency(res.data.reserved),
-
-          // The amount that `free` may not drop below when withdrawing for *anything except transaction
-          // fee payment*.
-          miscFrozen: ApiService.formatCurrency(res.data.miscFrozen),
-
-          // The amount that `free` may not drop below when withdrawing specifically for transaction
-          // fee payment.
-          feeFrozen: ApiService.formatCurrency(res.data.feeFrozen)
-
-        }
-
-      };
+      return this.transformAccountInfo(res);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return error as any;
     }
   }
@@ -209,7 +181,7 @@ export class ApiService {
 
       return ApiService.formatCurrency(partialFee);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return error as any;
     }
   }
@@ -228,12 +200,25 @@ export class ApiService {
       return {
         hash: hash.toHex(),
         to: recipient,
-        date: new Date(),
+        date: new Date().getTime(),
         amount
       };
     } catch (error) {
       console.error(error);
       return error as any;
+    }
+  }
+
+  subscribeToBalance(address: string): void {
+    try {
+      this.api.query.system.account(address, (data: AccountInfo) => {
+        emitter.emit(
+          'wallet:balanceChange',
+          this.transformAccountInfo(data)
+        );
+      });
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -263,12 +248,10 @@ export class ApiService {
               const relatedTransfer = isDeposit || isWithdraw;
 
               if (event.method === 'Transfer' && relatedTransfer) {
-                const x = { ...amount, negative: 1 };
-                console.log(amount, x.toString());
-                emitter.emit('transaction', {
+                emitter.emit('wallet:transfer', {
                   hash: extrinsic.hash.toString(),
                   from: sender.toString(),
-                  date: new Date().toISOString(),
+                  date: new Date().getTime(),
                   amount: ApiService.formatCurrency(amount, isWithdraw)
                 });
               }
@@ -277,7 +260,7 @@ export class ApiService {
         }
       );
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 

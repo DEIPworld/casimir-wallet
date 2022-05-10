@@ -26,6 +26,6 @@ export interface ITransaction {
   hash: string;
   to?: string;
   from?: string;
-  date: Date;
+  date: Date | number;
   amount: number | string;
 }

@@ -11,11 +11,11 @@ export const WalletBalances = defineComponent({
 
     const balanceStore = useWalletStore();
     const { balance } = storeToRefs(balanceStore);
-    const { getAccountBalance } = balanceStore;
-
-    onMounted(async () => {
-      await getAccountBalance(address.value);
-    });
+    // const { getAccountBalance } = balanceStore;
+    //
+    // onMounted(async () => {
+    //   await getAccountBalance(address.value);
+    // });
 
     return () => (
       <VSheet

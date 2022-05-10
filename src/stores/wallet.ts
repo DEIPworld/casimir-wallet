@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { ApiService } from '@/services/ApiService';
-import type { IAccount } from '../../types';
+import type { IAccount, ITransaction } from '../../types';
 import { emitter } from '@/utils/eventBus';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
@@ -10,8 +10,9 @@ const apiService = ApiService.getInstance();
 
 export const useWalletStore = defineStore('balance', () => {
   const balance = ref<IAccount | undefined>();
-  const transactions = ref<Record<string, string>[]>([]);
+  const transactions = ref<ITransaction[]>([]);
 
+  // theoretically not required
   const getAccountBalance = async (address: string | undefined): Promise<void> => {
     if (address) {
       const res = await apiService.getAccountBalance(address);
@@ -20,15 +21,17 @@ export const useWalletStore = defineStore('balance', () => {
   };
 
   const subscribeToBalance = async (address: string) => {
-    balance.value = await apiService.getAccountBalance(address);
+    apiService.subscribeToBalance(address);
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    await subscribeToBalance(address);
+    emitter.on('wallet:balanceChange', (data: IAccount) => {
+      balance.value = data;
+    });
   };
 
   const subscribeToTransfers = (address: string) => {
     apiService.subscribeToTransfers(address);
-    emitter.on('transaction', (data: Record<string, string>) => {
+
+    emitter.on('wallet:transfer', (data: ITransaction) => {
       transactions.value.push(data);
     });
   };
