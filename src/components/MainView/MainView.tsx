@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 
 import { storeToRefs } from 'pinia';
 import { useAccountStore } from '@/stores/account';
@@ -12,10 +12,10 @@ export const MainView = defineComponent({
     const accountStore = useAccountStore();
     const { isLoggedIn } = storeToRefs(accountStore);
 
-    const DisplayCmp = isLoggedIn.value ? WalletView : HomeView;
+    const DisplayCmp = computed(() => isLoggedIn.value ? WalletView : HomeView);
 
     return () => (
-      <DisplayCmp />
+      <DisplayCmp.value />
     );
   }
 });

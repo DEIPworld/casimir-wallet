@@ -12,6 +12,11 @@ export const useWalletStore = defineStore('balance', () => {
   const balance = ref<IAccount | undefined>();
   const transactions = ref<ITransaction[]>([]);
 
+  const clear = () => {
+    balance.value = undefined;
+    transactions.value = [];
+  };
+
   // theoretically not required
   const getAccountBalance = async (address: string | undefined): Promise<void> => {
     if (address) {
@@ -85,7 +90,9 @@ export const useWalletStore = defineStore('balance', () => {
 
     subscribeToUpdates,
     subscribeToBalance,
-    subscribeToTransfers
+    subscribeToTransfers,
+
+    clear
   };
 }, {
   persistedState: {
