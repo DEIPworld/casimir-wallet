@@ -3,16 +3,17 @@ import { storeToRefs } from 'pinia';
 import { VIcon, VSheet, VSpacer } from 'vuetify/components';
 import { useWalletStore } from '@/stores/wallet';
 import { useDate } from '@/composable/date';
+import type { ITransaction } from '../../../types';
 
 export const WalletTransactions = defineComponent({
   setup() {
     const walletStore = useWalletStore();
     const { transactions } = storeToRefs(walletStore);
 
-    const { formatDate, parseISO } = useDate();
+    const { formatDate } = useDate();
 
-    const renderRow = (data: Record<string, string>) => {
-      const isPositive = !data.amount.includes('-');
+    const renderRow = (data: ITransaction) => {
+      const isPositive = !(data.amount as string).includes('-');
 
       return (
         <VSheet
@@ -41,7 +42,7 @@ export const WalletTransactions = defineComponent({
               </span>
               <span class="mx-2">•</span>
               <div class="text-body-1 text-medium-emphasis">
-                {formatDate(parseISO(data.date))}
+                {formatDate(data.date)}
               </div>
             </div>
             <VSheet maxWidth={240} class="text-truncate">

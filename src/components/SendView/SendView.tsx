@@ -19,7 +19,7 @@ export const SendView = defineComponent({
     const password = ref('');
 
     const { getTransactionFee, makeTransaction } = useWalletStore();
-    const { showError, showSuccess } = useNotify();
+    const { showSuccess } = useNotify();
 
 
     const recipient = ref<string>('');
@@ -57,6 +57,7 @@ export const SendView = defineComponent({
       );
 
       showSuccess('Successfully sent');
+      router.push({ name: 'wallet' });
     };
 
     const transferIsDisabled = computed(() => !(recipient.value && amount.value));

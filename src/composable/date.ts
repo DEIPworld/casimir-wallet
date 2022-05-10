@@ -8,23 +8,28 @@ import {
 import { enGB } from 'date-fns/locale';
 
 export function useDate() {
-  function formatDate(date: Date, formatStr = 'PPP') {
-    return format(date, formatStr, {
-      locale: enGB
-    });
+  const defaultOptions = {
+    locale: enGB
+  };
+
+  function formatDate(
+    date: Date | number,
+    formatStr = 'PPP'
+  ) {
+    return format(date, formatStr, defaultOptions);
   }
 
   function formatDistance(date: Date, baseDate: Date, options: Record<string, unknown>) {
     return _formatDistance(date, baseDate, {
       ...options,
-      locale: enGB
+      ...defaultOptions
     });
   }
 
   function formatDistanceToNow(date: Date, options: Record<string, unknown>) {
     return _formatDistanceToNow(date, {
       ...options,
-      locale: enGB
+      ...defaultOptions
     });
   }
 
