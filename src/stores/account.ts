@@ -30,6 +30,10 @@ export const useAccountStore = defineStore(
       return apiService.restoreAccount(json, password);
     }
 
+    function logOut() {
+      accountJson.value = undefined;
+    }
+
     return {
       accountJson,
 
@@ -41,7 +45,8 @@ export const useAccountStore = defineStore(
       generateSeedPhrase,
 
       addAccount,
-      restoreAccount
+      restoreAccount,
+      logOut
     };
   },
   {

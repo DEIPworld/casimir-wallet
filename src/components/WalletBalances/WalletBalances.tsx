@@ -6,11 +6,12 @@ import { useWalletStore } from '@/stores/wallet';
 
 export const WalletBalances = defineComponent({
   setup() {
-    const accountStore = useAccountStore();
-    const { address } = storeToRefs(accountStore);
+    // const accountStore = useAccountStore();
+    // const { address } = storeToRefs(accountStore);
 
     const balanceStore = useWalletStore();
     const { balance } = storeToRefs(balanceStore);
+
     // const { getAccountBalance } = balanceStore;
     //
     // onMounted(async () => {

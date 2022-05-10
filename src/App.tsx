@@ -1,4 +1,4 @@
-import { RouterView } from 'vue-router';
+import { RouterView, useRouter } from 'vue-router';
 import { BodyOverlay } from '@/components/BodyOverlay';
 import { computed, defineComponent, watchEffect } from 'vue';
 
@@ -11,7 +11,7 @@ import {
   VSpacer,
   VTabs,
   VTab,
-  VMain
+  VMain, VBtn
 } from 'vuetify/components';
 import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
@@ -26,6 +26,7 @@ export const App = defineComponent({
     const accountStore = useAccountStore();
     const walletStore = useWalletStore();
     const route = useRoute();
+    const router = useRouter();
 
     const { isLoggedIn, address } = storeToRefs(accountStore);
 
@@ -41,11 +42,27 @@ export const App = defineComponent({
       if (address.value) walletStore.subscribeToUpdates(address.value);
     });
 
+    const logOut = () => {
+      accountStore.logOut();
+      walletStore.clear();
+      router.push({ name: 'wallet' });
+    };
+
     const renderNavigation = () => (
       <VTabs optional>
         <VTab to={{ name: 'wallet' }} exact-path>Wallet</VTab>
         <VTab to={{ name: 'vesting' }} exact-path>Vesting</VTab>
       </VTabs>
+    );
+
+    const renderLogout = () => (
+      <VBtn
+        color={'secondary-btn'}
+        variant="contained" size="small"
+        onClick={logOut}
+      >
+        Log out
+      </VBtn>
     );
 
     return () => (
@@ -62,6 +79,9 @@ export const App = defineComponent({
           {!hideNavigation.value && renderNavigation()}
 
           <VSpacer/>
+
+          {isLoggedIn.value && renderLogout()}
+
 
         </VAppBar>
         <VMain>
