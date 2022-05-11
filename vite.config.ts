@@ -12,6 +12,7 @@ export default defineConfig({
     outDir: '../dist'
   },
   envDir: '../',
+  publicDir: '../public',
   plugins: [
     vue(),
     vueJsx(),
