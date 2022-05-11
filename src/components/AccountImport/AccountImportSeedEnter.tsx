@@ -2,6 +2,9 @@ import { computed, defineComponent, ref } from 'vue';
 import { VBtn, VTextarea, VSpacer } from 'vuetify/components';
 import { storeToRefs } from 'pinia';
 import { useAccountStore } from '@/stores/account';
+import { number, object, string } from 'yup';
+import { useYup } from '@/composable/validate';
+import { useField, useForm } from 'vee-validate';
 
 export const AccountImportSeedEnter = defineComponent({
   emits: [
@@ -9,13 +12,29 @@ export const AccountImportSeedEnter = defineComponent({
   ],
 
   setup(props, { emit }) {
-    const seedPhrase = ref<string>('');
-
     const { tempSeed } = storeToRefs(useAccountStore());
-    const disabled = computed(() => {
-      const  length = tempSeed.value.split(' ').filter((v) => !!v).length;
-      return length !== 12;
+
+    const { makeError, mnemonicValidator } = useYup();
+
+    const schema = object({
+      mnemonic: string()
+        .test(mnemonicValidator)
+        .required().label('Mnemonic phrase')
     });
+
+    const { meta: formState } = useForm({
+      validationSchema: schema
+    });
+
+    const {
+      value: mnemonic,
+      errorMessage: mnemonicError
+    } = useField<string>('mnemonic');
+
+    const process = () => {
+      tempSeed.value = mnemonic.value;
+      emit('click:next');
+    };
 
     return () => (
       <>
@@ -31,7 +50,8 @@ export const AccountImportSeedEnter = defineComponent({
 
         <VTextarea
           label="Passphrase (12 words)"
-          v-model={tempSeed.value}
+          v-model={mnemonic.value}
+          {...makeError(mnemonicError.value)}
           rows={2}
         />
 
@@ -40,8 +60,8 @@ export const AccountImportSeedEnter = defineComponent({
 
           <VBtn
             class="ml-4"
-            disabled={disabled.value}
-            onClick={() => emit('click:next', seedPhrase.value)}
+            disabled={!formState.value.valid}
+            onClick={process}
           >
             Next
           </VBtn>

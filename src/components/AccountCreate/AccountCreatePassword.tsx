@@ -64,7 +64,6 @@ export const AccountCreatePassword = defineComponent({
             for your accounts on the DEIP blockchain.
           </p>
         </div>
-
         <VRow>
           <VCol>
             <VTextField
