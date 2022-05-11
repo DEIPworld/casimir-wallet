@@ -36,6 +36,7 @@ export const AccountCreateSeedCheck = defineComponent({
       checkWord.value = seedArray[num];
       checkWord.value = seedArray[num];
       checkWordNum.value = num + 1;
+      word.value = '';
     };
 
     const verify = () => {
