@@ -26,7 +26,7 @@ export const SendView = defineComponent({
     const { getTransactionFee, makeTransaction } = useWalletStore();
     const { showSuccess } = useNotify();
 
-    const { addressValidator } = useYup();
+    const { makeError, addressValidator } = useYup();
 
     const schema = object({
       recipient: string()
@@ -93,13 +93,6 @@ export const SendView = defineComponent({
 
       showSuccess('Successfully sent');
       router.push({ name: 'wallet' });
-    };
-
-    const makeError = (val: string | undefined) => {
-      return {
-        messages: val,
-        error: !!val
-      };
     };
 
     return () => (
