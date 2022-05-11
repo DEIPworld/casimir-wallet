@@ -26,10 +26,12 @@
     "qrcode": "^1.5.0",
     "string-crypto": "^2.0.2",
     "tiny-emitter": "^2.1.0",
+    "vee-validate": "^4.5.11",
     "vue": "^3.2.33",
     "vue-clipboard3": "^2.0.0",
     "vue-router": "^4.0.14",
-    "vuetify": "^3.0.0-beta.1"
+    "vuetify": "^3.0.0-beta.1",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@deip/eslint-config": "^1.375.0",

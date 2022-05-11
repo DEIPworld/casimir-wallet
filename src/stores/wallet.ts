@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { ApiService } from '@/services/ApiService';
 import type { IAccount, ITransaction } from '../../types';
 import { emitter } from '@/utils/eventBus';
@@ -11,6 +11,8 @@ const apiService = ApiService.getInstance();
 export const useWalletStore = defineStore('balance', () => {
   const balance = ref<IAccount | undefined>();
   const transactions = ref<ITransaction[]>([]);
+
+  const freeBalance = computed(() => parseFloat(balance.value?.data.free || ''));
 
   const clear = () => {
     balance.value = undefined;
@@ -82,6 +84,8 @@ export const useWalletStore = defineStore('balance', () => {
 
   return {
     balance,
+    freeBalance,
+
     transactions,
 
     getAccountBalance,
