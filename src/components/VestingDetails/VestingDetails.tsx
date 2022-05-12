@@ -1,13 +1,19 @@
 import { defineComponent } from 'vue';
 import { storeToRefs } from 'pinia';
 import { VSheet } from 'vuetify/components';
+import { useDate } from '@/composable/date';
+import { useWalletStore } from '@/stores/wallet';
 import { useVestingStore } from '@/stores/vesting';
-import { format } from 'date-fns';
 
 export const VestingDetails = defineComponent({
   setup() {
     const vestingStore = useVestingStore();
     const { vesting } = storeToRefs(vestingStore);
+
+    const balanceStore = useWalletStore();
+    const { balance } = storeToRefs(balanceStore);
+
+    const { formatDate } = useDate();
 
     const renderRow = (label: string, data: any) => (
       <VSheet
@@ -23,10 +29,11 @@ export const VestingDetails = defineComponent({
     return () => (
       <>
         {renderRow('Total vested tokens', `${vesting.value?.totalAmount} DEIP`)}
+        {renderRow('Locked tokens', `${balance.value?.data.feeFrozen} DEIP`)}
         {
           vesting.value?.startTime ? renderRow(
             'Start vesting contract',
-            `${format(vesting.value?.startTime, 'dd MMMM yyyy')}`
+            `${formatDate(vesting.value?.startTime, 'dd MMMM yyyy, h:m a')}`
           ) : null
         }
         {renderRow('Vesting interval', `${vesting.value?.interval} month`)}

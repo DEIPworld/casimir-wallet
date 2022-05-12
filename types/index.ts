@@ -8,6 +8,7 @@ export interface IAccount {
     reserved: string;
     feeFrozen: string;
     miscFrozen: string;
+    actual: string;
   }
 }
 

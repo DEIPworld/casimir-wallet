@@ -92,6 +92,8 @@ export class ApiService {
   }
 
   transformAccountInfo(data: AccountInfo) {
+    const calculateActualBalance = Number(data.data.free) - Number(data.data.feeFrozen);
+
     return {
       nonce: data.nonce.toNumber(),
       consumers: data.consumers.toNumber(),
@@ -101,7 +103,8 @@ export class ApiService {
         free: ApiService.formatCurrency(data.data.free),
         reserved: ApiService.formatCurrency(data.data.reserved),
         miscFrozen: ApiService.formatCurrency(data.data.miscFrozen),
-        feeFrozen: ApiService.formatCurrency(data.data.feeFrozen)
+        feeFrozen: ApiService.formatCurrency(data.data.feeFrozen),
+        actual: ApiService.formatCurrency(calculateActualBalance)
       }
     };
   }

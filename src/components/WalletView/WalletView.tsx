@@ -15,7 +15,6 @@ export const WalletView = defineComponent({
     const balanceStore = useWalletStore();
     const { balance } = storeToRefs(balanceStore);
 
-
     return () => (
       <InnerContainer>
         <div class="d-flex justify-space-between mb-6">
@@ -26,7 +25,7 @@ export const WalletView = defineComponent({
           </div>
 
           <div class="text-right">
-            <div class="text-h3 mb-2">{balance.value?.data.free} DEIP</div>
+            <div class="text-h3 mb-2">{balance.value?.data.actual} DEIP</div>
             {/*<div class="text-subtitle-1">(~$100.00)</div>*/}
           </div>
         </div>
