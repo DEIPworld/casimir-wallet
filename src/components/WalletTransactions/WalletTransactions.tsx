@@ -38,11 +38,11 @@ export const WalletTransactions = defineComponent({
           <div>
             <div class="d-flex mb-2">
               <span class="text-h6">
-                {isPositive ? 'Recieved' : 'Send'}
+                {isPositive ? 'Received' : 'Sent'}
               </span>
               <span class="mx-2">•</span>
               <div class="text-body-1 text-medium-emphasis">
-                {formatDate(data.date)}
+                {formatDate(data.date, 'dd MMMM yyyy, h:m a')}
               </div>
             </div>
             <VSheet maxWidth={240} class="text-truncate">
