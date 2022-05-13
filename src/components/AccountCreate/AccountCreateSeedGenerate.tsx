@@ -53,10 +53,11 @@ export const AccountCreateSeedGenerate = defineComponent({
       <VCol cols={4}>
         <VSheet
           color="neutral-darken-4"
-          class="px-4 py-3"
+          class="px-5 py-4 d-flex"
           rounded
         >
-          {i + 1}. {w}
+          <VSheet class="text-medium-emphasis" width="24px">{i + 1}.</VSheet>
+          {w}
         </VSheet>
       </VCol>
     ));
@@ -67,7 +68,7 @@ export const AccountCreateSeedGenerate = defineComponent({
           Set up your secure seed phrase
         </div>
 
-        <div class="text-body1 mb-6">
+        <div class="text-body-large mb-12">
           Write down the following words in order and keep
           them in a safe place. Anyone who has access
           to it will also have access to your account!

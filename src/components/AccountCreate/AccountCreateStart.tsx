@@ -18,22 +18,20 @@ export const AccountCreateStart = defineComponent({
           Create your account
         </div>
 
-        <div class="text-body1 mb-6">
-          <p>
-            DEIP Wallet is a secure wallet and account manager
-            for your accounts on the DEIP blockchain.
-          </p>
-          <p>
-            Once you create an account, you’ll need it to
-            interact with applications on DEIP, and to
-            securely store your various tokens and collectibles (NFTs).
-          </p>
+        <div class="text-body-large mb-6">
+          DEIP Wallet is a secure wallet and account manager
+          for your accounts on the DEIP blockchain.
+        </div>
+        <div class="text-body-large mb-6">
+          Once you create an account, you’ll need it to
+          interact with applications on DEIP, and to
+          securely store your various tokens and collectibles (NFTs).
         </div>
 
         <VCheckbox
           v-model={confirm.value}
           label="I agree to the Terms of service and Privacy policy."
-          class="ml-n3"
+          class="ml-n3 mt-12"
         />
 
         <div class="d-flex mt-12">

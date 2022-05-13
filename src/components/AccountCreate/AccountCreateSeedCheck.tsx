@@ -55,9 +55,10 @@ export const AccountCreateSeedCheck = defineComponent({
 
     return () => (
       <>
-        <div class="text-h3 mb-6">
+        <div class="text-h3 mb-12">
           Check the phrase
         </div>
+
         <VTextField
           label={`Word #${checkWordNum.value}`}
           v-model={word.value}
@@ -65,12 +66,14 @@ export const AccountCreateSeedCheck = defineComponent({
 
         <div class="d-flex mt-12">
           <VSpacer/>
+
           <VBtn
             color="secondary-btn"
             onClick={() => emit('click:restart')}
           >
             Start Again
           </VBtn>
+
           <VBtn
             color="primary"
             class="ml-4"

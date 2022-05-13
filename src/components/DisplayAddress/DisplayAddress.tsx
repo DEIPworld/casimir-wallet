@@ -49,7 +49,7 @@ export const DisplayAddress = defineComponent({
     const renderAccentVariant = () => (
       <VSheet
         color="neutral-darken-4"
-        rounded
+        rounded="pill"
         class="d-flex"
       >
         <VSheet

@@ -14,7 +14,7 @@ import { useYup } from '@/composable/validate';
 import { useField, useForm } from 'vee-validate';
 import { string, number, object } from 'yup';
 
-export const SendView = defineComponent({
+export const ActionSend = defineComponent({
   setup() {
     const accountStore = useAccountStore();
     const walletStore = useWalletStore();
@@ -96,11 +96,7 @@ export const SendView = defineComponent({
     };
 
     return () => (
-      <InnerContainer>
-        <div class="text-h3 mb-6">
-          Send DEIP
-        </div>
-
+      <>
         <VRow>
           <VCol>
             <VTextField
@@ -159,7 +155,7 @@ export const SendView = defineComponent({
             Confirm
           </VBtn>
         </div>
-      </InnerContainer>
+      </>
     );
   }
 });

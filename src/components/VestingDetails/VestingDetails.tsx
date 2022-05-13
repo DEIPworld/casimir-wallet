@@ -17,7 +17,7 @@ export const VestingDetails = defineComponent({
 
     const renderRow = (label: string, data: any) => (
       <VSheet
-        rounded="lg"
+        rounded
         color="rgba(255,255,255,.05)"
         class="pa-4 d-flex align-center justify-space-between mb-2"
       >

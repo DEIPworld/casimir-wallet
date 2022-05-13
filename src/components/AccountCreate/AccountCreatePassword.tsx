@@ -58,12 +58,11 @@ export const AccountCreatePassword = defineComponent({
           Set password
         </div>
 
-        <div class="text-body1 mb-6">
-          <p>
-            DEIP Wallet is a secure wallet and account manager
-            for your accounts on the DEIP blockchain.
-          </p>
+        <div class="text-body-large mb-12">
+          DEIP Wallet is a secure wallet and account manager
+          for your accounts on the DEIP blockchain.
         </div>
+
         <VRow>
           <VCol>
             <VTextField
@@ -81,7 +80,7 @@ export const AccountCreatePassword = defineComponent({
           </VCol>
         </VRow>
 
-        <div class="d-flex mt-12">
+        <div class="d-flex mt-6">
           <VSpacer/>
 
           <VBtn

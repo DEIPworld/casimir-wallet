@@ -20,7 +20,7 @@ export const WalletBalances = defineComponent({
 
     return () => (
       <VSheet
-        rounded="lg"
+        rounded
         color="rgba(255,255,255,.1)"
         class="pa-4 d-flex align-center"
       >
