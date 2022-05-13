@@ -13,11 +13,9 @@ export const AccountImportStart = defineComponent({
           Import your account
         </div>
 
-        <div class="text-body1 mb-6">
-          <p>
-            Make sure you have your 12 word recovery phrase,
-            then click below to begin the recovery process.
-          </p>
+        <div class="text-body-large mb-12">
+          Make sure you have your 12 word recovery phrase,
+          then click below to begin the recovery process.
         </div>
 
         <div class="d-flex mt-12">

@@ -7,17 +7,14 @@ import { DisplayAddress } from '@/components/DisplayAddress/DisplayAddress';
 import { useAccountStore } from '@/stores/account';
 import { InnerContainer } from '@/components/InnerContainer';
 
-export const DepositView = defineComponent({
+export const ActionReceive = defineComponent({
   setup() {
 
     const accountStore = useAccountStore();
     const { address } = storeToRefs(accountStore);
 
     return () => (
-      <InnerContainer>
-        <div class="text-h3 mb-6">
-          Deposit
-        </div>
+      <>
         <div class="text-body1 mb-6">
           The address is generated, you can
           use it to deposit your wallet
@@ -37,7 +34,7 @@ export const DepositView = defineComponent({
             Go to wallet
           </VBtn>
         </div>
-      </InnerContainer>
+      </>
     );
   }
 });

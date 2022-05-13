@@ -5,7 +5,8 @@ export const vuetify = createVuetify({
   defaults: {
     VBtn: {
       elevation: 0,
-      color: 'primary'
+      color: 'primary',
+      rounded: 'pill'
     },
     VCheckbox: {
       hideDetails: true
@@ -30,7 +31,7 @@ export const vuetify = createVuetify({
       walletTheme: {
         dark: true,
         colors: {
-          background: '#090A0B',
+          background: '#000',
 
           secondary: '#fff',
 

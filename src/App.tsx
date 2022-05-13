@@ -1,4 +1,4 @@
-import { RouterView, useRouter } from 'vue-router';
+import { RouterView, useRouter, RouterLink } from 'vue-router';
 import { BodyOverlay } from '@/components/BodyOverlay';
 import { computed, defineComponent, watchEffect } from 'vue';
 
@@ -11,7 +11,8 @@ import {
   VSpacer,
   VTabs,
   VTab,
-  VMain, VBtn
+  VMain, VBtn,
+  VSwitch
 } from 'vuetify/components';
 import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
@@ -65,21 +66,31 @@ export const App = defineComponent({
       </VBtn>
     );
 
+    // <VSwitch
+    //   hide-details
+    //   inset
+    //   inline
+    //   trueIcon="mdi-white-balance-sunny"
+    //   falseIcon="mdi-weather-night"
+    // />
+
     return () => (
       <VApp>
         <VAppBar
-          elevation={0}
-          color={'rgba(255,255,255, .05)'}
-          class={'pl-18 pr-18'}
+          height="72"
+          flat
+          color="black"
+          border
         >
           <VAppBarTitle style={'flex: none'} class={'mr-18'}>
-            <img src={logoUrl} alt="DEIP Wallet" height="24" class="d-block"/>
+            <RouterLink to={{ name: 'wallet' }}>
+              <img src={logoUrl} alt="DEIP Wallet" height="24" class="d-block"/>
+            </RouterLink>
           </VAppBarTitle>
 
           {!hideNavigation.value && renderNavigation()}
 
           <VSpacer/>
-
           {isLoggedIn.value && renderLogout()}
 
 
@@ -87,7 +98,6 @@ export const App = defineComponent({
         <VMain>
           <RouterView />
         </VMain>
-        <BodyOverlay />
 
         <AppNotify />
       </VApp>

@@ -24,7 +24,7 @@ export const AccountCreateFinish = defineComponent({
           Almost there!
         </div>
 
-        <div class="text-body1 mb-6">
+        <div class="text-body-large mb-12">
           The address is generated, you can
           use it to deposit your wallet
         </div>

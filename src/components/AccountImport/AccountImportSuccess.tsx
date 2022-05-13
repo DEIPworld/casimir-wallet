@@ -13,7 +13,7 @@ export const AccountImportSuccess = defineComponent({
           Recovered successfully
         </div>
 
-        <div class="text-body1 mb-6">
+        <div class="text-body-large mb-12">
           <p>
             Welcome back to your account
           </p>

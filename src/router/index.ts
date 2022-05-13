@@ -1,20 +1,25 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import { useAccountStore } from '@/stores/account';
 
 // import { HomeView } from '@/components/HomeView';
 // import { WalletView } from '@/components/WalletView';
 
+import { MainView } from '@/components/MainView';
+
+import { AccountView } from '@/components/AccountView';
 import { AccountCreate } from '@/components/AccountCreate';
 import { AccountImport } from '@/components/AccountImport';
+
 import { WalletBalances } from '@/components/WalletBalances';
 import { WalletTransactions } from '@/components/WalletTransactions';
-import { AccountView } from '@/components/AccountView';
+
 import { VestingView } from '@/components/VestingView';
 import { VestingDetails } from '@/components/VestingDetails';
-import { DepositView } from '@/components/DepositView';
-import { SendView } from '@/components/SendView';
-import { MainView } from '@/components/MainView';
-import { useAccountStore } from '@/stores/account';
-import { storeToRefs } from 'pinia';
+
+import { ActionView } from '@/components/ActionView';
+import { ActionReceive } from '@/components/ActionReceive';
+import { ActionSend } from '@/components/ActionSend';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,15 +43,21 @@ const router = createRouter({
     },
 
     {
-      path: '/deposit',
-      name: 'wallet.deposit',
-      component: DepositView
-    },
-
-    {
-      path: '/send',
-      name: 'wallet.send',
-      component: SendView
+      path: '/action',
+      component: ActionView,
+      redirect: { name: 'action.send' },
+      children: [
+        {
+          path: 'send',
+          name: 'action.send',
+          component: ActionSend
+        },
+        {
+          path: 'receive',
+          name: 'action.receive',
+          component: ActionReceive
+        }
+      ]
     },
 
     {

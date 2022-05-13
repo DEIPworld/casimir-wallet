@@ -39,13 +39,11 @@ export const AccountImportSeedEnter = defineComponent({
     return () => (
       <>
         <div class="text-h3 mb-6">
-          Recover using seed phrase
+          Import using seed phrase
         </div>
 
-        <div class="text-body1 mb-6">
-          <p>
+        <div class="text-body-large mb-12">
             Enter the backup passphrase associated with the account.
-          </p>
         </div>
 
         <VTextarea
@@ -55,7 +53,7 @@ export const AccountImportSeedEnter = defineComponent({
           rows={2}
         />
 
-        <div class="d-flex mt-12">
+        <div class="d-flex mt-6">
           <VSpacer/>
 
           <VBtn

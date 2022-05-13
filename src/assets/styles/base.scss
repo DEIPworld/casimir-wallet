@@ -1,122 +1,135 @@
 //@use 'generic';
-$body-font-family: 'Roboto', sans-serif;
+$body-font-family: 'Gramatika', sans-serif;
 $heading-font-family: $body-font-family;
 
+// 132 / 100 / 80 / 64 / 56 / 40 / 32 / 20 / 16
+
 @use 'vuetify/styles/main' with (
+  $toolbar-padding-start: 24px,
+  $toolbar-padding-end: 24px,
   $spacers-steps: 24,
+  $body-font-family: $body-font-family,
 
   $typography: (
-    'h1': (
-      'size': 80px,
+    'display': (
+      'size': 120px,
       'weight': 600,
-      'line-height': 94px,
+      'line-height': 96px,
+      'letter-spacing': normal,
+      'font-family': $heading-font-family,
+      'text-transform': none
+    ),
+    'h1': (
+      'size': 90px,
+      'line-height': 72px,
+      'weight': 600,
       'letter-spacing': normal,
       'font-family': $heading-font-family,
       'text-transform': none
     ),
     'h2': (
-      'weight': 700,
-      'size': 60px,
-      'line-height': 72px,
+      'size': 67px,
+      'line-height': 52px,
+      'weight': 600,
       'letter-spacing': -0.5px,
       'font-family': $heading-font-family,
       'text-transform': none
     ),
     'h3': (
-      'weight': 700,
-      'size': 36px,
-      'line-height': 42px,
+      'size': 51px,
+      'line-height': 52px,
+      'weight': 600,
       'letter-spacing': 0.25px,
       'font-family': $heading-font-family,
       'text-transform': none
     ),
     'h4': (
-      'weight': 500,
-      'size': 32px,
-      'line-height': 38px,
+      'size': 38px,
+      'line-height': 40px,
+      'weight': 600,
       'letter-spacing': 0.25px,
       'font-family': $heading-font-family,
       'text-transform': none
     ),
     'h5': (
+      'size': 28px,
+      'line-height': 32px,
       'weight': 400,
-      'size': 24px,
-      'line-height': 36px,
       'letter-spacing': normal,
       'font-family': $heading-font-family,
       'text-transform': none
     ),
     'h6': (
-      'weight': 500,
-      'size': 20px,
-      'line-height': 24px,
+      'size': 21px,
+      'line-height': 28px,
+      'weight': 600,
       'letter-spacing': 0.15px,
       'font-family': $heading-font-family,
       'text-transform': none
     ),
     'subtitle-1': (
-      'weight': 400,
       'size': 20px,
       'line-height': 24px,
+      'weight': 400,
       'letter-spacing': 0.15px,
       'font-family': $body-font-family,
       'text-transform': none
     ),
     'subtitle-2': (
-      'weight': 500,
       'size': 14px,
-      'line-height': 24px,
+      'line-height': 20px,
+      'weight': 600,
       'letter-spacing': 0.1px,
       'font-family': $body-font-family,
       'text-transform': none
     ),
-    'body-1': (
+    'body-large': (
+      'size': 1.125rem,
       'weight': 400,
+      'line-height': 1.75rem,
+      'letter-spacing': .03125em,
+      'font-family': $body-font-family,
+      'text-transform': none
+    ),
+    'body-1': (
       'size': 16px,
       'line-height': 24px,
+      'weight': 400,
       'letter-spacing': .03125em,
       'font-family': $body-font-family,
       'text-transform': none
     ),
     'body-2': (
-      'weight': 400,
       'size': 14px,
       'line-height': 20px,
+      'weight': 400,
       'letter-spacing': .0178571429em,
       'font-family': $body-font-family,
       'text-transform': none
     ),
     'button': (
-      'weight': 500,
-      'size': 16px,
-      'line-height': 24px,
-      'letter-spacing': 1.35px,
+      'size': 1.125rem,
+      'line-height': 1.5rem,
+      'weight': 600,
+      'letter-spacing': normal,
       'font-family': $body-font-family,
-      'text-transform': uppercase
-    ),
-    'button-small': (
-      'weight': 500,
-      'size': 14px,
-      'line-height': 16px,
-      'letter-spacing': 1.25px,
-      'font-family': $body-font-family,
-      'text-transform': uppercase
+      'text-transform': lowercase
     ),
     'caption': (
-      'weight': 400,
       'size': 12px,
       'line-height': 16px,
+      'weight': 400,
       'letter-spacing': 0.4px,
       'font-family': $body-font-family,
       'text-transform': none
     ),
     'overline': (
-      'weight': 500,
       'size': 14px,
       'line-height': 16px,
+      'weight': 600,
       'letter-spacing': 1.5px,
       'font-family': $body-font-family,
-      'text-transform': uppercase
+      'text-transform': lowercase
     )
   ),
 
@@ -131,14 +144,44 @@ $heading-font-family: $body-font-family;
       ),
   ),
 
-  $button-sizes: (
-    height: 48px
-  ),
-
   $rounded: (
     'xl': 16px
-  )
+  ),
+
+  //$size-scales: (
+  //  'x-small': -3,
+  //  'small': -1.5,
+  //  'default': 0,
+  //  'large': 1.5,
+  //  'x-large': 3
+  //),
+
+  $button-sizes: (
+    'height': 48px,
+    //'font-size': 18px,
+    //'width-ratio': $button-width-ratio, // 16 / 9
+    //'padding-ratio': $button-padding-ratio // 2.25
+  ),
+
+  $border-radius-root: 0.5rem,
+
 );
+
+@font-face {
+  font-family: 'Gramatika';
+  src: url('../fonts/gramatika_bold-webfont.woff2') format('woff2'),
+  url('../fonts/gramatika_bold-webfont.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gramatika';
+  src: url('../fonts/gramatika_regular-webfont.woff2') format('woff2'),
+  url('../fonts/gramatika_regular-webfont.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
 
 .bg-secondary-btn {
   --v-theme-overlay-multiplier: var(--v-theme-secondary-overlay-multiplier);
@@ -160,7 +203,7 @@ $heading-font-family: $body-font-family;
 
 .bg-card {
   --v-theme-overlay-multiplier: var(--v-theme-secondary-overlay-multiplier);
-  background: rgba(var(--v-theme-secondary), .15) !important;
+  background: rgba(var(--v-theme-secondary), .1) !important;
   color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity)) !important;
 }
 
@@ -178,6 +221,29 @@ $heading-font-family: $body-font-family;
 
   .v-label.v-field-label {
     padding-top: 12px;
+  }
+}
+
+.v-card {
+  &--variant-outlined {
+    border-color: rgba(#fff, .1);
+  }
+}
+
+.v-toolbar {
+  &--border {
+    border-bottom: 1px solid rgba(#fff, .1) !important;
+  }
+}
+
+.v-switch {
+  .v-switch__track {
+    opacity: .2;
+  }
+
+  .v-icon {
+    margin-right: -18px;
+    font-size: 16px;
   }
 }
 
