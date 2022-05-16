@@ -4,9 +4,7 @@ $heading-font-family: $body-font-family;
 
 // 132 / 100 / 80 / 64 / 56 / 40 / 32 / 20 / 16
 
-@use 'vuetify/styles/main' with (
-  $toolbar-padding-start: 24px,
-  $toolbar-padding-end: 24px,
+@use 'vuetify/lib/styles/main' with (
   $spacers-steps: 24,
   $body-font-family: $body-font-family,
 
@@ -156,16 +154,31 @@ $heading-font-family: $body-font-family;
   //  'x-large': 3
   //),
 
-  $button-sizes: (
-    'height': 48px,
-    //'font-size': 18px,
-    //'width-ratio': $button-width-ratio, // 16 / 9
-    //'padding-ratio': $button-padding-ratio // 2.25
-  ),
-
   $border-radius-root: 0.5rem,
 
+  //$toolbar-padding-start: 24px,
+  //$toolbar-padding-end: 24px,
+
+  $button-sizes: (
+    'height': 48px
+  ),
 );
+
+//@forward 'vuetify/lib/components/VDivider/VDivider';
+//@forward 'vuetify/lib/components/VTabs/VTabs';
+//@forward 'vuetify/lib/components/VTabs/VTab';
+//@forward 'vuetify/lib/components/VTabs/VTab';
+
+//@forward 'vuetify/lib/components/VToolbar/VToolbar' with (
+//  $toolbar-padding-start: 24px,
+//  $toolbar-padding-end: 24px,
+//);
+
+//@forward 'vuetify/lib/components/VBtn/VBtn' with (
+//  $button-sizes: (
+//    'height': 48px
+//  ),
+//);
 
 @font-face {
   font-family: 'Gramatika';

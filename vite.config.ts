@@ -15,11 +15,11 @@ export default defineConfig({
   publicDir: '../public',
   plugins: [
     vue(),
-    vueJsx(),
     vuetify({
       autoImport: true,
       styles: 'expose'
-    })
+    }),
+    vueJsx()
   ],
   resolve: {
     alias: {

@@ -1,5 +1,4 @@
 import { RouterView, useRouter, RouterLink } from 'vue-router';
-import { BodyOverlay } from '@/components/BodyOverlay';
 import { computed, defineComponent, watchEffect } from 'vue';
 
 import logoUrl from '@/assets/deip-logo.svg';
@@ -81,6 +80,7 @@ export const App = defineComponent({
           flat
           color="black"
           border
+          class="px-6"
         >
           <VAppBarTitle style={'flex: none'} class={'mr-18'}>
             <RouterLink to={{ name: 'wallet' }}>
