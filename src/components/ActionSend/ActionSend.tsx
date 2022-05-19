@@ -6,6 +6,7 @@ import {
 
 import { useAccountStore } from '@/stores/account';
 import { InnerContainer } from '@/components/InnerContainer';
+import { WithLoadingStateButton } from '@/components/common/WithLoadingStateButton';
 import { useWalletStore } from '@/stores/wallet';
 import { useNotify } from '@/composable/notify';
 import { useRouter } from 'vue-router';
@@ -62,6 +63,7 @@ export const ActionSend = defineComponent({
 
 
     const fee = ref<string>('0');
+    const isLoading = ref<boolean>(false);
 
     const totalSend = computed(() => {
       if (amount.value) {
@@ -70,29 +72,39 @@ export const ActionSend = defineComponent({
       return 0;
     });
 
-    watchEffect( async () => {
+    watchEffect(async () => {
       if (
         recipientMeta.valid
         && amountMeta.valid
         && address.value
       ) {
+        isLoading.value = true;
+
         fee.value = await getTransactionFee(
           recipient.value,
           address.value,
           amount.value
-        ) ;
+        );
+
+        isLoading.value = false;
       }
     });
 
-    const transfer = () => {
-      accountJson.value && makeTransaction(
-        recipient.value,
-        { account: accountJson.value, password: password.value },
-        amount.value
-      );
+    const transfer = async(): Promise<void> => {
+      try {
+        isLoading.value = true;
 
-      showSuccess('Successfully sent');
-      router.push({ name: 'wallet' });
+        accountJson.value && await makeTransaction(
+          recipient.value,
+          { account: accountJson.value, password: password.value },
+          amount.value
+        );
+  
+        showSuccess('Successfully sent');
+        router.push({ name: 'wallet' });
+      } finally {
+        isLoading.value = false;
+      }
     };
 
     return () => (
@@ -147,13 +159,14 @@ export const ActionSend = defineComponent({
           >
             cancel
           </VBtn>
-          <VBtn
+          <WithLoadingStateButton
             onClick={transfer}
             class="ml-4"
+            isLoading={isLoading.value}
             disabled={!formState.value.valid}
           >
             Confirm
-          </VBtn>
+          </WithLoadingStateButton>
         </div>
       </>
     );
