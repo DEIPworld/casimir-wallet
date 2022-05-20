@@ -1,12 +1,11 @@
 import { computed, defineComponent, ref, watchEffect } from 'vue';
 import { storeToRefs } from 'pinia';
 import {
-  VBtn, VRow, VCol, VTextField, VDivider
+  VBtn, VRow, VCol, VTextField, VDivider, VProgressCircular
 } from 'vuetify/components';
 
 import { useAccountStore } from '@/stores/account';
 import { InnerContainer } from '@/components/InnerContainer';
-import { WithLoadingStateButton } from '@/components/common/WithLoadingStateButton';
 import { useWalletStore } from '@/stores/wallet';
 import { useNotify } from '@/composable/notify';
 import { useRouter } from 'vue-router';
@@ -159,14 +158,13 @@ export const ActionSend = defineComponent({
           >
             cancel
           </VBtn>
-          <WithLoadingStateButton
+          <VBtn
             onClick={transfer}
             class="ml-4"
-            isLoading={isLoading.value}
             disabled={!formState.value.valid}
           >
-            Confirm
-          </WithLoadingStateButton>
+            {isLoading.value ? <VProgressCircular indeterminate={true} /> : 'Confirm'}
+          </VBtn>
         </div>
       </>
     );
