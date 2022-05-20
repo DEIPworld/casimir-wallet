@@ -1,7 +1,7 @@
 import { computed, defineComponent, onMounted, ref } from 'vue';
 import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
-import { VBtn, VTextField, VSheet } from 'vuetify/components';
+import { VBtn, VTextField, VSheet, VProgressCircular } from 'vuetify/components';
 import { RouterView } from 'vue-router';
 import { InnerContainer } from '@/components/InnerContainer';
 import { useVestingStore } from '@/stores/vesting';
@@ -18,6 +18,7 @@ export const VestingView = defineComponent({
 
     const password = ref('');
     const isConfirmActive = ref(false);
+    const isLoading = ref<boolean>(false);
 
     const isActive = computed(() => vesting.value?.startTime);
 
@@ -30,6 +31,16 @@ export const VestingView = defineComponent({
 
       if (!isConfirmActive.value) {
         password.value = '';
+      }
+    };
+
+    const onConfirmClick = async(): Promise<void> => {
+      try {
+        isLoading.value = true;
+
+        accountJson.value && await claimVesting(accountJson.value, password.value);
+      } finally {
+        isLoading.value = false;
       }
     };
 
@@ -65,9 +76,9 @@ export const VestingView = defineComponent({
             />
             <VBtn
               class="ml-4"
-              onClick={() => accountJson.value && claimVesting(accountJson.value, password.value)}
+              onClick={onConfirmClick}
             >
-              Confirm
+              {isLoading.value ? <VProgressCircular indeterminate={true} /> : 'Confirm'}
             </VBtn>
           </VSheet>
         );
