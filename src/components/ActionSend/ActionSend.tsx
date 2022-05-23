@@ -1,11 +1,12 @@
 import { computed, defineComponent, ref, watchEffect } from 'vue';
 import { storeToRefs } from 'pinia';
 import {
-  VBtn, VRow, VCol, VTextField, VDivider, VProgressCircular
+  VBtn, VRow, VCol, VTextField, VDivider
 } from 'vuetify/components';
 
 import { useAccountStore } from '@/stores/account';
 import { InnerContainer } from '@/components/InnerContainer';
+import { ConfirmActionModal } from '@/components/ConfirmActionModal';
 import { useWalletStore } from '@/stores/wallet';
 import { useNotify } from '@/composable/notify';
 import { useRouter } from 'vue-router';
@@ -35,9 +36,7 @@ export const ActionSend = defineComponent({
       amount: number().typeError('Must be a number')
         .positive()
         .max(freeBalance.value)
-        .required().label('Amount'),
-      password: string()
-        .required().label('Password')
+        .required().label('Amount')
     });
 
     const { meta: formState } = useForm({
@@ -56,13 +55,10 @@ export const ActionSend = defineComponent({
       meta: amountMeta
     } = useField<number>('amount');
 
-    const {
-      value: password
-    } = useField<string>('password');
-
-
     const fee = ref<string>('0');
     const isLoading = ref<boolean>(false);
+    const isOpen = ref<boolean>(false);
+    const passwordError = ref<string>();
 
     const totalSend = computed(() => {
       if (amount.value) {
@@ -77,33 +73,39 @@ export const ActionSend = defineComponent({
         && amountMeta.valid
         && address.value
       ) {
-        isLoading.value = true;
-
         fee.value = await getTransactionFee(
           recipient.value,
           address.value,
           amount.value
         );
-
-        isLoading.value = false;
       }
     });
 
-    const transfer = async(): Promise<void> => {
-      try {
-        isLoading.value = true;
+    const transfer = async (password: string): Promise<void> => {
+      isLoading.value = true;
 
-        accountJson.value && await makeTransaction(
-          recipient.value,
-          { account: accountJson.value, password: password.value },
-          amount.value
-        );
-  
-        showSuccess('Successfully sent');
-        router.push({ name: 'wallet' });
-      } finally {
-        isLoading.value = false;
-      }
+      setTimeout(async () => {
+        try { 
+          accountJson.value &&
+            (await makeTransaction(
+              recipient.value,
+              { account: accountJson.value, password },
+              amount.value
+            ));
+
+          showSuccess("Successfully sent");
+          router.push({ name: "wallet" });
+        } catch (error: any) {
+          passwordError.value = error.message;
+        } finally {
+          isLoading.value = false;
+        }
+      }, 500);
+    };
+
+    const openConfirmModal = (): void => {
+      isOpen.value = true;
+      passwordError.value = undefined;
     };
 
     return () => (
@@ -128,7 +130,7 @@ export const ActionSend = defineComponent({
 
         <VRow>
           <VCol>Will be sent</VCol>
-          <VCol class="text-right">{amount.value || 0 } DEIP</VCol>
+          <VCol class="text-right">{amount.value || 0} DEIP</VCol>
         </VRow>
         <VRow>
           <VCol>Platform fee</VCol>
@@ -139,18 +141,10 @@ export const ActionSend = defineComponent({
 
         <VRow>
           <VCol>Total</VCol>
-          <VCol class="text-right">{totalSend.value } DEIP</VCol>
+          <VCol class="text-right">{totalSend.value} DEIP</VCol>
         </VRow>
 
-        <div class="d-flex mt-12 align-center">
-          <VTextField
-            singleLine
-            density="comfortable"
-            class="spacer"
-            label="Password"
-            v-model={password.value}
-            hideDetails
-          />
+        <div class="d-flex mt-12 justify-end align-center">
           <VBtn
             class="ml-4"
             to={{ name: 'wallet' }}
@@ -159,13 +153,21 @@ export const ActionSend = defineComponent({
             cancel
           </VBtn>
           <VBtn
-            onClick={transfer}
+            onClick={openConfirmModal}
             class="ml-4"
             disabled={!formState.value.valid}
           >
-            {isLoading.value ? <VProgressCircular indeterminate={true} /> : 'Confirm'}
+            Confirm
           </VBtn>
         </div>
+        <ConfirmActionModal
+          title='Confirm transaction'
+          isOpen={isOpen.value}
+          isLoading={isLoading.value}
+          error={passwordError.value}
+          onClick:cancel={() => isOpen.value = false}
+          onClick:confirm={transfer}
+        />
       </>
     );
   }
