@@ -260,4 +260,9 @@ $heading-font-family: $body-font-family;
   }
 }
 
+.v-overlay__scrim {
+  background: rgba(var(--v-theme-background), .5);
+  opacity: 1;
+}
+
 @media (prefers-color-scheme: dark) { }

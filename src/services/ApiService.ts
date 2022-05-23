@@ -85,10 +85,17 @@ export class ApiService {
     throw new Error(`The seed phrase "${seedPhrase}" is not valid`);
   }
 
-  restoreAccount(json: KeyringPair$Json, password: string): CreateResult {
-    const pair: KeyringPair = Keyring.restoreAccount(json, password);
+  async restoreAccount(json: KeyringPair$Json, password: string): Promise<CreateResult> {
+    return new Promise((resolve, reject) => {
+      try {
+        const pair: KeyringPair = Keyring.restoreAccount(json, password);
 
-    return Keyring.addPair(pair, password);
+        const restoredAccount = Keyring.addPair(pair, password);
+        resolve(restoredAccount);
+      } catch (error) {
+        reject(new Error('password is incorrect'));
+      }
+    });
   }
 
   transformAccountInfo(data: AccountInfo) {
