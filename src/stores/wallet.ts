@@ -73,7 +73,7 @@ export const useWalletStore = defineStore('balance', () => {
       password
     } = sender;
 
-    const restoredAccount: CreateResult = apiService.restoreAccount(account, password);
+    const restoredAccount: CreateResult = await apiService.restoreAccount(account, password);
 
     return await apiService.makeTransaction(
       recipient,

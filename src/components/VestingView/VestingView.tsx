@@ -1,9 +1,10 @@
 import { computed, defineComponent, onMounted, ref } from 'vue';
 import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
-import { VBtn, VTextField, VSheet, VProgressCircular } from 'vuetify/components';
+import { VBtn } from 'vuetify/components';
 import { RouterView } from 'vue-router';
 import { InnerContainer } from '@/components/InnerContainer';
+import { ConfirmActionModal } from '@/components/ConfirmActionModal';
 import { useVestingStore } from '@/stores/vesting';
 import { DisplayAddress } from '@/components/DisplayAddress/DisplayAddress';
 
@@ -16,9 +17,9 @@ export const VestingView = defineComponent({
     const { vesting } = storeToRefs(vestingStore);
     const { getVestingPlan, claimVesting } = vestingStore;
 
-    const password = ref('');
-    const isConfirmActive = ref(false);
     const isLoading = ref<boolean>(false);
+    const isConfirmationModalOpen = ref<boolean>(false);
+    const passwordError = ref<string>();
 
     const isActive = computed(() => vesting.value?.startTime);
 
@@ -26,22 +27,25 @@ export const VestingView = defineComponent({
       await getVestingPlan(address.value);
     });
 
-    const toggleConfirm = () => {
-      isConfirmActive.value = !isConfirmActive.value;
+    const onConfirm = async(password: string): Promise<void> => {
+      isLoading.value = true;
 
-      if (!isConfirmActive.value) {
-        password.value = '';
-      }
+      setTimeout(async () => {
+        try { 
+          accountJson.value &&
+            (await claimVesting(accountJson.value, password));
+          isConfirmationModalOpen.value = false;
+        } catch (error: any) {
+          passwordError.value = error.message;
+        } finally {
+          isLoading.value = false;
+        }
+      }, 500);
     };
 
-    const onConfirmClick = async(): Promise<void> => {
-      try {
-        isLoading.value = true;
-
-        accountJson.value && await claimVesting(accountJson.value, password.value);
-      } finally {
-        isLoading.value = false;
-      }
+    const openConfirmModal = (): void => {
+      isConfirmationModalOpen.value = true;
+      passwordError.value = undefined;
     };
 
     const renderClaimBtn = () => {
@@ -51,36 +55,11 @@ export const VestingView = defineComponent({
             <VBtn
               size="small"
               color="primary"
-              onClick={toggleConfirm}
+              onClick={openConfirmModal}
             >
               claim
             </VBtn>
           </div>
-        );
-      }
-
-      return null;
-    };
-
-    const renderInput = () => {
-      if (isActive.value && isConfirmActive.value) {
-        return (
-          <VSheet rounded="lg" color="rgba(0,0,0,.2)" class="d-flex mt-12 align-center pa-6 mb-6">
-            <VTextField
-              singleLine
-              density="comfortable"
-              class="spacer"
-              label="Password"
-              v-model={password.value}
-              hideDetails
-            />
-            <VBtn
-              class="ml-4"
-              onClick={onConfirmClick}
-            >
-              {isLoading.value ? <VProgressCircular indeterminate={true} /> : 'Confirm'}
-            </VBtn>
-          </VSheet>
         );
       }
 
@@ -109,9 +88,16 @@ export const VestingView = defineComponent({
           {renderClaimBtn()}
         </div>
 
-        {renderInput()}
-
         {renderView()}
+
+
+        <ConfirmActionModal
+          isOpen={isConfirmationModalOpen.value}
+          isLoading={isLoading.value}
+          error={passwordError.value}
+          onClick:cancel={() => isConfirmationModalOpen.value = false}
+          onClick:confirm={onConfirm}
+        />
       </InnerContainer>
     );
   }
