@@ -37,21 +37,21 @@ export const AccountImport = defineComponent({
       <>
         <VWindow
           v-model={currentsStep.value}
-          class="pa-12 ma-n12"
+          class="ma-n12"
         >
-          <VWindowItem value="start">
+          <VWindowItem value="start" class="pa-12">
             <AccountImportStart
               onClick:start={goToSeedEnter}
             />
           </VWindowItem>
 
-          <VWindowItem value="seedEnter">
+          <VWindowItem value="seedEnter" class="pa-12">
             <AccountImportSeedEnter
               onClick:next={goToPasswordSet}
             />
           </VWindowItem>
 
-          <VWindowItem value="setPassword">
+          <VWindowItem value="setPassword" class="pa-12">
             <AccountCreatePassword
               onClick:restart={goToSeedEnter}
 
@@ -60,12 +60,12 @@ export const AccountImport = defineComponent({
             />
           </VWindowItem>
 
-          <VWindowItem value="success">
+          <VWindowItem value="success" class="pa-12">
             <AccountImportSuccess
               onClick:next={goToWallet}
             />
           </VWindowItem>
-          <VWindowItem value="error">
+          <VWindowItem value="error" class="pa-12">
             <AccountImportError
               onClick:next={goToSeedEnter}
             />
