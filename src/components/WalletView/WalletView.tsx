@@ -1,9 +1,10 @@
 import { defineComponent } from 'vue';
-import { useAccountStore } from '@/stores/account';
-import { storeToRefs } from 'pinia';
-import { VBtn, VDivider, VTab, VTabs } from 'vuetify/components';
-import { useWalletStore } from '@/stores/wallet';
 import { RouterView } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import { useAccountStore } from '@/stores/account';
+import { useWalletStore } from '@/stores/wallet';
+
+import { VBtn, VDivider, VTab, VTabs } from 'vuetify/components';
 import { InnerContainer } from '@/components/InnerContainer';
 import { DisplayAddress } from '@/components/DisplayAddress/DisplayAddress';
 
