@@ -46,7 +46,7 @@ export const WalletTransactions = defineComponent({
               </div>
             </div>
             <VSheet maxWidth={240} class="text-truncate">
-              From: {data.from}
+              {isPositive ? 'From' : 'To'}: {data.from}
             </VSheet>
           </div>
           <VSpacer />
@@ -61,6 +61,6 @@ export const WalletTransactions = defineComponent({
       );
     };
 
-    return () => transactions.value.map((data) => renderRow(data));
+    return () => transactions.value.slice().reverse().map(renderRow);
   }
 });
