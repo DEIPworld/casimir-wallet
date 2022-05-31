@@ -1,7 +1,12 @@
 import { computed, defineComponent, ref, watchEffect } from 'vue';
 import { storeToRefs } from 'pinia';
 import {
-  VBtn, VRow, VCol, VTextField, VDivider
+  VBtn,
+  VRow,
+  VCol,
+  VTextField,
+  VDivider,
+  VProgressCircular
 } from 'vuetify/components';
 
 import { useAccountStore } from '@/stores/account';
@@ -45,8 +50,7 @@ export const ActionSend = defineComponent({
 
     const {
       value: recipient,
-      errorMessage: recipientError,
-      meta: recipientMeta
+      errorMessage: recipientError
     } = useField<string>('recipient');
 
     const {
@@ -69,15 +73,21 @@ export const ActionSend = defineComponent({
 
     watchEffect(async () => {
       if (
-        recipientMeta.valid
-        && amountMeta.valid
+        amountMeta.valid
+        && amount.value
         && address.value
       ) {
+        isLoading.value = true;
+
         fee.value = await getTransactionFee(
           recipient.value,
           address.value,
           amount.value
         );
+
+        isLoading.value = false;
+      } else {
+        fee.value = '0';
       }
     });
 
@@ -157,7 +167,11 @@ export const ActionSend = defineComponent({
             class="ml-4"
             disabled={!formState.value.valid}
           >
-            Confirm
+            {isLoading.value ? (
+                <VProgressCircular indeterminate={true} />
+              ) : (
+                'Confirm'
+              )}
           </VBtn>
         </div>
         <ConfirmActionModal
