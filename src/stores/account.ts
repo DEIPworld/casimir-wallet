@@ -26,7 +26,7 @@ export const useAccountStore = defineStore(
       accountJson.value = json;
     }
 
-    function restoreAccount(json: KeyringPair$Json, password: string): CreateResult {
+    function restoreAccount(json: KeyringPair$Json, password: string): Promise<CreateResult> {
       return apiService.restoreAccount(json, password);
     }
 

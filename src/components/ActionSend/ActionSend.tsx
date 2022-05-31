@@ -22,7 +22,7 @@ export const ActionSend = defineComponent({
     const router = useRouter();
 
     const { address, accountJson } = storeToRefs(accountStore);
-    const { freeBalance } = storeToRefs(walletStore);
+    const { actualBalance } = storeToRefs(walletStore);
 
     const { getTransactionFee, makeTransaction } = useWalletStore();
     const { showSuccess } = useNotify();
@@ -35,7 +35,7 @@ export const ActionSend = defineComponent({
         .required().label('Recipient address'),
       amount: number().typeError('Must be a number')
         .positive()
-        .max(freeBalance.value)
+        .max(actualBalance.value)
         .required().label('Amount')
     });
 

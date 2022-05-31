@@ -12,7 +12,12 @@ export const useWalletStore = defineStore('balance', () => {
   const balance = ref<IAccount | undefined>();
   const transactions = ref<ITransaction[]>([]);
 
-  const freeBalance = computed(() => parseFloat(balance.value?.data.free || ''));
+  const freeBalance = computed(() =>
+    parseFloat(balance.value?.data.free.replace(',', '') || '')
+  );
+  const actualBalance = computed(() =>
+    parseFloat(balance.value?.data.actual.replace(',', '') || '')
+  );
 
   const clear = () => {
     balance.value = undefined;
@@ -85,6 +90,7 @@ export const useWalletStore = defineStore('balance', () => {
   return {
     balance,
     freeBalance,
+    actualBalance,
 
     transactions,
 
