@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@chenfengyuan/vue-qrcode": "^2.0.0",
-    "@deip/chain-service": "1.380.0",
+    "@deip/chain-service": "1.381.0",
     "@mdi/font": "^6.6.96",
     "@mdi/js": "^6.6.96",
     "@polkadot/api": "^8.6.2",
