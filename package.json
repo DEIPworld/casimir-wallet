@@ -10,13 +10,15 @@
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.ts,.tsx --fix --ignore-path .gitignore",
     "precommit": "lint-staged",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "linkModules": "node ./scripts/linkDevModules.js"
   },
   "dependencies": {
     "@chenfengyuan/vue-qrcode": "^2.0.0",
+    "@deip/chain-service": "1.380.0",
     "@mdi/font": "^6.6.96",
     "@mdi/js": "^6.6.96",
-    "@polkadot/api": "^8.0.2",
+    "@polkadot/api": "^8.6.2",
     "@polkadot/ui-keyring": "^2.0.1",
     "bignumber.js": "^9.0.2",
     "cryptext": "^1.1.4",
@@ -57,7 +59,12 @@
     "typescript": "~4.6.4",
     "vite": "^2.9.9",
     "vitest": "^0.12.4",
-    "vue-tsc": "^0.34.13"
+    "vue-tsc": "^0.34.13",
+    "glob": "^7.2.0",
+    "inquirer": "^8.2.0",
+    "npm-check-updates": "^12.0.2",
+    "rimraf": "^3.0.2",
+    "symlink-dir": "^5.0.1"
   },
   "lint-staged": {
     "*.{vue,js,jsx,ts,tsx}": "eslint --fix"
