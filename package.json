@@ -16,6 +16,8 @@
   "dependencies": {
     "@chenfengyuan/vue-qrcode": "^2.0.0",
     "@deip/chain-service": "1.381.0",
+    "@deip/commands": "^1.380.0",
+    "@deip/toolbox": "^1.380.0",
     "@mdi/font": "^6.6.96",
     "@mdi/js": "^6.6.96",
     "@polkadot/api": "^8.7.1",
@@ -53,20 +55,20 @@
     "eslint": "^8.15.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-vue": "^8.7.1",
+    "glob": "^7.2.0",
     "husky": "^7.0.4",
+    "inquirer": "^8.2.0",
     "jsdom": "^19.0.0",
     "lint-staged": "^12.4.1",
+    "npm-check-updates": "^12.0.2",
+    "rimraf": "^3.0.2",
     "rollup-plugin-polyfill-node": "^0.9.0",
     "sass": "^1.51.0",
+    "symlink-dir": "^5.0.1",
     "typescript": "~4.6.4",
     "vite": "^2.9.9",
     "vitest": "^0.12.4",
-    "vue-tsc": "^0.34.13",
-    "glob": "^7.2.0",
-    "inquirer": "^8.2.0",
-    "npm-check-updates": "^12.0.2",
-    "rimraf": "^3.0.2",
-    "symlink-dir": "^5.0.1"
+    "vue-tsc": "^0.34.13"
   },
   "lint-staged": {
     "*.{vue,js,jsx,ts,tsx}": "eslint --fix"

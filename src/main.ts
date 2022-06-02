@@ -6,6 +6,7 @@ import '@polkadot/wasm-crypto/initOnlyAsm';
 import SentryInit from '@/utils/sentry';
 
 import { ApiService } from '@/services/ApiService';
+import { DeipService } from '@/services/DeipService';
 
 import { createApp } from 'vue';
 import { App } from './App';
@@ -16,6 +17,7 @@ import { pinia } from './plugins/pinia';
 import { router } from './router';
 
 const apiService = ApiService.getInstance();
+const deipService = DeipService.getInstance();
 
 const app = createApp(App);
 
@@ -25,7 +27,10 @@ app.use(pinia);
 app.use(router);
 app.use(vuetify);
 
-apiService.init()
+Promise.all([
+  apiService.init(),
+  deipService.init()
+])
   .then(async () => {
     app.mount('#app');
   });

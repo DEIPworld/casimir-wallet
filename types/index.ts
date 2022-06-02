@@ -30,3 +30,9 @@ export interface ITransaction {
   date: Date | number;
   amount: number | string;
 }
+
+export interface IWallet {
+  walletAddress: string;
+  publicKey: string;
+  privateKey: string;
+}
