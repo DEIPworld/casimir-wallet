@@ -16,7 +16,7 @@ jobs:
         run: npm install
 
       - name: Build
-        run: VITE_SENTRY=${{ secrets.SENTRY_DSN }} npm run build:testnet
+        run: VITE_SENTRY=${{ secrets.SENTRY_DSN }} VITE_RELEASE=${{ GITHUB_SHA }} npm run build:testnet
 
       - name: List files in the repository
         run: |
