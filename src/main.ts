@@ -1,4 +1,5 @@
 import '@/assets/styles/base.scss';
+import '@/assets/styles/tooltip.scss';
 
 import '@polkadot/wasm-crypto/initOnlyAsm';
 

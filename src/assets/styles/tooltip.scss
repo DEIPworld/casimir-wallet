@@ -1,0 +1,36 @@
+.dw-tooltip {
+  position: relative;
+
+  &:before {
+    content: attr(data-tooltip);
+    position: absolute;
+    display: none;
+    
+    bottom: 100%;
+    left: 50%;
+    margin-bottom: 16px;
+    transform: translateX(-50%);
+    
+    padding: 8px 16px;
+    border-radius:16px;
+    background: #333333;
+    white-space: nowrap;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    display: none;
+    
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+   
+    border: 8px solid #333333;
+    border-color: #333333 transparent transparent transparent;
+  }
+
+  &:hover:before, &:hover:after {
+    display: block;
+  }
+}
