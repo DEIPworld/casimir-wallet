@@ -21,7 +21,7 @@ export const DisplayAddress = defineComponent({
   setup(props) {
     const { toClipboard } = useClipboard();
     const { showError, showSuccess } = useNotify();
-    const { formatAddress } = useString();
+    const { middleTruncate } = useString();
 
     const copyAddress = async (): Promise<void> => {
       try {
@@ -36,7 +36,7 @@ export const DisplayAddress = defineComponent({
 
     const renderDefaultVariant = () => (
       <VSheet maxWidth={200} class="d-flex align-center">
-        <div class="text-subtitle-1 text-truncate">{formatAddress(props.address)}</div>
+        <div class="text-subtitle-1 text-truncate">{middleTruncate(props.address)}</div>
         <VBtn
           icon
           variant="outlined"
