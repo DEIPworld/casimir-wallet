@@ -1,4 +1,5 @@
 import '@/assets/styles/base.scss';
+import '@/assets/styles/tooltip.scss';
 
 import { ApiService } from '@/services/ApiService';
 

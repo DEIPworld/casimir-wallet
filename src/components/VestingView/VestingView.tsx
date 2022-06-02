@@ -1,11 +1,15 @@
-import { computed, defineComponent, onMounted, ref } from 'vue';
+import { computed, defineComponent, onMounted, watchEffect, ref } from 'vue';
 import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
-import { VBtn } from 'vuetify/components';
+
 import { RouterView } from 'vue-router';
+import { VBtn } from 'vuetify/components';
+
+import { useVestingStore } from '@/stores/vesting';
+import { useDate } from '@/composable/date';
+
 import { InnerContainer } from '@/components/InnerContainer';
 import { ConfirmActionModal } from '@/components/ConfirmActionModal';
-import { useVestingStore } from '@/stores/vesting';
 import { DisplayAddress } from '@/components/DisplayAddress/DisplayAddress';
 
 export const VestingView = defineComponent({
@@ -17,23 +21,34 @@ export const VestingView = defineComponent({
     const { vesting } = storeToRefs(vestingStore);
     const { getVestingPlan, claimVesting } = vestingStore;
 
+    const { addTimePeriod, isBefore } = useDate();
+
     const isLoading = ref<boolean>(false);
     const isConfirmationModalOpen = ref<boolean>(false);
     const passwordError = ref<string>();
+    const isNotAvailable = ref<boolean>(true);
 
     const isActive = computed(() => vesting.value?.startTime);
+
+    watchEffect(() => {
+      if (vesting.value?.startTime && vesting.value?.cliffDuration) {
+        const endTime = addTimePeriod(new Date(vesting.value?.startTime as number), {
+          months: vesting.value?.cliffDuration as number
+        });
+        isNotAvailable.value = isBefore(new Date(), endTime);
+      }
+    });
 
     onMounted(async () => {
       await getVestingPlan(address.value);
     });
 
-    const onConfirm = async(password: string): Promise<void> => {
+    const onConfirm = async (password: string): Promise<void> => {
       isLoading.value = true;
 
       setTimeout(async () => {
-        try { 
-          accountJson.value &&
-            (await claimVesting(accountJson.value, password));
+        try {
+          accountJson.value && (await claimVesting(accountJson.value, password));
           isConfirmationModalOpen.value = false;
         } catch (error: any) {
           passwordError.value = error.message;
@@ -49,33 +64,34 @@ export const VestingView = defineComponent({
     };
 
     const renderClaimBtn = () => {
-      if (isActive.value) {
-        return (
-          <div class="text-right">
+      if (!isActive.value) return null;
+
+      return (
+        <div class="text-right">
+          <div
+            class={isNotAvailable.value ? 'dw-tooltip' : null}
+            data-tooltip="No funds claim is possible until the end of the cliff period"
+          >
             <VBtn
               size="small"
               color="primary"
+              disabled={isNotAvailable.value}
               onClick={openConfirmModal}
             >
               claim
             </VBtn>
           </div>
-        );
-      }
-
-      return null;
+        </div>
+      );
     };
 
     const renderView = () => {
       if (isActive.value) {
-        return (
-          <RouterView />
-        );
+        return <RouterView />;
       }
 
-      return 'There\'s no vesting contract assigned to the account.';
+      return "There's no vesting contract assigned to the account.";
     };
-
 
     return () => (
       <InnerContainer>
@@ -90,12 +106,11 @@ export const VestingView = defineComponent({
 
         {renderView()}
 
-
         <ConfirmActionModal
           isOpen={isConfirmationModalOpen.value}
           isLoading={isLoading.value}
           error={passwordError.value}
-          onClick:cancel={() => isConfirmationModalOpen.value = false}
+          onClick:cancel={() => (isConfirmationModalOpen.value = false)}
           onClick:confirm={onConfirm}
         />
       </InnerContainer>
