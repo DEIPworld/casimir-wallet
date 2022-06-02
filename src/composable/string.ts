@@ -1,17 +1,24 @@
 export function useString() {
-  const defaultAddressLength = 14;
+  const defaultStringLength = 14;
 
-  function formatAddress(address= '', length = defaultAddressLength, separator = '...'): string {
-    if (address.length <= length) return address;
+  function middleTruncate(
+    fullString = '',
+    length = defaultStringLength,
+    separator = '...'
+  ): string {
+    if (fullString.length <= length) return fullString;
 
     const charsToShow: number = length - separator.length;
     const frontChars: number = Math.ceil(charsToShow/2);
     const backChars: number = Math.floor(charsToShow/2);
 
-    return address.slice(0, frontChars) + separator + address.slice(address.length - backChars);
+    const prefix: string = fullString.slice(0, frontChars);
+    const suffix: string = fullString.slice(fullString.length - backChars);
+
+    return `${prefix}${separator}${suffix}`;
   }
 
   return {
-    formatAddress
+    middleTruncate
   };
 }
