@@ -11,23 +11,23 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-        
+
       - name: Install
         run: npm install
 
       - name: Build
-        run: npm run build:testnet
+        run: VITE_SENTRY=${{ secrets.SENTRY_DSN }} npm run build:testnet
 
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
-          
+
       - name: Run Ansible playbook
         uses: dawidd6/action-ansible-playbook@v2.5.0
         with:
-          playbook: deploy-playbook.yaml 
+          playbook: deploy-playbook.yaml
           directory: ./ansible
-          key: ${{ secrets.SSH_PRIVATE_KEY }} 
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           inventory: |
             [development_server]
             ubuntu ansible_host=${{ secrets.ANSIBLE_HOST_TESTNET }}  ansible_user=ubuntu

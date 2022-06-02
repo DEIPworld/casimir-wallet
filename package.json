@@ -20,6 +20,8 @@
     "@mdi/js": "^6.6.96",
     "@polkadot/api": "^8.6.2",
     "@polkadot/ui-keyring": "^2.0.1",
+    "@sentry/tracing": "^7.0.0",
+    "@sentry/vue": "^7.0.0",
     "bignumber.js": "^9.0.2",
     "cryptext": "^1.1.4",
     "date-fns": "^2.28.0",
