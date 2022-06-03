@@ -11,6 +11,7 @@ export default defineConfig({
   build: {
     outDir: '../dist'
   },
+  envPrefix: 'DW_',
   envDir: '../',
   publicDir: '../public',
   plugins: [
