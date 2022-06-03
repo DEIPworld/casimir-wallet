@@ -20,7 +20,7 @@ jobs:
         run: npm install
 
       - name: Build
-        run: DW_SENTRY=${{ secrets.SENTRY_DSN }} DW_RELEASE=${{ GITHUB_SHA }} npm run build:testnet
+        run: DW_SENTRY=${{ secrets.SENTRY_DSN }} DW_RELEASE=${{ github.sha }} npm run build:testnet
 
       - name: List files in the repository
         run: |
