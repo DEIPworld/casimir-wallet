@@ -1,6 +1,6 @@
 import '@/assets/styles/base.scss';
 
-import '@polkadot/wasm-crypto/initWasmAsm';
+import '@polkadot/wasm-crypto/initOnlyAsm';
 
 import { ApiService } from '@/services/ApiService';
 
