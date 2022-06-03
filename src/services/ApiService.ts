@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import Keyring from '@polkadot/ui-keyring';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { mnemonicGenerate, mnemonicValidate } from '@polkadot/util-crypto';
+import { mnemonicGenerate, mnemonicValidate, cryptoWaitReady } from '@polkadot/util-crypto';
 
 import type { IAccount, IVestingPlan, ITransaction } from '../../types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
@@ -41,6 +41,8 @@ export class ApiService {
 
   async loadApi(): Promise<void> {
     try {
+      await cryptoWaitReady();
+
       const provider = new WsProvider(import.meta.env.VITE_NETWORK);
       this.api = await ApiPromise.create({ provider });
     } catch (error) {
