@@ -40,7 +40,7 @@ export class ApiService {
 
   async loadApi(): Promise<void> {
     try {
-      const provider = new WsProvider(import.meta.env.VITE_NETWORK);
+      const provider = new WsProvider(import.meta.env.DW_NETWORK);
       this.api = await ApiPromise.create({ provider });
     } catch (error) {
       console.log('Unable to initiate an API service: ', error);
