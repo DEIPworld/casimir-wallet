@@ -1,5 +1,7 @@
 import '@/assets/styles/base.scss';
 
+import '@polkadot/wasm-crypto/initWasmAsm';
+
 import { ApiService } from '@/services/ApiService';
 
 import { createApp } from 'vue';

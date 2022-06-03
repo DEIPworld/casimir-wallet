@@ -6,8 +6,6 @@ import { mnemonicGenerate, mnemonicValidate, cryptoWaitReady } from '@polkadot/u
 import type { IAccount, IVestingPlan, ITransaction } from '../../types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
-import type { WordCount } from '@polkadot/util-crypto/mnemonic/generate';
-
 
 import { singleton } from '@/utils/singleton';
 import { emitter } from '@/utils/eventBus';
@@ -71,7 +69,7 @@ export class ApiService {
 
   // ////////////////////////
 
-  generateSeedPhrase(numWords: WordCount | undefined = 12): string {
+  generateSeedPhrase(numWords: 12 | 15 | 18 | 21 | 24 | undefined = 12): string {
     return mnemonicGenerate(numWords);
   }
 
