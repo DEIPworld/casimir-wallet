@@ -1,13 +1,11 @@
 import BigNumber from 'bignumber.js';
 import Keyring from '@polkadot/ui-keyring';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { mnemonicGenerate, mnemonicValidate } from '@polkadot/util-crypto';
+import { mnemonicGenerate, mnemonicValidate, cryptoWaitReady } from '@polkadot/util-crypto';
 
 import type { IAccount, IVestingPlan, ITransaction } from '../../types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
-import type { WordCount } from '@polkadot/util-crypto/mnemonic/generate';
-
 
 import { singleton } from '@/utils/singleton';
 import { emitter } from '@/utils/eventBus';
@@ -41,6 +39,8 @@ export class ApiService {
 
   async loadApi(): Promise<void> {
     try {
+      await cryptoWaitReady();
+
       const provider = new WsProvider(import.meta.env.DW_NETWORK);
       this.api = await ApiPromise.create({ provider });
     } catch (error) {
@@ -69,7 +69,7 @@ export class ApiService {
 
   // ////////////////////////
 
-  generateSeedPhrase(numWords: WordCount | undefined = 12): string {
+  generateSeedPhrase(numWords: 12 | 15 | 18 | 21 | 24 | undefined = 12): string {
     return mnemonicGenerate(numWords);
   }
 

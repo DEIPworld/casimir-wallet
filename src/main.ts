@@ -1,5 +1,7 @@
 import '@/assets/styles/base.scss';
 
+import '@polkadot/wasm-crypto/initOnlyAsm';
+
 import SentryInit from '@/utils/sentry';
 
 import { ApiService } from '@/services/ApiService';
