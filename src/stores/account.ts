@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, ref } from 'vue';
-import { ApiService } from '@/services/ApiService';
+import { ChainService } from '@/services/ChainService';
 
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 
-const apiService = ApiService.getInstance();
+const chainService = ChainService.getInstance();
 
 export const useAccountStore = defineStore(
   'account',
@@ -18,16 +18,16 @@ export const useAccountStore = defineStore(
     const isLoggedIn = computed(() => !!address.value);
 
     function generateSeedPhrase(): string {
-      return apiService.generateSeedPhrase();
+      return chainService.generateSeedPhrase();
     }
 
     function addAccount(seedPhrase: string, password: string): void {
-      const { json } = apiService.addAccount(seedPhrase, password);
+      const { json } = chainService.addAccount(seedPhrase, password);
       accountJson.value = json;
     }
 
     function restoreAccount(json: KeyringPair$Json, password: string): Promise<CreateResult> {
-      return apiService.restoreAccount(json, password);
+      return chainService.restoreAccount(json, password);
     }
 
     function logOut() {
