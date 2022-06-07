@@ -13,7 +13,7 @@ import { emitter } from '@/utils/eventBus';
 import type { BN } from '@polkadot/util';
 import type { AccountInfo } from '@polkadot/types/interfaces/system/types';
 
-export class ApiService {
+export class ChainService {
   // this.api.consts
   // All runtime constants, e.g. this.api.consts.balances.existentialDeposit.
   // These are not functions, rather accessing the endpoint immediately
@@ -107,11 +107,11 @@ export class ApiService {
       providers: data.providers.toNumber(),
       sufficients: data.sufficients.toNumber(),
       data: {
-        free: ApiService.formatCurrency(data.data.free),
-        reserved: ApiService.formatCurrency(data.data.reserved),
-        miscFrozen: ApiService.formatCurrency(data.data.miscFrozen),
-        feeFrozen: ApiService.formatCurrency(data.data.feeFrozen),
-        actual: ApiService.formatCurrency(calculateActualBalance)
+        free: ChainService.formatCurrency(data.data.free),
+        reserved: ChainService.formatCurrency(data.data.reserved),
+        miscFrozen: ChainService.formatCurrency(data.data.miscFrozen),
+        feeFrozen: ChainService.formatCurrency(data.data.feeFrozen),
+        actual: ChainService.formatCurrency(calculateActualBalance)
       }
     };
   }
@@ -125,13 +125,13 @@ export class ApiService {
       return {
 
         // Duration of cliff, not allowed to withdraw
-        cliffDuration: ApiService.millisecondsToMonth(Number(value.cliffDuration)),
+        cliffDuration: ChainService.millisecondsToMonth(Number(value.cliffDuration)),
 
         // Amount of tokens which will be released at startTime
-        initialAmount: ApiService.formatCurrency(value.initialAmount),
+        initialAmount: ChainService.formatCurrency(value.initialAmount),
 
         // Vesting interval (availability for the next unlock)
-        interval: ApiService.millisecondsToMonth(Number(value.interval)),
+        interval: ChainService.millisecondsToMonth(Number(value.interval)),
 
         // Starting time for unlocking (vesting)
         startTime: Number(value.startTime),
@@ -140,10 +140,10 @@ export class ApiService {
         endTime: Number(value.startTime) + Number(value.totalDuration),
 
         // Total locked amount, including the initialAmount
-        totalAmount: ApiService.formatCurrency(value.totalAmount),
+        totalAmount: ChainService.formatCurrency(value.totalAmount),
 
         // Total duration of this vesting plan (in time)
-        totalDuration: ApiService.millisecondsToMonth(Number(value.totalDuration)),
+        totalDuration: ChainService.millisecondsToMonth(Number(value.totalDuration)),
 
         // True if vesting amount is accumulated during cliff duration
         vestingDuringCliff: Boolean(value.vestingDuringCliff)
@@ -189,7 +189,7 @@ export class ApiService {
         .transfer(recipient, amount)
         .paymentInfo(address);
 
-      return ApiService.formatCurrency(partialFee);
+      return ChainService.formatCurrency(partialFee);
     } catch (error) {
       console.error(error);
       return error as any;
@@ -262,7 +262,7 @@ export class ApiService {
                   hash: extrinsic.hash.toString(),
                   from: sender.toString(),
                   date: new Date().getTime(),
-                  amount: ApiService.formatCurrency(amount, isWithdraw)
+                  amount: ChainService.formatCurrency(amount, isWithdraw)
                 });
               }
             });
@@ -274,6 +274,6 @@ export class ApiService {
     }
   }
 
-  static readonly getInstance = singleton(() => new ApiService());
+  static readonly getInstance = singleton(() => new ChainService());
 
 }

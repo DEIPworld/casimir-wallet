@@ -5,8 +5,6 @@ import { JsonDataMsg } from '@deip/messages';
 import { randomAsHex } from '@polkadot/util-crypto';
 
 import { singleton } from '@/utils/singleton';
-import { waitAsync } from '@/utils/helpers';
-
 import type { IWallet } from '../../types';
 
 export class DeipService {
@@ -25,27 +23,6 @@ export class DeipService {
     this.chainTxBuilder = this.chainService.getChainTxBuilder();
     this.api = this.chainService.getChainNodeClient();
     this.rpc = this.chainService.getChainRpc();
-  }
-
-  private async sendTxAndWaitAsync(
-    finalizedTx: any,
-    timeout = import.meta.env.DW_DEIP_APPCHAIN_MILLISECS_PER_BLOCK
-    ) {
-
-    const {
-      pubKey: verificationPubKey,
-      privKey: verificationPrivKey
-    } = JSON.parse(import.meta.env.DW_TENANT_PORTAL);
-    const { tx } = finalizedTx.getPayload();
-
-    const verifiedTxPromise = tx.isOnBehalfPortal()
-      ? tx.verifyByPortalAsync({ verificationPubKey, verificationPrivKey }, this.api)
-      : Promise.resolve(tx.getSignedRawTx());
-
-    const verifiedTx = await verifiedTxPromise;
-    await this.rpc.sendTxAsync(verifiedTx);
-
-    await waitAsync(timeout);
   }
 
   async createDao({
