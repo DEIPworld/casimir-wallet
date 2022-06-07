@@ -1,6 +1,7 @@
 import { ChainService } from '@deip/chain-service';
 import { genRipemd160Hash, genSha256Hash } from '@deip/toolbox';
 import { CreateDaoCmd } from '@deip/commands';
+import { JsonDataMsg } from '@deip/messages';
 import { randomAsHex } from '@polkadot/util-crypto';
 
 import { singleton } from '@/utils/singleton';
@@ -82,11 +83,9 @@ export class DeipService {
       this.api
     );
 
-    await this.sendTxAndWaitAsync(createUserDaoByUserTx);
+    const message = new JsonDataMsg(createUserDaoByUserTx.getPayload());
 
-    const result = await this.rpc.getAccountAsync(daoId);
-
-    return result;
+    return message;
   }
 
   static readonly getInstance = singleton(() => new DeipService());
