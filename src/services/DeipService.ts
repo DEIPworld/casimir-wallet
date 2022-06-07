@@ -5,6 +5,7 @@ import { JsonDataMsg } from '@deip/messages';
 import { randomAsHex } from '@polkadot/util-crypto';
 
 import { singleton } from '@/utils/singleton';
+
 import type { IWallet } from '../../types';
 
 export class DeipService {
@@ -25,7 +26,7 @@ export class DeipService {
     this.rpc = this.chainService.getChainRpc();
   }
 
-  async createDao({
+  async createDaoTransactionMessage({
     walletAddress,
     publicKey,
     privateKey
@@ -60,9 +61,7 @@ export class DeipService {
       this.api
     );
 
-    const message = new JsonDataMsg(createUserDaoByUserTx.getPayload());
-
-    return message;
+    return new JsonDataMsg(createUserDaoByUserTx.getPayload()).getHttpBody().envelope;
   }
 
   static readonly getInstance = singleton(() => new DeipService());
