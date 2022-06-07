@@ -17,6 +17,7 @@
     "@chenfengyuan/vue-qrcode": "^2.0.0",
     "@deip/chain-service": "1.381.0",
     "@deip/commands": "^1.380.0",
+    "@deip/messages": "^1.381.0",
     "@deip/toolbox": "^1.380.0",
     "@mdi/font": "^6.6.96",
     "@mdi/js": "^6.6.96",
