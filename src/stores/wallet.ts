@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import { ChainService } from '@/services/ChainService';
+import { ApiService } from '@/services/ApiService';
 import type { IAccount, ITransaction } from '../../types';
 import { emitter } from '@/utils/eventBus';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 
-const chainService = ChainService.getInstance();
+const apiService = ApiService.getInstance();
 
 export const useWalletStore = defineStore('balance', () => {
   const balance = ref<IAccount | undefined>();
@@ -27,13 +27,13 @@ export const useWalletStore = defineStore('balance', () => {
   // theoretically not required
   const getAccountBalance = async (address: string | undefined): Promise<void> => {
     if (address) {
-      const res = await chainService.getAccountBalance(address);
+      const res = await apiService.getAccountBalance(address);
       if (res) balance.value = res;
     }
   };
 
   const subscribeToBalance = async (address: string) => {
-    chainService.subscribeToBalance(address);
+    apiService.subscribeToBalance(address);
 
     emitter.on('wallet:balanceChange', (data: IAccount) => {
       balance.value = data;
@@ -41,7 +41,7 @@ export const useWalletStore = defineStore('balance', () => {
   };
 
   const subscribeToTransfers = (address: string) => {
-    chainService.subscribeToTransfers(address);
+    apiService.subscribeToTransfers(address);
 
     emitter.on('wallet:transfer', (data: ITransaction) => {
       transactions.value.push(data);
@@ -58,7 +58,7 @@ export const useWalletStore = defineStore('balance', () => {
     address: string,
     amount: number
   ) => {
-    return await chainService.getTransactionFee(
+    return await apiService.getTransactionFee(
       recipient,
       address,
       amount
@@ -78,9 +78,9 @@ export const useWalletStore = defineStore('balance', () => {
       password
     } = sender;
 
-    const restoredAccount: CreateResult = await chainService.restoreAccount(account, password);
+    const restoredAccount: CreateResult = await apiService.restoreAccount(account, password);
 
-    return await chainService.makeTransaction(
+    return await apiService.makeTransaction(
       recipient,
       restoredAccount,
       amount
