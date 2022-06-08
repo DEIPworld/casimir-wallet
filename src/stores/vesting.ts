@@ -1,33 +1,33 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { ChainService } from '@/services/ChainService';
+import { ApiService } from '@/services/ApiService';
 import type { IVestingPlan } from '../../types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 
-const chainService = ChainService.getInstance();
+const apiService = ApiService.getInstance();
 
 export const useVestingStore = defineStore('vesting', () => {
   const vesting = ref<IVestingPlan | undefined>();
 
   const getVestingPlan = async (address: string | undefined): Promise<void> => {
     if (address) {
-      const res = await chainService.getVestingPlan(address);
+      const res = await apiService.getVestingPlan(address);
       if (res) vesting.value = res;
     }
   };
 
   // const claimVesting = async (account: CreateResult) => {
-  //   return await chainService.claimVesting(account);
+  //   return await apiService.claimVesting(account);
   // };
 
   const claimVesting = async (
     account: KeyringPair$Json,
     password: string
   ) => {
-    const restoredAccount: CreateResult = await chainService.restoreAccount(account, password);
+    const restoredAccount: CreateResult = await apiService.restoreAccount(account, password);
 
-    return await chainService.claimVesting(restoredAccount);
+    return await apiService.claimVesting(restoredAccount);
   };
 
   return {
