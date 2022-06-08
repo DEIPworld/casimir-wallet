@@ -2,9 +2,15 @@ import BigNumber from 'bignumber.js';
 import Keyring from '@polkadot/ui-keyring';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { waitReady } from '@polkadot/wasm-crypto';
-import { mnemonicGenerate, mnemonicValidate } from '@polkadot/util-crypto';
+import {
+  mnemonicGenerate,
+  mnemonicValidate,
+  mnemonicToMiniSecret,
+  decodeAddress
+} from '@polkadot/util-crypto';
+import { u8aToHex } from '@polkadot/util';
 
-import type { IAccount, IVestingPlan, ITransaction } from '../../types';
+import type { IAccount, IKeyPair, IVestingPlan, ITransaction } from '../../types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
 
@@ -96,6 +102,20 @@ export class ApiService {
         reject(new Error('password is incorrect'));
       }
     });
+  }
+
+  getAccountKeyPair(
+    seedPhrase: string,
+    address: string
+  ): IKeyPair {
+    if (!this.validateSeedPhrase(seedPhrase)) {
+      throw new Error(`The seed phrase "${seedPhrase}" is not valid`);
+    }
+
+    return {
+      privateKey: u8aToHex(mnemonicToMiniSecret(seedPhrase)),
+      publicKey: u8aToHex(decodeAddress(address))
+    };
   }
 
   transformAccountInfo(data: AccountInfo) {

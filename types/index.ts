@@ -31,8 +31,12 @@ export interface ITransaction {
   amount: number | string;
 }
 
-export interface IWallet {
-  walletAddress: string;
+export interface IKeyPair {
   publicKey: string;
   privateKey: string;
 }
+
+export interface IWallet extends IKeyPair {
+  walletAddress: string;
+}
+
