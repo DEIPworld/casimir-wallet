@@ -10,8 +10,12 @@ import {
   VSpacer,
   VTabs,
   VTab,
-  VMain, VBtn,
-  VSwitch
+  VMain,
+  VBtn,
+  VMenu,
+  VList,
+  VListItem,
+  VIcon
 } from 'vuetify/components';
 import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
@@ -31,14 +35,14 @@ export const App = defineComponent({
     const { isLoggedIn, address } = storeToRefs(accountStore);
 
     const hideNavigation = computed(() => {
-      const routeName = route.name as string || '';
+      const routeName = (route.name as string) || '';
       const hideOnRoutes = ['account.import', 'account.create'].includes(routeName);
       const hideOnWallet = routeName.includes('wallet') && !isLoggedIn.value;
 
       return hideOnRoutes || hideOnWallet;
     });
 
-    watchEffect( () => {
+    watchEffect(() => {
       if (address.value) walletStore.subscribeToUpdates(address.value);
     });
 
@@ -50,18 +54,35 @@ export const App = defineComponent({
 
     const renderNavigation = () => (
       <VTabs optional>
-        <VTab to={{ name: 'wallet' }} exact-path>Wallet</VTab>
-        <VTab to={{ name: 'vesting' }} exact-path>Vesting</VTab>
+        <VTab to={{ name: 'wallet' }} exact-path>
+          Wallet
+        </VTab>
+        <VTab to={{ name: 'vesting' }} exact-path>
+          Vesting
+        </VTab>
       </VTabs>
     );
 
-    const renderLogout = () => (
-      <VBtn
-        color={'secondary-btn'}
-        variant="contained" size="small"
-        onClick={logOut}
-      >
-        Log out
+    const renderMenu = () => (
+      <VBtn  width="180" color="secondary-btn" variant="contained" size="small" rounded={false}>
+        Accounts
+        <VMenu activator="parent" location='bottom'>
+          <VList>
+            <VListItem to={{ name: 'wallet' }}>
+                my wallet
+            </VListItem>
+            <VListItem to={{ name: 'multisig.create' }}>
+              <VIcon
+                size="small"
+                class="ml-n2"
+              >
+                mdi-plus
+              </VIcon>
+              <span>Add multisig</span>
+            </VListItem>
+            <VListItem onClick={logOut}>log out</VListItem>
+          </VList>
+        </VMenu>
       </VBtn>
     );
 
@@ -75,25 +96,17 @@ export const App = defineComponent({
 
     return () => (
       <VApp>
-        <VAppBar
-          height="72"
-          flat
-          color="black"
-          border
-          class="px-6"
-        >
+        <VAppBar height="72" flat color="black" border class="px-6">
           <VAppBarTitle style={'flex: none'} class={'mr-18'}>
             <RouterLink to={{ name: 'wallet' }}>
-              <img src={logoUrl} alt="DEIP Wallet" height="24" class="d-block"/>
+              <img src={logoUrl} alt="DEIP Wallet" height="24" class="d-block" />
             </RouterLink>
           </VAppBarTitle>
 
           {!hideNavigation.value && renderNavigation()}
 
-          <VSpacer/>
-          {isLoggedIn.value && renderLogout()}
-
-
+          <VSpacer />
+          {isLoggedIn.value && renderMenu()}
         </VAppBar>
         <VMain>
           <RouterView />

@@ -11,6 +11,8 @@ import { AccountView } from '@/components/AccountView';
 import { AccountCreate } from '@/components/AccountCreate';
 import { AccountImport } from '@/components/AccountImport';
 
+import { MultisigAccountCreate } from '@/components/MultisigAccountCreate';
+
 import { WalletBalances } from '@/components/WalletBalances';
 import { WalletTransactions } from '@/components/WalletTransactions';
 
@@ -87,6 +89,19 @@ const router = createRouter({
           path: 'import',
           name: 'account.import',
           component: AccountImport
+        }
+      ]
+    },
+
+    {
+      path: '/multisig',
+      name: 'multisig',
+      component: MultisigAccountCreate, // TODO: replace with multisig wallet view
+      children: [
+        {
+          path: 'create',
+          name: 'multisig.create',
+          component: MultisigAccountCreate
         }
       ]
     }
