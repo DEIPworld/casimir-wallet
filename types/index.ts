@@ -40,3 +40,7 @@ export interface IWallet extends IKeyPair {
   walletAddress: string;
 }
 
+export interface ISignatory {
+  address: string;
+  name: string;
+}
