@@ -1,6 +1,6 @@
 {
     "family": "frontend-task",
-    "executionRoleArn": "arn:aws:iam::155964518584:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::777345813910:role/ecsTaskExecutionRole",
     "containerDefinitions": [
         {
             "name": "frontend-task",
