@@ -36,4 +36,4 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           inventory: |
             [development_server]
-            ubuntu ansible_host=${{ secrets.DEV_ANSIBLE_HOST }}  ansible_user=ubuntu
+            ubuntu ansible_host=${{ secrets.DEV_ANSIBLE_HOST }}  ansible_user=ubuntu ansible_python_interpreter=/usr/bin/python3
