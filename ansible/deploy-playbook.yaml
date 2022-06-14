@@ -13,7 +13,7 @@
       name: deipworld/dev-wallet-frontend
   
   - name: docker-compose UP
-    community.docker.docker_compose:
+    docker_compose:
       build: no
       definition: docker-compose.yaml
     register: output
