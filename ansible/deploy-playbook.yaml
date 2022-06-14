@@ -11,6 +11,7 @@
   - name: Pull new image of frontend app
     docker_image:
       name: deipworld/dev-wallet-frontend
+      source: pull
   
   - name: docker-compose UP
     docker_compose:
