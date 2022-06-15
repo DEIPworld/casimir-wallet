@@ -10,7 +10,7 @@ import { useDate } from '@/composable/date';
 
 import { InnerContainer } from '@/components/InnerContainer';
 import { ConfirmActionModal } from '@/components/ConfirmActionModal';
-import { DisplayAddress } from '@/components/DisplayAddress/DisplayAddress';
+import { DisplayAddress } from '@/components/DisplayAddress';
 
 export const VestingView = defineComponent({
   setup() {

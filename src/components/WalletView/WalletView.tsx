@@ -6,7 +6,7 @@ import { useWalletStore } from '@/stores/wallet';
 
 import { VBtn, VDivider, VTab, VTabs } from 'vuetify/components';
 import { InnerContainer } from '@/components/InnerContainer';
-import { DisplayAddress } from '@/components/DisplayAddress/DisplayAddress';
+import { DisplayAddress } from '@/components/DisplayAddress';
 
 export const WalletView = defineComponent({
   setup() {

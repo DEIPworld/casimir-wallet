@@ -15,6 +15,10 @@ export const DisplayAddress = defineComponent({
     variant: {
       type: String,
       default: 'default'
+    },
+    hideCopyButton: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -37,39 +41,32 @@ export const DisplayAddress = defineComponent({
     const renderDefaultVariant = () => (
       <VSheet maxWidth={200} class="d-flex align-center">
         <div class="text-subtitle-1 text-truncate">{middleTruncate(props.address)}</div>
-        <VBtn
-          icon
-          variant="outlined"
-          height="32"
-          width="32"
-          color="secondary-bt"
-          onClick={copyAddress}
-        >
-          <VIcon size="16px">mdi-content-copy</VIcon>
-        </VBtn>
+        {!props.hideCopyButton && (
+          <VBtn
+            icon
+            variant="outlined"
+            height="32"
+            width="32"
+            color="secondary-bt"
+            onClick={copyAddress}
+          >
+            <VIcon size="16px">mdi-content-copy</VIcon>
+          </VBtn>
+        )}
       </VSheet>
     );
 
     const renderAccentVariant = () => (
-      <VSheet
-        color="neutral-darken-4"
-        rounded="pill"
-        class="d-flex"
-      >
-        <VSheet
-          class="mr-n1 px-4 d-flex align-center"
-          maxWidth={200}
-        >
+      <VSheet color="neutral-darken-4" rounded="pill" class="d-flex">
+        <VSheet class="mr-n1 px-4 d-flex align-center" maxWidth={200}>
           <div class="text-truncate">{props.address}</div>
         </VSheet>
 
-        <VBtn
-          color="primary"
-          prependIcon="mdi-content-copy"
-          onClick={copyAddress}
-        >
-          Copy
-        </VBtn>
+        {!props.hideCopyButton && (
+          <VBtn color="primary" prependIcon="mdi-content-copy" onClick={copyAddress}>
+            Copy
+          </VBtn>
+        )}
       </VSheet>
     );
 
