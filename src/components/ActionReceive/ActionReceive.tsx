@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia';
 import { VBtn, VSheet, VSpacer } from 'vuetify/components';
 
 import VueQrcode from '@chenfengyuan/vue-qrcode';
-import { DisplayAddress } from '@/components/DisplayAddress/DisplayAddress';
+import { DisplayAddress } from '@/components/DisplayAddress';
 import { useAccountStore } from '@/stores/account';
 import { InnerContainer } from '@/components/InnerContainer';
 

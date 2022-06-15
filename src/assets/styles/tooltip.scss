@@ -11,10 +11,12 @@
     margin-bottom: 16px;
     transform: translateX(-50%);
     
+    min-height: 40px;
     padding: 8px 16px;
     border-radius:16px;
     background: #333333;
-    white-space: nowrap;
+    white-space: pre;
+    z-index: 1;
   }
 
   &:after {
@@ -32,5 +34,20 @@
 
   &:hover:before, &:hover:after {
     display: block;
+  }
+
+  &.dw-tooltip__right {
+    &:before {
+      top: 50%;
+      bottom: initial;
+      left: 100%;
+      margin-bottom: 0;
+      margin-left: 8px;
+      transform: translateY(-50%);
+    }
+
+    &:after {      
+      display: none
+    }
   }
 }

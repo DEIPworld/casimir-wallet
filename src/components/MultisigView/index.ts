@@ -1,0 +1,1 @@
+export { MultisigView } from './MultisigView';

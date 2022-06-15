@@ -11,7 +11,12 @@ import { AccountView } from '@/components/AccountView';
 import { AccountCreate } from '@/components/AccountCreate';
 import { AccountImport } from '@/components/AccountImport';
 
+import { MultisigView } from '@/components/MultisigView';
 import { MultisigAccountCreate } from '@/components/MultisigAccountCreate';
+import { MultisigWalletView } from '@/components/MultisigWalletView';
+import { MultisigBalances } from '@/components/MultisigBalances';
+import { MultisigTransactions } from '@/components/MultisigTransactions';
+import { MultisigApprovals } from '@/components/MultisigApprovals';
 
 import { WalletBalances } from '@/components/WalletBalances';
 import { WalletTransactions } from '@/components/WalletTransactions';
@@ -96,12 +101,36 @@ const router = createRouter({
     {
       path: '/multisig',
       name: 'multisig',
-      component: MultisigAccountCreate, // TODO: replace with multisig wallet view
+      component: MultisigView,
+      redirect: { name: 'multisig.create' },
       children: [
         {
           path: 'create',
           name: 'multisig.create',
           component: MultisigAccountCreate
+        },
+        {
+          path: ':address',
+          name: 'multisig.wallet',
+          props: true,
+          component: MultisigWalletView,
+          children: [
+            {
+              path: '',
+              name: 'multisig.balances',
+              component: MultisigBalances
+            },
+            {
+              path: 'transactions',
+              name: 'multisig.transactions',
+              component: MultisigTransactions
+            },
+            {
+              path: 'approvals',
+              name: 'multisig.approvals',
+              component: MultisigApprovals
+            }
+          ]
         }
       ]
     }
@@ -114,7 +143,7 @@ router.beforeEach(async (to, from, next) => {
 
   const guestAllowed = ['wallet', 'account.create', 'account.import'];
 
-  if ( !isLoggedIn) {
+  if (!isLoggedIn) {
     if (guestAllowed.includes(to.name as string)) next();
     next({ name: 'wallet' });
   } else {
