@@ -17,6 +17,8 @@ import { MultisigWalletView } from '@/components/MultisigWalletView';
 import { MultisigBalances } from '@/components/MultisigBalances';
 import { MultisigTransactions } from '@/components/MultisigTransactions';
 import { MultisigApprovals } from '@/components/MultisigApprovals';
+import { MultisigActionSend } from '@/components/MultisigActionSend';
+import { MultisigActionReceive } from '@/components/MultisigActionReceive';
 
 import { WalletBalances } from '@/components/WalletBalances';
 import { WalletTransactions } from '@/components/WalletTransactions';
@@ -111,24 +113,52 @@ const router = createRouter({
         },
         {
           path: ':address',
-          name: 'multisig.wallet',
+          name: 'multisig.view',
           props: true,
-          component: MultisigWalletView,
+          component: MultisigView,
+          redirect: { name: 'multisig.balances' },
           children: [
             {
-              path: '',
-              name: 'multisig.balances',
-              component: MultisigBalances
+              path: 'wallet',
+              name: 'multisig.wallet',
+              props: true,
+              component: MultisigWalletView,
+              children: [
+                {
+                  path: '',
+                  name: 'multisig.balances',
+                  component: MultisigBalances
+                },
+                {
+                  path: 'transactions',
+                  name: 'multisig.transactions',
+                  component: MultisigTransactions
+                },
+                {
+                  path: 'approvals',
+                  name: 'multisig.approvals',
+                  component: MultisigApprovals
+                }
+              ]
             },
             {
-              path: 'transactions',
-              name: 'multisig.transactions',
-              component: MultisigTransactions
-            },
-            {
-              path: 'approvals',
-              name: 'multisig.approvals',
-              component: MultisigApprovals
+              path: 'action',
+              component: ActionView,
+              redirect: { name: 'multisig.action.send' },
+              children: [
+                {
+                  path: 'send',
+                  name: 'multisig.action.send',
+                  props: true,
+                  component: MultisigActionSend
+                },
+                {
+                  path: 'receive',
+                  name: 'multisig.action.receive',
+                  props: true,
+                  component: MultisigActionReceive
+                }
+              ]
             }
           ]
         }

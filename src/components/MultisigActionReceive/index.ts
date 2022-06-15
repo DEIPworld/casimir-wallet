@@ -1,0 +1,1 @@
+export { MultisigActionReceive } from './MultisigActionReceive';

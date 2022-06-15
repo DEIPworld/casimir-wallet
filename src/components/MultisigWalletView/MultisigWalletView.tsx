@@ -40,7 +40,7 @@ export const MultisigWalletView = defineComponent({
           <div class="text-right">
             <div class="text-h4 mt-1 mb-3">{balance.value?.data.actual} DEIP</div>
             <div>
-              <VBtn size="small" color="primary" rounded={false}>
+              <VBtn size="small" color="primary" rounded={false} to={{ name: 'multisig.action.send' }}>
                 Send
               </VBtn>
 
