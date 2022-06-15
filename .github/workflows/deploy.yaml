@@ -28,12 +28,3 @@ jobs:
           docker push deipworld/dev-wallet-frontend:latest
 
 
-      - name: Run Ansible playbook
-        uses: dawidd6/action-ansible-playbook@v2.5.0
-        with:
-          playbook: deploy-playbook.yaml
-          directory: ./ansible
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          inventory: |
-            [development_server]
-            ubuntu ansible_host=${{ secrets.DEV_ANSIBLE_HOST }}  ansible_user=ubuntu ansible_python_interpreter=/usr/bin/python3
