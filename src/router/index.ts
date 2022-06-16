@@ -10,6 +10,7 @@ import { MainView } from '@/components/MainView';
 import { AccountView } from '@/components/AccountView';
 import { AccountCreate } from '@/components/AccountCreate';
 import { AccountImport } from '@/components/AccountImport';
+import { AccountOAuth } from '@/components/AccountOAuth';
 
 import { WalletBalances } from '@/components/WalletBalances';
 import { WalletTransactions } from '@/components/WalletTransactions';
@@ -87,6 +88,12 @@ const router = createRouter({
           path: 'import',
           name: 'account.import',
           component: AccountImport
+        },
+
+        {
+          path: 'oauth',
+          name: 'account.oauth',
+          component: AccountOAuth
         }
       ]
     }

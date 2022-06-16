@@ -31,17 +31,13 @@ export const AccountCreate = defineComponent({
     const goToPasswordSet = (): void => setStep('setPassword');
     const goToFinish = (): void => setStep('finish');
 
-    const goToWallet = (): void => {
-      router.push({
-        name: 'wallet'
-      });
-    };
+    const goToWallet = () => router.push({ name: 'wallet' });
+    const goToRestore = () => router.push({ name: 'account.import' });
 
-    const goToRestore = (): void => {
-      router.push({
-        name: 'account.import'
-      });
-    };
+    const goToOAuth = () => router.push({
+      name: 'account.oauth',
+      query: router.currentRoute.value.query
+    });
 
     return () => (
       <>
@@ -85,6 +81,8 @@ export const AccountCreate = defineComponent({
           <VWindowItem value="finish">
             <AccountCreateFinish
               onClick:next={goToWallet}
+              onClick:oauth={goToOAuth}
+              isHasPortal={!!router.currentRoute.value.query.portal}
             />
           </VWindowItem>
         </VWindow>

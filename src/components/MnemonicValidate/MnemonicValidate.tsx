@@ -1,15 +1,25 @@
-import { computed, defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { VBtn, VTextarea, VSpacer } from 'vuetify/components';
-import { storeToRefs } from 'pinia';
-import { useAccountStore } from '@/stores/account';
-import { number, object, string } from 'yup';
-import { useYup } from '@/composable/validate';
 import { useField, useForm } from 'vee-validate';
+import { useYup } from '@/composable/validate';
+import { object, string } from 'yup';
+import { storeToRefs } from "pinia";
+import { useAccountStore } from '@/stores/account';
 
-export const AccountImportSeedEnter = defineComponent({
+export const MnemonicValidate = defineComponent({
   emits: [
     'click:next'
   ],
+
+  props: {
+    title: {
+      type: String
+    },
+    description: {
+      type: String,
+      default: 'Enter the backup passphrase associated with the account.'
+    }
+  },
 
   setup(props, { emit }) {
     const { tempSeed } = storeToRefs(useAccountStore());
@@ -38,12 +48,14 @@ export const AccountImportSeedEnter = defineComponent({
 
     return () => (
       <>
-        <div class="text-h3 mb-6">
-          Import using seed phrase
-        </div>
+        {props.title && (
+          <div class="text-h3 mb-6">
+            {props.title}
+          </div>
+        )}
 
         <div class="text-body-large mb-12">
-            Enter the backup passphrase associated with the account.
+          {props.description}
         </div>
 
         <VTextarea
@@ -67,4 +79,5 @@ export const AccountImportSeedEnter = defineComponent({
       </>
     );
   }
+
 });

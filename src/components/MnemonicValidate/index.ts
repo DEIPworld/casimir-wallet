@@ -1,0 +1,1 @@
+export { MnemonicValidate } from './MnemonicValidate';

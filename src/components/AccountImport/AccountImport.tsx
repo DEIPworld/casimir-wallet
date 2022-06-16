@@ -6,12 +6,11 @@ import {
 } from 'vuetify/components';
 import { AccountImportStart } from '@/components/AccountImport/AccountImportStart';
 import { useMultistep } from '@/composable/multistep';
-import { AccountImportSeedEnter } from '@/components/AccountImport/AccountImportSeedEnter';
 import { AccountImportSuccess } from '@/components/AccountImport/AccountImportSuccess';
 import { AccountImportError } from '@/components/AccountImport/AccountImportError';
-import { useAccountStore } from '@/stores/account';
 import { useRouter } from 'vue-router';
 import { AccountCreatePassword } from '@/components/AccountCreate/AccountCreatePassword';
+import { MnemonicValidate } from '@/components/MnemonicValidate';
 
 type Steps = 'start' | 'seedEnter' | 'setPassword' | 'success' | 'error';
 
@@ -27,11 +26,12 @@ export const AccountImport = defineComponent({
     const goToSuccess = (): void => setStep('success');
     const goToError = (): void => setStep('success');
 
-    const goToWallet = () => {
-      router.push({
-        name: 'wallet'
-      });
-    };
+    const goToOAuth = () => router.push({
+      name: 'account.oauth',
+      query: router.currentRoute.value.query
+    });
+
+    const goToWallet = () => router.push({ name: 'wallet' });
 
     return () => (
       <>
@@ -46,7 +46,8 @@ export const AccountImport = defineComponent({
           </VWindowItem>
 
           <VWindowItem value="seedEnter" class="pa-12">
-            <AccountImportSeedEnter
+            <MnemonicValidate
+              title="Import using seed phrase"
               onClick:next={goToPasswordSet}
             />
           </VWindowItem>
@@ -63,6 +64,8 @@ export const AccountImport = defineComponent({
           <VWindowItem value="success" class="pa-12">
             <AccountImportSuccess
               onClick:next={goToWallet}
+              onClick:oauth={goToOAuth}
+              isHasPortal={!!router.currentRoute.value.query.portal}
             />
           </VWindowItem>
           <VWindowItem value="error" class="pa-12">

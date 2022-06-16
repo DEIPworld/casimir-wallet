@@ -8,6 +8,8 @@ import { singleton } from '@/utils/singleton';
 
 import type { IWallet } from '../../types';
 
+import HttpService from './HttpService';
+
 export class DeipService {
   private chainService: any;
   private chainTxBuilder: any;
@@ -27,7 +29,7 @@ export class DeipService {
   }
 
   async createDaoTransactionMessage({
-    walletAddress,
+    address,
     publicKey,
     privateKey
   }: IWallet): Promise<any> {
@@ -43,8 +45,8 @@ export class DeipService {
               weight: 1
             }
           },
-          creator: walletAddress,
-          description: genSha256Hash({ "description": "user DAO" }),
+          creator: address,
+          description: genSha256Hash({ description: `${address} DAO` }),
           isTeamAccount: false,
           attributes: []
         });
@@ -57,11 +59,19 @@ export class DeipService {
       1st approval from user DAO (final)
     */
     const createUserDaoByUserTx = await createDaoTx.signAsync(
-      privateKey, 
+      privateKey,
       this.api
     );
 
-    return new JsonDataMsg(createUserDaoByUserTx.getPayload()).getHttpBody().envelope;
+    const message = new JsonDataMsg(createUserDaoByUserTx.getPayload()).getHttpBody().envelope;
+
+    const data = {
+      message,
+      daoId,
+      publicKey: `0x${publicKey}`
+    };
+
+    return HttpService.post('/dao/create', data);
   }
 
   static readonly getInstance = singleton(() => new DeipService());

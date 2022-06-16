@@ -106,7 +106,7 @@ export class ApiService {
 
   getAccountKeyPair(
     seedPhrase: string,
-    address: string
+    address: string | undefined
   ): IKeyPair {
     if (!this.validateSeedPhrase(seedPhrase)) {
       throw new Error(`The seed phrase "${seedPhrase}" is not valid`);

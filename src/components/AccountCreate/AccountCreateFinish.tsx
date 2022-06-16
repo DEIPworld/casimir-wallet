@@ -11,8 +11,16 @@ export const AccountCreateFinish = defineComponent({
 
   emits: [
     'click:addressCopy',
-    'click:next'
+    'click:next',
+    'click:oauth'
   ],
+
+  props: {
+    isHasPortal: {
+      type: Boolean,
+      default: false
+    }
+  },
 
   setup(props, { emit }) {
 
@@ -42,6 +50,14 @@ export const AccountCreateFinish = defineComponent({
           >
             Go to wallet
           </VBtn>
+          {props.isHasPortal && (
+            <VBtn
+              class="ml-4"
+              onClick={() => emit('click:oauth')}
+            >
+              Back to oauth
+            </VBtn>
+          )}
         </div>
       </>
     );

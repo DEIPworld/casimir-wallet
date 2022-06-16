@@ -1,11 +1,13 @@
 import { defineStore } from 'pinia';
-import { computed, reactive, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { ApiService } from '@/services/ApiService';
+import { DeipService } from '@/services/DeipService';
 
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 
 const apiService = ApiService.getInstance();
+const deipService = DeipService.getInstance();
 
 export const useAccountStore = defineStore(
   'account',
@@ -30,6 +32,18 @@ export const useAccountStore = defineStore(
       return apiService.restoreAccount(json, password);
     }
 
+    async function connectPortal() {
+      const keys = apiService.getAccountKeyPair(tempSeed.value, address.value);
+      console.log(keys);
+      const res = await deipService.createDaoTransactionMessage({
+        address: address.value,
+        publicKey: keys.publicKey.slice(2),
+        privateKey: keys.privateKey.slice(2)
+      });
+
+      console.log(res);
+    }
+
     function logOut() {
       accountJson.value = undefined;
     }
@@ -43,6 +57,7 @@ export const useAccountStore = defineStore(
       isLoggedIn,
 
       generateSeedPhrase,
+      connectPortal,
 
       addAccount,
       restoreAccount,

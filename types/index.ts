@@ -37,6 +37,6 @@ export interface IKeyPair {
 }
 
 export interface IWallet extends IKeyPair {
-  walletAddress: string;
+  address: string | undefined;
 }
 

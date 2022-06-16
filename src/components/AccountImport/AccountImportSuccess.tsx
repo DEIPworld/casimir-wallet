@@ -3,8 +3,16 @@ import { VBtn, VSpacer } from 'vuetify/components';
 
 export const AccountImportSuccess = defineComponent({
   emits: [
-    'click:next'
+    'click:next',
+    'click:oauth'
   ],
+
+  props: {
+    isHasPortal: {
+      type: Boolean,
+      default: false
+    }
+  },
 
   setup(props, { emit }) {
     return () => (
@@ -22,12 +30,30 @@ export const AccountImportSuccess = defineComponent({
         <div class="d-flex mt-12">
           <VSpacer/>
 
-          <VBtn
-            class="ml-4"
-            onClick={() => emit('click:next')}
-          >
-            Go to wallet
-          </VBtn>
+          {props.isHasPortal ? (
+            <>
+              <VBtn
+                color="secondary-btn"
+                class="ml-4"
+                onClick={() => emit('click:next')}
+              >
+                Go to wallet
+              </VBtn>
+              <VBtn
+                class="ml-4"
+                onClick={() => emit('click:oauth')}
+              >
+                Back to oauth
+              </VBtn>
+            </>
+          ) : (
+            <VBtn
+              class="ml-4"
+              onClick={() => emit('click:next')}
+            >
+              Go to wallet
+            </VBtn>
+          )}
         </div>
       </>
     );

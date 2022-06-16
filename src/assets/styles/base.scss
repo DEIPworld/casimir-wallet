@@ -202,6 +202,10 @@ $heading-font-family: $body-font-family;
   color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity)) !important;
 }
 
+.text-color-primary {
+  color: rgb(var(--v-theme-primary));
+}
+
 .text-secondary-bt {
   color: rgba(var(--v-theme-secondary), .1) !important;
 
