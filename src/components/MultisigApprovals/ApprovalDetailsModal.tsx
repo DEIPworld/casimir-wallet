@@ -110,7 +110,7 @@ export const ApprovalDetailsModal = defineComponent({
             )}
 
             <div class="d-flex justify-end align-center mt-8">
-              <VBtn class="ml-4" color="secondary-btn" onClick={() => emit('click:cancel')}>
+              <VBtn color="secondary-btn" onClick={() => emit('click:cancel')}>
                 cancel
               </VBtn>
               <VBtn class="ml-4" disabled={isFinalApproval.value && !formState.value.valid}>
