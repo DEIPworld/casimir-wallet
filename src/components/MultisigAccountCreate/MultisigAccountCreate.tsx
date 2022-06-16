@@ -20,7 +20,7 @@ export const MultisigAccountCreate = defineComponent({
     const accountStore = useAccountStore();
     const { address } = storeToRefs(accountStore);
 
-    const { makeError, addressValidator, tresholdValidator } = useYup();
+    const { makeError, addressValidator, thresholdValidator } = useYup();
     const { showSuccess } = useNotify();
     const router = useRouter();
 
@@ -30,7 +30,7 @@ export const MultisigAccountCreate = defineComponent({
     });
 
     const schema = object({
-      treshold: number().required().min(1).test(tresholdValidator).label('Treshold'),
+      threshold: number().required().min(1).test(thresholdValidator).label('Threshold'),
       name: string().required().label('Multisig account name'),
       signatories: array().of(signatorySchema).ensure().min(1).label('Signatories')
     });
@@ -39,7 +39,7 @@ export const MultisigAccountCreate = defineComponent({
       validationSchema: schema
     });
 
-    const { value: treshold, errorMessage: tresholdError } = useField<string>('treshold');
+    const { value: threshold, errorMessage: thresholdError } = useField<string>('threshold');
     const { value: name, errorMessage: nameError } = useField<number>('name');
     const { value: signatories } = useField<Array<ISignatory>>('signatories');
 
@@ -112,9 +112,9 @@ export const MultisigAccountCreate = defineComponent({
 
           <div class="mt-12">
             <VTextField
-              label="Treshold"
-              v-model={treshold.value}
-              {...makeError(tresholdError.value)}
+              label="Threshold"
+              v-model={threshold.value}
+              {...makeError(thresholdError.value)}
             />
             <VTextField
               label="Multisig account name"
