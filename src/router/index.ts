@@ -17,6 +17,9 @@ import { MultisigWalletView } from '@/components/MultisigWalletView';
 import { MultisigBalances } from '@/components/MultisigBalances';
 import { MultisigTransactions } from '@/components/MultisigTransactions';
 import { MultisigApprovals } from '@/components/MultisigApprovals';
+import { MultisigVestingView } from '@/components/MultisigVestingView';
+import { MultisigVestingDetails } from '@/components/MultisigVestingDetails';
+import { MultisigDetailsView } from '@/components/MultisigDetailsView';
 import { MultisigActionSend } from '@/components/MultisigActionSend';
 import { MultisigActionReceive } from '@/components/MultisigActionReceive';
 
@@ -159,6 +162,22 @@ const router = createRouter({
                   component: MultisigActionReceive
                 }
               ]
+            },
+            {
+              path: 'vesting',
+              component: MultisigVestingView,
+              children: [
+                {
+                  path: '',
+                  name: 'multisig.vesting',
+                  component: MultisigVestingDetails
+                }
+              ]
+            },
+            {
+              path: 'details',
+              name: 'multisig.details',
+              component: MultisigDetailsView
             }
           ]
         }

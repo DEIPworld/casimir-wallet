@@ -1,0 +1,1 @@
+export { MultisigVestingDetails } from './MultisigVestingDetails';
