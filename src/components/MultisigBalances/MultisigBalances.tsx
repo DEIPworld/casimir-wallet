@@ -2,7 +2,7 @@ import { defineComponent } from 'vue';
 import { storeToRefs } from 'pinia';
 import { VSheet } from 'vuetify/components';
 
-import { useMultisigWalletStore } from '@/stores/multisig';
+import { useMultisigWalletStore } from '@/stores/multisigWallet';
 
 export const MultisigBalances = defineComponent({
   setup() {

@@ -6,16 +6,21 @@ import {
   mnemonicGenerate,
   mnemonicValidate,
   mnemonicToMiniSecret,
-  decodeAddress
+  decodeAddress,
+  encodeAddress,
+  encodeMultiAddress,
+  createKeyMulti,
+  sortAddresses
 } from '@polkadot/util-crypto';
 import { u8aToHex } from '@polkadot/util';
 
-import type { IAccount, IKeyPair, IVestingPlan, ITransaction } from '../../types';
-import type { CreateResult } from '@polkadot/ui-keyring/types';
-import type { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
-
 import { singleton } from '@/utils/singleton';
 import { emitter } from '@/utils/eventBus';
+
+import type { CreateResult } from '@polkadot/ui-keyring/types';
+import type { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
+import type { IAccount, IKeyPair, IVestingPlan, ITransaction } from '../../types';
+
 import type { BN } from '@polkadot/util';
 import type { AccountInfo } from '@polkadot/types/interfaces/system/types';
 
@@ -102,6 +107,10 @@ export class ApiService {
         reject(new Error('password is incorrect'));
       }
     });
+  }
+
+  addMultisigAccount(addresses: string[], threshold: number): string {
+    return encodeMultiAddress(addresses, threshold);
   }
 
   getAccountKeyPair(

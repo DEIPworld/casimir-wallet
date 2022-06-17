@@ -1,3 +1,5 @@
+import { string } from 'yup';
+
 export interface IAccount {
   nonce: number;
   consumers: number;
@@ -43,4 +45,11 @@ export interface IWallet extends IKeyPair {
 export interface ISignatory {
   address: string;
   name: string;
+}
+
+export interface IMultisigWallet {
+  address: string;
+  name: string;
+  threshold: number,
+  signatories: ISignatory[];
 }

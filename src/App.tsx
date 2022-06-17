@@ -23,7 +23,10 @@ export const App = defineComponent({
     const { address } = storeToRefs(accountStore);
 
     watchEffect(() => {
-      if (address.value) walletStore.subscribeToUpdates(address.value);
+      if (address.value) {
+        accountStore.getMultisigAccounts();
+        walletStore.subscribeToUpdates(address.value);
+      }
     });
 
     const logOut = () => {

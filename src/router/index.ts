@@ -106,8 +106,9 @@ const router = createRouter({
     {
       path: '/multisig',
       name: 'multisig',
-      component: MultisigView,
+      props: true,
       redirect: { name: 'multisig.create' },
+      component: MultisigView,
       children: [
         {
           path: 'create',
@@ -118,13 +119,14 @@ const router = createRouter({
           path: ':address',
           name: 'multisig.view',
           props: true,
-          component: MultisigView,
           redirect: { name: 'multisig.balances' },
+          component: MultisigView,
           children: [
             {
               path: 'wallet',
               name: 'multisig.wallet',
               props: true,
+              redirect: { name: 'multisig.balances' },
               component: MultisigWalletView,
               children: [
                 {
@@ -146,8 +148,8 @@ const router = createRouter({
             },
             {
               path: 'action',
-              component: ActionView,
               redirect: { name: 'multisig.action.send' },
+              component: ActionView,
               children: [
                 {
                   path: 'send',

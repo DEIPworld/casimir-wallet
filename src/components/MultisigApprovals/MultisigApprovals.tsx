@@ -2,7 +2,7 @@ import { defineComponent, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { VSheet, VBtn } from 'vuetify/components';
 
-import { useMultisigWalletStore } from '@/stores/multisig';
+import { useMultisigWalletStore } from '@/stores/multisigWallet';
 
 import { ApprovalDetailsModal } from './ApprovalDetailsModal';
 

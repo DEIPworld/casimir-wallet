@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia';
 import { VSheet } from 'vuetify/components';
 
 import { useDate } from '@/composable/date';
-import { useMultisigWalletStore } from '@/stores/multisig';
+import { useMultisigWalletStore } from '@/stores/multisigWallet';
 import { useVestingStore } from '@/stores/vesting';
 
 export const MultisigVestingDetails = defineComponent({

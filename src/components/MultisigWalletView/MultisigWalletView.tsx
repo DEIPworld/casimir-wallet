@@ -1,4 +1,4 @@
-import { defineComponent, onBeforeMount, onBeforeUnmount } from 'vue';
+import { defineComponent, ref, onBeforeMount, onBeforeUnmount } from 'vue';
 import { RouterView } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
@@ -6,7 +6,8 @@ import { VBtn, VBadge, VDivider, VTab, VTabs } from 'vuetify/components';
 import { InnerContainer } from '@/components/InnerContainer';
 import { DisplayAddress } from '@/components/DisplayAddress';
 
-import { useMultisigWalletStore } from '@/stores/multisig';
+import { useAccountStore } from '@/stores/account';
+import { useMultisigWalletStore } from '@/stores/multisigWallet';
 
 export const MultisigWalletView = defineComponent({
   props: {
@@ -16,13 +17,16 @@ export const MultisigWalletView = defineComponent({
     }
   },
   setup(props) {
-    const multisigStore = useMultisigWalletStore();
-    const { balance, pendingApprovals } = storeToRefs(multisigStore);
+    const accountStore = useAccountStore();
+    const walletStore = useMultisigWalletStore();
 
-    onBeforeMount(() => {
+    const { multisigAccountDetails } = storeToRefs(accountStore);
+    const { balance, pendingApprovals } = storeToRefs(walletStore);
+
+    onBeforeMount(async () => {
       // TODO: get transaction history without subscription if it is possible
       // multisigStore.subscribeToTransfers(props.address);
-      multisigStore.getAccountBalance(props.address);
+      walletStore.getAccountBalance(props.address);
     });
 
     onBeforeUnmount(() => {
@@ -33,7 +37,7 @@ export const MultisigWalletView = defineComponent({
       <InnerContainer>
         <div class="d-flex justify-space-between mb-4">
           <div>
-            <div class="text-h3 mb-2">/Wallet Name/</div>
+            <div class="text-h3 mb-2">{multisigAccountDetails.value?.name}</div>
             <DisplayAddress address={props.address} />
           </div>
 

@@ -1,30 +1,28 @@
 import { defineComponent } from 'vue';
+import { storeToRefs } from 'pinia';
 
 import { VBtn, VRow, VCol } from 'vuetify/components';
 import { InnerContainer } from '@/components/InnerContainer';
 import { DisplayAddress } from '@/components/DisplayAddress';
 
+import { useAccountStore } from '@/stores/account';
+
 export const MultisigDetailsView = defineComponent({
-  props: {
-    address: {
-      type: String,
-      required: true
-    }
-  },
-  setup(props) {
+  setup() {
+    const accountStore = useAccountStore();
+    const { multisigAccountDetails } = storeToRefs(accountStore);
+
     const renderSignatories = () => (
-      <>
-        <div>User 1</div>
-        <div>User 2</div>
-        <div>User 3</div>
-      </>
+      multisigAccountDetails.value?.signatories.map((item) => (
+        <div key={item.address}>{item.name}</div>
+      ))
     );
 
     return () => (
       <InnerContainer>
         <div>
-          <div class="text-h4 mb-2">[name of the multisig account]</div>
-          <DisplayAddress address={props.address} />
+          <div class="text-h4 mb-2">{multisigAccountDetails.value?.name}</div>
+          <DisplayAddress address={multisigAccountDetails.value?.address} />
         </div>
 
         <VRow class="mt-4 text-body-1">

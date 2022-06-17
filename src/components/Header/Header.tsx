@@ -27,7 +27,7 @@ export const Header = defineComponent({
     const accountStore = useAccountStore();
     const route = useRoute();
 
-    const { isLoggedIn } = storeToRefs(accountStore);
+    const { isLoggedIn, multisigAccounts } = storeToRefs(accountStore);
 
     const isMultiSigView = computed(() => route.path.includes('multisig'));
     const routePrefix = computed(() => (isMultiSigView.value ? 'multisig.' : ''));
@@ -66,6 +66,13 @@ export const Header = defineComponent({
       </VTabs>
     );
 
+    const renderMultisigAccounts = () =>
+      multisigAccounts.value?.map((item) => (
+        <VListItem key={item.address} to={{ name: 'multisig.balances', params: { address: item.address } }}>
+          {item.name}
+        </VListItem>
+      ));
+
     const renderMenu = () => (
       <VBtn width="180" color="secondary-btn" variant="contained" size="small" rounded={false}>
         Accounts
@@ -78,6 +85,7 @@ export const Header = defineComponent({
               </VIcon>
               <span>Add multisig</span>
             </VListItem>
+            {renderMultisigAccounts()}
             <VListItem onClick={() => emit('click:logout')}>log out</VListItem>
           </VList>
         </VMenu>
