@@ -13,7 +13,7 @@ import {
 
 import { ConfirmActionModal } from '@/components/ConfirmActionModal';
 
-import { useMultisigWalletStore } from '@/stores/multisig';
+import { useMultisigWalletStore } from '@/stores/multisigWallet';
 import { useNotify } from '@/composable/notify';
 import { useYup } from '@/composable/validate';
 

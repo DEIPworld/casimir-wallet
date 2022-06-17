@@ -20,6 +20,8 @@ export const MultisigAccountCreate = defineComponent({
     const accountStore = useAccountStore();
     const { address } = storeToRefs(accountStore);
 
+    const { createMultisigAccount } = accountStore;
+
     const { makeError, addressValidator, thresholdValidator } = useYup();
     const { showSuccess } = useNotify();
     const router = useRouter();
@@ -40,7 +42,7 @@ export const MultisigAccountCreate = defineComponent({
     });
 
     const { value: threshold, errorMessage: thresholdError } = useField<string>('threshold');
-    const { value: name, errorMessage: nameError } = useField<number>('name');
+    const { value: name, errorMessage: nameError } = useField<string>('name');
     const { value: signatories } = useField<Array<ISignatory>>('signatories');
 
     const isAddSignatoryModalOpen = ref<boolean>(false);
@@ -65,10 +67,14 @@ export const MultisigAccountCreate = defineComponent({
       signatories.value = signatories.value.filter((item) => item.address !== address);
     };
 
-    const onConfirm = (): void => {
-      // TODO: prepare data and send it
+    const onConfirm = async (): Promise<void> => {
+      const result = await createMultisigAccount(
+        signatories.value,
+        parseInt(threshold.value),
+        name.value
+      );
       showSuccess('Multisig account succesfuly created');
-      router.push({ name: 'multisig' });
+      router.push({ name: 'multisig.wallet', params: { address: result.address } });
     };
 
     const renderSignatories = () =>

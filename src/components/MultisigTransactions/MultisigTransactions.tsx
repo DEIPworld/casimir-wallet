@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia';
 import { VIcon, VSheet, VSpacer } from 'vuetify/components';
 
 import { useDate } from '@/composable/date';
-import { useMultisigWalletStore } from '@/stores/multisig';
+import { useMultisigWalletStore } from '@/stores/multisigWallet';
 
 import type { ITransaction } from '../../../types';
 
