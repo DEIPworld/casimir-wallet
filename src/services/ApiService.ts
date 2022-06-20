@@ -49,6 +49,8 @@ export class ApiService {
     return Math.floor(milliseconds / 2.628e+9);
   }
 
+  private activeAddresses: Set<string> = new Set();
+
   async loadApi(): Promise<void> {
     try {
       const provider = new WsProvider(import.meta.env.DW_NETWORK);
@@ -262,10 +264,15 @@ export class ApiService {
   }
 
   subscribeToTransfers(address: string): void {
+    this.activeAddresses.add(address);
+
+    if (this.activeAddresses.size > 1) {
+      return;
+    }
+
     try {
       this.api.rpc.chain.subscribeFinalizedHeads(
         async (header: any) => {
-
           const [{ block }, records] = await Promise.all([
             this.api.rpc.chain.getBlock(header.hash),
             this.api.query.system.events.at(header.hash)
@@ -281,17 +288,19 @@ export class ApiService {
             events.forEach(({ event }: any) => {
               const [sender, recipient, amount] = event.data;
 
-              const isDeposit = recipient && recipient.toString() === address;
-              const isWithdraw = sender && sender.toString() === address;
+              const isDeposit = recipient && this.activeAddresses.has(recipient.toString());
+              const isWithdraw = sender && this.activeAddresses.has(sender.toString());
 
               const relatedTransfer = isDeposit || isWithdraw;
-
+              
               if (event.method === 'Transfer' && relatedTransfer) {
-                emitter.emit('wallet:transfer', {
+                const relatedAddress = isDeposit ? recipient.toString() : sender.toString();
+
+                emitter.emit(`wallet:transfer:${relatedAddress}`, {
                   hash: extrinsic.hash.toString(),
                   from: sender.toString(),
                   date: new Date().getTime(),
-                  amount: ApiService.formatCurrency(amount, isWithdraw)
+                  amount: ApiService.formatCurrency(amount, !isDeposit)
                 });
               }
             });
@@ -301,6 +310,10 @@ export class ApiService {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  unsubscribeFromTransfers(address: string): void {
+    this.activeAddresses.delete(address);
   }
 
   static readonly getInstance = singleton(() => new ApiService());
