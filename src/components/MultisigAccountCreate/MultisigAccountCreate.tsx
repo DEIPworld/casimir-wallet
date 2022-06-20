@@ -18,9 +18,7 @@ import type { ISignatory } from '../../../types';
 export const MultisigAccountCreate = defineComponent({
   setup() {
     const accountStore = useAccountStore();
-    const { address } = storeToRefs(accountStore);
-
-    const { createMultisigAccount } = accountStore;
+    const { address: userAddress } = storeToRefs(accountStore);
 
     const { makeError, addressValidator, thresholdValidator } = useYup();
     const { showSuccess } = useNotify();
@@ -43,7 +41,7 @@ export const MultisigAccountCreate = defineComponent({
 
     const { value: threshold, errorMessage: thresholdError } = useField<string>('threshold');
     const { value: name, errorMessage: nameError } = useField<string>('name');
-    const { value: signatories } = useField<Array<ISignatory>>('signatories');
+    const { value: signatories } = useField<ISignatory[]>('signatories');
 
     const isAddSignatoryModalOpen = ref<boolean>(false);
     const signatoryError = ref<string>();
@@ -54,7 +52,7 @@ export const MultisigAccountCreate = defineComponent({
         return;
       }
 
-      if (signatory.address === address.value) {
+      if (signatory.address === userAddress.value) {
         signatoryError.value = 'Your address is added by default';
         return;
       }
@@ -68,7 +66,7 @@ export const MultisigAccountCreate = defineComponent({
     };
 
     const onConfirm = async (): Promise<void> => {
-      const result = await createMultisigAccount(
+      const result = await accountStore.createMultisigAccount(
         signatories.value,
         parseInt(threshold.value),
         name.value

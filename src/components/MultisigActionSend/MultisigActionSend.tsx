@@ -32,10 +32,10 @@ export const MultisigActionSend = defineComponent({
     }
   },
   setup(props) {
-    const walletStore = useMultisigWalletStore();
+    const multisigStore = useMultisigWalletStore();
     const router = useRouter();
 
-    const { actualBalance } = storeToRefs(walletStore);
+    const { actualBalance } = storeToRefs(multisigStore);
 
     const { getTransactionFee } = useMultisigWalletStore();
     const { showSuccess } = useNotify();

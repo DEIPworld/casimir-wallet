@@ -1,4 +1,4 @@
-import { defineComponent, ref, onBeforeMount, onBeforeUnmount } from 'vue';
+import { defineComponent, onBeforeMount, onBeforeUnmount, watch, toRef } from 'vue';
 import { RouterView } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
@@ -18,19 +18,30 @@ export const MultisigWalletView = defineComponent({
   },
   setup(props) {
     const accountStore = useAccountStore();
-    const walletStore = useMultisigWalletStore();
+    const multisigStore = useMultisigWalletStore();
 
     const { multisigAccountDetails } = storeToRefs(accountStore);
-    const { balance, pendingApprovals } = storeToRefs(walletStore);
+    const { balance, pendingApprovals } = storeToRefs(multisigStore);
+
+    const address = toRef(props, 'address');
 
     onBeforeMount(async () => {
-      // TODO: get transaction history without subscription if it is possible
-      // multisigStore.subscribeToTransfers(props.address);
-      walletStore.getAccountBalance(props.address);
+      multisigStore.subscribeToTransfers(props.address);
+      multisigStore.getAccountBalance(props.address);
     });
 
     onBeforeUnmount(() => {
-      // TODO unsubscribe from updates
+      multisigStore.clear();
+      multisigStore.unsubscribeFromTransfers(props.address);
+    });
+
+    watch(address, (currentAddress, prevAddress) => {
+      multisigStore.clear();
+
+      multisigStore.subscribeToTransfers(currentAddress);
+      multisigStore.getAccountBalance(currentAddress);
+
+      multisigStore.unsubscribeFromTransfers(prevAddress);
     });
 
     return () => (
@@ -44,11 +55,22 @@ export const MultisigWalletView = defineComponent({
           <div class="text-right">
             <div class="text-h4 mt-1 mb-3">{balance.value?.data.actual} DEIP</div>
             <div>
-              <VBtn size="small" color="primary" rounded={false} to={{ name: 'multisig.action.send' }}>
+              <VBtn
+                size="small"
+                color="primary"
+                rounded={false}
+                to={{ name: 'multisig.action.send' }}
+              >
                 Send
               </VBtn>
 
-              <VBtn size="small" color={'secondary-btn'} class={'ml-2'} rounded={false} to={{ name: 'multisig.details' }}>
+              <VBtn
+                size="small"
+                color={'secondary-btn'}
+                class={'ml-2'}
+                rounded={false}
+                to={{ name: 'multisig.details' }}
+              >
                 Edit
               </VBtn>
             </div>
@@ -62,13 +84,15 @@ export const MultisigWalletView = defineComponent({
           </VTab>
           <VTab to={{ name: 'multisig.approvals', params: { address: props.address } }}>
             <span>approvals</span>
-            <VBadge
-              class="ml-2"
-              inline
-              content={pendingApprovals.value.length}
-              textColor="white"
-              color="#f44336"
-            />
+            {pendingApprovals.value.length > 0 && (
+              <VBadge
+                class="ml-2"
+                inline
+                content={pendingApprovals.value.length}
+                textColor="white"
+                color="#f44336"
+              />
+            )}
           </VTab>
         </VTabs>
 

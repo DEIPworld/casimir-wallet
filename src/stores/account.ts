@@ -5,7 +5,7 @@ import HttpService from '@/services/HttpService';
 
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
-import type { IMultisigWallet } from '../../types/';
+import type { IMultisigWallet, ISignatory } from '../../types/';
 
 const apiService = ApiService.getInstance();
 
@@ -46,6 +46,31 @@ export const useAccountStore = defineStore(
       multisigAccountDetails.value = data;
     }
 
+    async function createMultisigAccount(
+      addresses: ISignatory[],
+      threshold: number,
+      name: string
+    ): Promise<IMultisigWallet> {
+      if (!address.value) {
+        throw new Error('user address is not defined');
+      }
+
+      const signatories = [{ name: 'Owner', address: address.value }, ...addresses];
+      const multisigAddress = apiService.addMultisigAccount(
+        signatories.map((signatory) => signatory.address),
+        threshold
+      );
+
+      const { data } = await HttpService.post('/multisig/create', {
+        address: multisigAddress,
+        threshold,
+        name,
+        signatories
+      });
+
+      return data;
+    }
+
     function logOut() {
       accountJson.value = undefined;
     }
@@ -66,6 +91,7 @@ export const useAccountStore = defineStore(
       restoreAccount,
       getMultisigAccounts,
       getMultisigAccountDetails,
+      createMultisigAccount,
 
       logOut
     };

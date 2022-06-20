@@ -9,7 +9,7 @@ const apiService = ApiService.getInstance();
 export const useMultisigWalletStore = defineStore('multisigBalance', () => {
   const balance = ref<IAccount | undefined>();
   const transactions = ref<ITransaction[]>([]);
-  const pendingApprovals = ref<any[]>([1, 2, 3]); // TODO: add type when schema is defined
+  const pendingApprovals = ref<any[]>([]); // TODO: add type when schema is defined
 
   const freeBalance = computed(() =>
     parseFloat(balance.value?.data.free.replace(',', '') || '')
@@ -21,9 +21,9 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
   const clear = () => {
     balance.value = undefined;
     transactions.value = [];
+    pendingApprovals.value = [];
   };
 
-  // TODO: maybe better to request balance instead of subscribing (as there might be several multisig accounts)?
   const getAccountBalance = async (address: string | undefined): Promise<void> => {
     if (address) {
       const res = await apiService.getAccountBalance(address);
@@ -31,25 +31,16 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     }
   };
 
-  const subscribeToBalance = async (address: string) => {
-    apiService.subscribeToBalance(address);
-
-    emitter.on('wallet:balanceChange', (data: IAccount) => {
-      balance.value = data;
-    });
-  };
-
   const subscribeToTransfers = (address: string) => {
     apiService.subscribeToTransfers(address);
 
-    emitter.on('wallet:transfer', (data: ITransaction) => {
+    emitter.on(`wallet:transfer:${address}`, (data: ITransaction) => {
       transactions.value.push(data);
     });
   };
 
-  const subscribeToUpdates = (address: string) => {
-    subscribeToBalance(address);
-    subscribeToTransfers(address);
+  const unsubscribeFromTransfers = (address: string) => {
+    apiService.unsubscribeFromTransfers(address);
   };
 
   const getTransactionFee = async (
@@ -75,9 +66,9 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     getTransactionFee,
     getAccountBalance,
 
-    subscribeToUpdates,
     subscribeToTransfers,
 
+    unsubscribeFromTransfers,
     clear
   };
 });
