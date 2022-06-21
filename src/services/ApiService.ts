@@ -12,7 +12,7 @@ import {
   createKeyMulti,
   sortAddresses
 } from '@polkadot/util-crypto';
-import { u8aToHex } from '@polkadot/util';
+import { u8aToHex, hexToU8a } from '@polkadot/util';
 
 import { singleton } from '@/utils/singleton';
 import { emitter } from '@/utils/eventBus';
@@ -247,6 +247,66 @@ export class ApiService {
     } catch (error) {
       console.error(error);
       return error as any;
+    }
+  }
+
+  async initMultisigTransaction(
+    recipient: string,
+    account: CreateResult,
+    otherSignatories: any[],
+    threshold: number,
+    amount: number
+  ): Promise<any> {
+    try {
+      const weight = 640000000; //TODO: calculate if possible or set fixed value
+      const transaction = this.api.tx.balances.transfer(
+        recipient,
+        new BigNumber(amount).shiftedBy(18).toString()
+      );
+  
+      const txHash = await this.api.tx.multisig
+        .approveAsMulti(threshold, otherSignatories.sort(), null, transaction.method.hash, weight) // TODO: sort other signatories by using polkadot utils method
+        .signAndSend(account.pair);
+  
+      console.clear();
+      console.log("DATA");
+      console.log(u8aToHex(txHash));
+      console.log(u8aToHex(transaction.method.hash));
+      console.log(transaction.method.toHex());
+
+      return {
+        callHash: u8aToHex(transaction.method.hash),
+        callData: transaction.method.toHex()
+      };
+    } catch (error) {
+      console.clear();
+      console.error(error);
+    }
+  }
+
+  async approveMultisigTransaction(
+    account: CreateResult,
+    otherSignatories: any[],
+    threshold: number
+  ): Promise<any> {
+    const weight = 640000000; //TODO: calculate if possible or set fixed value
+    const multisigAddress = '5H7nVfrWNcDdVAwZt1FJd7joBehjMbuT5j9AFtp2ixDH1wsv'; //TODO: replace with actual value
+
+    // 4. Send 1 WND to Charlie account
+    try {
+      const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a('0xdf10f1b47ae4e1f0e93b57f4e35c1d453caca1d06c905dc8d2824a389cc9b099')); //TODO: took from transaction.method.hash
+      const timePoint = info.unwrap().when;
+
+      const txHash = await this.api.tx.multisig
+        .asMulti(threshold, otherSignatories.sort(), timePoint, '0x040000245233f6f31cdf26937e58dc67009d28599d203b2f46173fe9eec86235f23e4413000064a7b3b6e00d', false, weight) //TODO: took from transaction.method.toHex()
+        .signAndSend(account.pair);
+
+      console.clear();
+      console.log("DONE AND SEND!!!");
+
+    } catch (error) {
+      console.clear();
+      console.error(error);
     }
   }
 

@@ -61,9 +61,9 @@ export const ApprovalDetailsModal = defineComponent({
         <VCard width="700" class="pa-8">
           <VCardTitle class="text-h6 text-white">Pending call hash</VCardTitle>
           <div class="d-flex ml-4 text-white text-subtitle-1">
-            <span>[pending call hash]</span>
+            <span class="text-truncate">{props.pendingApproval.callHash}</span>
             <div
-              class="dw-tooltip dw-tooltip__right ml-2 text-body-1"
+              class="dw-tooltip dw-tooltip__right ml-8 text-body-1"
               data-tooltip="The call hash as calculated for this transaction"
             >
               <VIcon size="x-small">mdi-help-circle-outline</VIcon>

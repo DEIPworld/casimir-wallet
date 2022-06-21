@@ -13,6 +13,7 @@ import {
 
 import { ConfirmActionModal } from '@/components/ConfirmActionModal';
 
+import { useAccountStore } from '@/stores/account';
 import { useMultisigWalletStore } from '@/stores/multisigWallet';
 import { useNotify } from '@/composable/notify';
 import { useYup } from '@/composable/validate';
@@ -32,10 +33,13 @@ export const MultisigActionSend = defineComponent({
     }
   },
   setup(props) {
-    const multisigStore = useMultisigWalletStore();
     const router = useRouter();
 
-    const { actualBalance } = storeToRefs(multisigStore);
+    const accountStore = useAccountStore();
+    const multisigStore = useMultisigWalletStore();
+
+    const { address, accountJson, multisigAccountDetails } = storeToRefs(accountStore);
+    const { actualBalance, balance } = storeToRefs(multisigStore);
 
     const { getTransactionFee } = useMultisigWalletStore();
     const { showSuccess } = useNotify();
@@ -90,6 +94,24 @@ export const MultisigActionSend = defineComponent({
     });
 
     const transfer = async (password: string): Promise<void> => {
+      if (!accountJson.value) {
+        console.clear();
+        console.log("NOT STARTED");
+        return;
+      }
+
+      // await multisigStore.approveMultisigTransaction(
+      //   { account: accountJson.value, password },
+      //   multisigAccountDetails.value?.signatories.filter((item) => item.address !== address.value).map((item) => item.address),
+      //   multisigAccountDetails.value?.threshold,
+      // )
+      await multisigStore.initMultisigTransaction(
+        recipient.value,
+        { account: accountJson.value, password },
+        multisigAccountDetails.value?.signatories.filter((item) => item.address !== address.value).map((item) => item.address),
+        multisigAccountDetails.value?.threshold,
+        amount.value
+      )
       showSuccess('Successfully sent');
       router.push({ name: 'multisig.wallet' });
     };

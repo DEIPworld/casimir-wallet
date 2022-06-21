@@ -28,18 +28,21 @@ export const MultisigWalletView = defineComponent({
     onBeforeMount(async () => {
       multisigStore.subscribeToTransfers(props.address);
       multisigStore.getAccountBalance(props.address);
+      multisigStore.getPendingApprovals(props.address);
     });
 
-    onBeforeUnmount(() => {
-      multisigStore.clear();
-      multisigStore.unsubscribeFromTransfers(props.address);
-    });
+    //TODO: move to level higher as it clears balance on action send view
+    // onBeforeUnmount(() => {
+    //   multisigStore.clear();
+    //   multisigStore.unsubscribeFromTransfers(props.address);
+    // });
 
     watch(address, (currentAddress, prevAddress) => {
       multisigStore.clear();
 
       multisigStore.subscribeToTransfers(currentAddress);
       multisigStore.getAccountBalance(currentAddress);
+      multisigStore.getPendingApprovals(currentAddress);
 
       multisigStore.unsubscribeFromTransfers(prevAddress);
     });

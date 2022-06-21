@@ -12,20 +12,33 @@ export const MultisigApprovals = defineComponent({
     const { pendingApprovals } = storeToRefs(multisigStore);
 
     const isOpen = ref<boolean>(false);
+    const selectedTransaction = ref<object>({});
+
+    const onSelect = (item: object) => {
+      isOpen.value = true;
+      selectedTransaction.value = item;
+    }
+
+    const onCloseModal = () => {
+      isOpen.value = false;
+      selectedTransaction.value = {};
+    }
 
     const renderApprovalsList = () =>
-      pendingApprovals.value.map(() => (
+      pendingApprovals.value.map((item) => (
         <VSheet
+          key={item.callData}
           rounded
           color="rgba(255,255,255,.1)"
           class="mt-4 pa-4 d-flex justify-space-between align-center"
         >
-          <span class="text-h6">pending call hash</span>
+          <span class="text-h6 text-truncate">{item.callHash}</span>
           <VBtn
             rounded={false}
             size="small"
             color={'secondary-btn'}
-            onClick={() => (isOpen.value = true)}
+            class="ml-8"
+            onClick={() => onSelect(item)}
           >
             View
           </VBtn>
@@ -37,7 +50,7 @@ export const MultisigApprovals = defineComponent({
         {renderApprovalsList()}
         <ApprovalDetailsModal
           isOpen={isOpen.value}
-          pendingApproval={{}}
+          pendingApproval={selectedTransaction.value}
           onClick:cancel={() => (isOpen.value = false)}
         />
       </>
