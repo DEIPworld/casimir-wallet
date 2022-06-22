@@ -10,7 +10,9 @@ import {
 } from '@polkadot/util-crypto';
 import { u8aToHex } from '@polkadot/util';
 
-import type { IAccount, IKeyPair, IVestingPlan, ITransaction } from '../../types';
+import HttpService from './HttpService';
+
+import type { IAccount, IKeyPair, IVestingPlan, ITransaction } from '@/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
 
@@ -102,6 +104,19 @@ export class ApiService {
         reject(new Error('password is incorrect'));
       }
     });
+  }
+
+  async getAccountDAO(address: string): Promise<any> {
+    try {
+      const publicKey = u8aToHex(decodeAddress(address));
+
+      const { data } = await HttpService.get('/dao/get', { publicKey });
+
+      return data;
+    } catch (error) {
+      console.log(error);
+      return error as any;
+    }
   }
 
   getAccountKeyPair(

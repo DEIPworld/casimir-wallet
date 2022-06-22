@@ -10,8 +10,8 @@ import {
   VSpacer,
   VTabs,
   VTab,
-  VMain, VBtn,
-  VSwitch
+  VMain,
+  VBtn
 } from 'vuetify/components';
 import { useAccountStore } from '@/stores/account';
 import { storeToRefs } from 'pinia';
@@ -32,7 +32,11 @@ export const App = defineComponent({
 
     const hideNavigation = computed(() => {
       const routeName = route.name as string || '';
-      const hideOnRoutes = ['account.import', 'account.create'].includes(routeName);
+      const hideOnRoutes = [
+        'account.import',
+        'account.create',
+        'account.oauth'
+      ].includes(routeName);
       const hideOnWallet = routeName.includes('wallet') && !isLoggedIn.value;
 
       return hideOnRoutes || hideOnWallet;

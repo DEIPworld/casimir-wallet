@@ -1,10 +1,9 @@
 import { defineComponent } from 'vue';
 import { VBtn, VSpacer } from 'vuetify/components';
 
-export const AccountOAuthUnsigned = defineComponent({
+export const AccountOAuthPaywall = defineComponent({
   emits: [
-    'click:import',
-    'click:create'
+    'click:receive'
   ],
 
   setup(props, { emit }) {
@@ -15,23 +14,17 @@ export const AccountOAuthUnsigned = defineComponent({
         </div>
 
         <div class="text-body-large mb-12">
-          To grant an access for Portal you must be authenticated.
+          To associated DAO with your wallet you must have at least 10 DEIP.
         </div>
 
         <div class="d-flex mt-12">
           <VSpacer/>
 
           <VBtn
-            color="secondary-btn"
-            onClick={() => emit('click:import')}
-          >
-            Import existing account
-          </VBtn>
-          <VBtn
             class="ml-4"
-            onClick={() => emit('click:create')}
+            onClick={() => emit('click:receive')}
           >
-            Create account
+            Fulfill balance
           </VBtn>
         </div>
       </>

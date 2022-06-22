@@ -6,7 +6,7 @@ import { randomAsHex } from '@polkadot/util-crypto';
 
 import { singleton } from '@/utils/singleton';
 
-import type { IWallet } from '../../types';
+import type { IWallet } from '@/types';
 
 import HttpService from './HttpService';
 
@@ -31,7 +31,8 @@ export class DeipService {
   async createDaoTransactionMessage({
     address,
     publicKey,
-    privateKey
+    privateKey,
+    portal
   }: IWallet): Promise<any> {
     const daoId = genRipemd160Hash(randomAsHex(20));
 
@@ -68,10 +69,13 @@ export class DeipService {
     const data = {
       message,
       daoId,
-      publicKey: `0x${publicKey}`
+      publicKey: `0x${publicKey}`,
+      portal
     };
 
-    return HttpService.post('/dao/create', data);
+    const { data: DAO } = await HttpService.post('/dao/create', data);
+
+    return DAO;
   }
 
   static readonly getInstance = singleton(() => new DeipService());

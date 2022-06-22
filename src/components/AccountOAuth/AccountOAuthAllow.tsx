@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { VBtn, VSpacer } from 'vuetify/components';
+import { VBtn, VSpacer, VProgressCircular } from 'vuetify/components';
 
 export const AccountOAuthAllow = defineComponent({
   emits: [
@@ -7,17 +7,29 @@ export const AccountOAuthAllow = defineComponent({
     'click:allow'
   ],
 
+  props: {
+    portal: {
+      type: Object,
+      required: true
+    },
+    isLoading: {
+      type: Boolean,
+      required: true,
+      default: false
+    }
+  },
+
   setup(props, { emit }) {
     return () => (
       <>
         <div class="text-h4 mb-6">
-          <span class="text-color-primary">[Portal Name]</span> wants
+          <span class="text-color-primary">{props.portal.name}</span> Portal wants
           to access your DEIP wallet DAO
         </div>
 
         <div class="text-body-large mb-6">
-          This will allow <span class="text-color-primary">[Portal Name]</span> with
-          {' '}<span class="text-color-primary">[Portal ID]</span> to:
+          This will allow <span class="text-color-primary">{props.portal.name}</span> Portal
+          with ID:<span class="text-color-primary">{props.portal.id}</span> to:
         </div>
 
         <div class="text-body-large">
@@ -28,8 +40,8 @@ export const AccountOAuthAllow = defineComponent({
         </div>
 
         <div class="text-body-large">
-          Make sure you trust <span class="text-color-primary">[Portal Name]</span> as
-          no additional approvals would be requested for transactions within
+          Make sure you trust <span class="text-color-primary">{props.portal.name}</span> Portal
+          as no additional approvals would be requested for transactions within
           the Portal with DEIP wallets funds. You could always see your
           access in your DEIP wallet.
         </div>
@@ -46,9 +58,10 @@ export const AccountOAuthAllow = defineComponent({
 
           <VBtn
             class="ml-4"
+            disabled={props.isLoading}
             onClick={() => emit('click:allow')}
           >
-            Allow
+            {props.isLoading ? <VProgressCircular indeterminate={true} /> : 'Allow'}
           </VBtn>
         </div>
       </>

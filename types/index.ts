@@ -36,7 +36,14 @@ export interface IKeyPair {
   privateKey: string;
 }
 
+export interface IPortal {
+  portalId: string;
+  url: string;
+  name: string;
+}
+
 export interface IWallet extends IKeyPair {
   address: string | undefined;
+  portal: IPortal;
 }
 

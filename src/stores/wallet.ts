@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { ApiService } from '@/services/ApiService';
-import type { IAccount, ITransaction } from '../../types';
 import { emitter } from '@/utils/eventBus';
+import type { IAccount, ITransaction } from '@/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 
