@@ -6,6 +6,7 @@ import {
   VCol,
   VTextField,
   VDivider,
+  VProgressCircular,
   VIcon
 } from 'vuetify/components';
 
@@ -130,8 +131,12 @@ export const SendView = defineComponent({
           <VBtn class="ml-4" color="secondary-btn" onClick={() => emit('click:cancel')}>
             cancel
           </VBtn>
-          <VBtn onClick={() => emit('click:confirm', recipient.value, amount.value)} class="ml-4" disabled={!formState.value.valid}>
-            Confirm
+          <VBtn
+            onClick={() => emit('click:confirm', recipient.value, amount.value)}
+            class="ml-4"
+            disabled={!formState.value.valid || isLoading.value}
+          >
+            {isLoading.value ? <VProgressCircular indeterminate={true} /> : 'Confirm'}
           </VBtn>
         </div>
       </>

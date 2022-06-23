@@ -49,39 +49,41 @@ export const MultisigActionSend = defineComponent({
     };
 
     const onInitTransaction = async (password: string): Promise<void> => {
-      if (
-        !accountJson.value ||
-        !transactionData.value ||
-        !recipient.value ||
-        !amount.value ||
-        !multisigAccountDetails.value
-      ) {
-        return;
-      }
-
       isLoading.value = true;
 
-      try {
-        await multisigStore.initMultisigTransaction({
-          multisigAddress: props.address,
-          recipient: recipient.value,
-          callHash: transactionData.value.callHash,
-          callData: transactionData.value.callData,
-          sender: { account: accountJson.value, password },
-          otherSignatories: multisigAccountDetails.value?.signatories
-            .filter((item) => item.address !== address.value)
-            .map((item) => item.address),
-          threshold: multisigAccountDetails.value?.threshold,
-          amount: amount.value
-        });
-
-        showSuccess('Successfully sent');
-        router.push({ name: 'multisig.wallet' });
-      } catch (error: any) {
-        passwordError.value = error.message;
-      } finally {
-        isLoading.value = false;
-      }
+      setTimeout(async () => {
+        if (
+          !accountJson.value ||
+          !transactionData.value ||
+          !recipient.value ||
+          !amount.value ||
+          !multisigAccountDetails.value
+        ) {
+          return;
+        }
+        try {
+          await multisigStore.initMultisigTransaction({
+            multisigAddress: props.address,
+            recipient: recipient.value,
+            callHash: transactionData.value.callHash,
+            callData: transactionData.value.callData,
+            sender: { account: accountJson.value, password },
+            otherSignatories: multisigAccountDetails.value?.signatories
+              .filter((item) => item.address !== address.value)
+              .map((item) => item.address),
+            threshold: multisigAccountDetails.value?.threshold,
+            amount: amount.value
+          });
+  
+          showSuccess('Successfully initiate transaction');
+          router.push({ name: 'multisig.wallet' });
+        } catch (error: any) {
+          passwordError.value = error.message;
+        } finally {
+          isLoading.value = false;
+        }
+      }, 500);
+      
     };
 
     const renderActiveView = () => {

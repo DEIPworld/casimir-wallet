@@ -7,7 +7,7 @@ import { emitter } from '@/utils/eventBus';
 
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
-import type { IAccount, ITransaction, IMultisigTransactionData, IMultisigTransactionObject } from '../../types';
+import type { IAccount, ITransaction, IMultisigTransactionData } from '../../types';
 
 const apiService = ApiService.getInstance();
 
@@ -108,6 +108,8 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
       true,
       {
         callHash,
+        recipient,
+        amount,
         multisigAddress,
         account: restoredAccount,
         otherSignatories,
@@ -137,6 +139,8 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
         account: KeyringPair$Json,
         password: string,
       },
+      recipient: string,
+      amount: number,
       callHash: string,
       callData: string,
       multisigAddress: string,
@@ -144,11 +148,16 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
       threshold: number
     }
   ): Promise<any> => {
-    const { sender, callHash, callData, multisigAddress, otherSignatories, threshold } = data;
     const {
-      account,
-      password
-    } = sender;
+      sender: { account, password },
+      callHash,
+      callData,
+      recipient,
+      amount,
+      multisigAddress,
+      otherSignatories,
+      threshold
+    } = data;
 
     const restoredAccount: CreateResult = await apiService.restoreAccount(account, password);
 
@@ -156,6 +165,8 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
       await apiService.approveAndSendMultisigTransaction({
         callHash,
         callData,
+        recipient,
+        amount,
         multisigAddress,
         account: restoredAccount,
         otherSignatories,
@@ -166,6 +177,8 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
         false,
         {
           callHash,
+          recipient,
+          amount,
           multisigAddress,
           account: restoredAccount,
           otherSignatories,

@@ -7,8 +7,7 @@ import {
   mnemonicValidate,
   mnemonicToMiniSecret,
   decodeAddress,
-  encodeMultiAddress,
-  sortAddresses
+  encodeMultiAddress
 } from '@polkadot/util-crypto';
 import { u8aToHex, hexToU8a } from '@polkadot/util';
 
@@ -23,7 +22,7 @@ import type {
   IVestingPlan,
   ITransaction,
   IMultisigTransactionData,
-  IMultisigTransactionObject
+  IMultisigTransaction
 } from '../../types';
 
 import type { BN } from '@polkadot/util';
@@ -269,48 +268,48 @@ export class ApiService {
 
   async approveMultisigTransaction(isFirstApproval: boolean, {
     callHash,
+    recipient,
+    amount,
     multisigAddress,
     account,
     otherSignatories,
     threshold
-  }: IMultisigTransactionObject): Promise<void> {
-    try {
-      const weight = 640000000; //TODO: calculate if possible or set fixed value
-      let timePoint = null;
+  }: IMultisigTransaction): Promise<void> {
+    const { weight } = await this.api.tx.balances
+        .transfer(recipient, amount)
+        .paymentInfo(multisigAddress);
+    let timePoint = null;
 
-      if (!isFirstApproval) {
-        const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash)); //TODO: took from transaction.method.hash
-        timePoint = info.unwrap().when;
-      }
-
-      await this.api.tx.multisig
-        .approveAsMulti(threshold, otherSignatories.sort(), timePoint, callHash, weight) // TODO: sort other signatories by using polkadot utils method
-        .signAndSend(account.pair);
-    } catch (error) {
-      console.error(error);
+    if (!isFirstApproval) {
+      const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash));
+      timePoint = info.unwrap().when;
     }
+
+    await this.api.tx.multisig
+      .approveAsMulti(threshold, otherSignatories.sort(), timePoint, callHash, parseInt(weight))
+      .signAndSend(account.pair);
   }
 
   async approveAndSendMultisigTransaction({
     callHash,
     callData,
+    recipient,
+    amount,
     multisigAddress,
     account,
     otherSignatories,
     threshold
-  }: IMultisigTransactionObject): Promise<any> {
-    const weight = 640000000; //TODO: calculate if possible or set fixed value
+  }: IMultisigTransaction): Promise<void> {
+    const { weight } = await this.api.tx.balances
+        .transfer(recipient, amount)
+        .paymentInfo(multisigAddress);
 
-    try {
-      const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash)); //TODO: took from transaction.method.hash
-      const timePoint = info.unwrap().when;
+    const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash));
+    const timePoint = info.unwrap().when;
 
-      await this.api.tx.multisig
-        .asMulti(threshold, otherSignatories.sort(), timePoint, callData, false, weight) //TODO: took from transaction.method.toHex()
-        .signAndSend(account.pair);
-    } catch (error) {
-      console.error(error);
-    }
+    await this.api.tx.multisig
+      .asMulti(threshold, otherSignatories.sort(), timePoint, callData, false, parseInt(weight))
+      .signAndSend(account.pair);
   }
 
   subscribeToBalance(address: string): void {

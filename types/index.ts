@@ -60,16 +60,18 @@ export interface IMultisigTransactionData {
   callHash: string;
 }
 
-export interface IMultisigTransactionObject { //TODO: change naming
+export interface IMultisigTransaction {
   callHash: string;
   callData?: string;
+  recipient: string;
+  amount: number;
   account: CreateResult,
   multisigAddress?: string,
   otherSignatories: string[],
   threshold: number,
 }
 
-export interface IMultisigTransaction extends IMultisigTransactionData {
+export interface IMultisigTransactionItem extends IMultisigTransactionData {
   _id: string;
   address: string;
   recipient: string;
