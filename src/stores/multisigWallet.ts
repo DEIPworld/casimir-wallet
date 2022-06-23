@@ -7,7 +7,7 @@ import { emitter } from '@/utils/eventBus';
 
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
-import type { IAccount, ITransaction, IMultisigTransactionData } from '../../types';
+import type { IAccount, ITransaction, IMultisigTransactionData, IMultisigTransactionObject } from '../../types';
 
 const apiService = ApiService.getInstance();
 
@@ -74,7 +74,7 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
   };
 
   const initMultisigTransaction = async (data: {
-    address: string,
+    multisigAddress: string,
     recipient: string,
     callHash: string,
     callData: string,
@@ -87,7 +87,7 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     amount: number
   }): Promise<any> => {
     const {
-      address,
+      multisigAddress,
       recipient,
       callData,
       callHash,
@@ -104,15 +104,18 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
 
     const restoredAccount: CreateResult = await apiService.restoreAccount(account, password);
 
-    await apiService.initMultisigTransaction(
-      callHash,
-      restoredAccount,
-      otherSignatories,
-      threshold
-    );
+    await apiService.approveMultisigTransaction(
+      true,
+      {
+        callHash,
+        multisigAddress,
+        account: restoredAccount,
+        otherSignatories,
+        threshold
+      });
 
     const params = {
-      address,
+      address: multisigAddress,
       recipient,
       amount,
       initiator: account.address,
@@ -127,13 +130,21 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
   };
 
   const approveMultisigTransaction = async (
-    sender: {
-      account: KeyringPair$Json,
-      password: string,
-    },
-    otherSignatories: any[],
-    threshold: number
+    transactionId: string,
+    isFinalApprove: boolean,
+    data: {
+      sender: {
+        account: KeyringPair$Json,
+        password: string,
+      },
+      callHash: string,
+      callData: string,
+      multisigAddress: string,
+      otherSignatories: string[],
+      threshold: number
+    }
   ): Promise<any> => {
+    const { sender, callHash, callData, multisigAddress, otherSignatories, threshold } = data;
     const {
       account,
       password
@@ -141,11 +152,32 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
 
     const restoredAccount: CreateResult = await apiService.restoreAccount(account, password);
 
-    return await apiService.approveMultisigTransaction(
-      restoredAccount,
-      otherSignatories,
-      threshold
-    );
+    if (isFinalApprove) {
+      await apiService.approveAndSendMultisigTransaction({
+        callHash,
+        callData,
+        multisigAddress,
+        account: restoredAccount,
+        otherSignatories,
+        threshold
+      });
+    } else {
+      await apiService.approveMultisigTransaction(
+        false,
+        {
+          callHash,
+          multisigAddress,
+          account: restoredAccount,
+          otherSignatories,
+          threshold
+        });
+    }
+
+    const params = {
+      approverAddress: account.address
+    };
+
+    await HttpService.patch(`/transaction/approve/${transactionId}`, params);
   };
 
 

@@ -63,7 +63,7 @@ export const MultisigActionSend = defineComponent({
 
       try {
         await multisigStore.initMultisigTransaction({
-          address: props.address,
+          multisigAddress: props.address,
           recipient: recipient.value,
           callHash: transactionData.value.callHash,
           callData: transactionData.value.callData,

@@ -135,7 +135,11 @@ export const ApprovalDetails = defineComponent({
             <VBtn color="secondary-btn" onClick={() => emit('click:cancel')}>
               cancel
             </VBtn>
-            {!isApprovedByUser.value && <VBtn class="ml-4">Approve</VBtn>}
+            {!isApprovedByUser.value && (
+              <VBtn class="ml-4" onClick={() => emit('click:confirm')}>
+                Approve
+              </VBtn>
+            )}
           </div>
         </div>
       </div>
