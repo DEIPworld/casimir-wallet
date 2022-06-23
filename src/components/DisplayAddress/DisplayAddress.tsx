@@ -38,10 +38,11 @@ export const DisplayAddress = defineComponent({
       }
     };
 
-    const renderDefaultVariant = () => (
-      <VSheet maxWidth={200} class="d-flex align-center">
-        <div class="text-subtitle-1 text-truncate">{middleTruncate(props.address)}</div>
-        {!props.hideCopyButton && (
+    const renderCopyButton = (isDefaultVariant = true) => {
+      if (props.hideCopyButton) return;
+
+      if (isDefaultVariant) {
+        return (
           <VBtn
             icon
             variant="outlined"
@@ -52,7 +53,20 @@ export const DisplayAddress = defineComponent({
           >
             <VIcon size="16px">mdi-content-copy</VIcon>
           </VBtn>
-        )}
+        );
+      }
+
+      return (
+        <VBtn color="primary" prependIcon="mdi-content-copy" onClick={copyAddress}>
+            Copy
+          </VBtn>
+      );
+    };
+
+    const renderDefaultVariant = () => (
+      <VSheet maxWidth={200} class="d-flex align-center">
+        <div class="text-subtitle-1 text-truncate">{middleTruncate(props.address)}</div>
+        {renderCopyButton(true)}
       </VSheet>
     );
 
@@ -61,12 +75,7 @@ export const DisplayAddress = defineComponent({
         <VSheet class="mr-n1 px-4 d-flex align-center" maxWidth={200}>
           <div class="text-truncate">{props.address}</div>
         </VSheet>
-
-        {!props.hideCopyButton && (
-          <VBtn color="primary" prependIcon="mdi-content-copy" onClick={copyAddress}>
-            Copy
-          </VBtn>
-        )}
+        {renderCopyButton(false)}
       </VSheet>
     );
 

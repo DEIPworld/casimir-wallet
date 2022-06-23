@@ -36,7 +36,7 @@ export const AddSignatoryModal = defineComponent({
     const { value: name, errorMessage: nameError } = useField<string>('name');
 
     watchEffect(() => {
-      if (props.isOpen) {
+      if (!props.isOpen) {
         address.value = '';
         name.value = '';
       }
@@ -50,7 +50,6 @@ export const AddSignatoryModal = defineComponent({
           </VCardTitle>
 
           <VTextField
-            singleLine
             density='comfortable'
             class='spacer'
             label='Address'
@@ -58,7 +57,6 @@ export const AddSignatoryModal = defineComponent({
             {...makeError(addressError.value || props.signatoryError)}
           />
           <VTextField
-            singleLine
             density='comfortable'
             class='spacer'
             label='Name'
