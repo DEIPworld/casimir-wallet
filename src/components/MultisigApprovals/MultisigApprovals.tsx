@@ -1,59 +1,33 @@
 import { defineComponent, ref } from 'vue';
-import { storeToRefs } from 'pinia';
-import { VSheet, VBtn } from 'vuetify/components';
 
-import { useMultisigWalletStore } from '@/stores/multisigWallet';
-
-import { ApprovalDetailsModal } from './ApprovalDetailsModal';
+import { ApprovalsList } from './ApprovalsList';
+import { ApprovalDetails } from './ApprovalDetails';
 
 export const MultisigApprovals = defineComponent({
   setup() {
-    const multisigStore = useMultisigWalletStore();
-    const { pendingApprovals } = storeToRefs(multisigStore);
+    const selectedTransaction = ref<object>();
 
-    const isOpen = ref<boolean>(false);
-    const selectedTransaction = ref<object>({});
-
-    const onSelect = (item: object) => {
-      isOpen.value = true;
+    const onOpenDetailsView = (item: object) => {
       selectedTransaction.value = item;
-    }
+    };
 
-    const onCloseModal = () => {
-      isOpen.value = false;
-      selectedTransaction.value = {};
-    }
+    const onCloseDetailsView = () => {
+      selectedTransaction.value = undefined;
+    };
 
-    const renderApprovalsList = () =>
-      pendingApprovals.value.map((item) => (
-        <VSheet
-          key={item.callData}
-          rounded
-          color="rgba(255,255,255,.1)"
-          class="mt-4 pa-4 d-flex justify-space-between align-center"
-        >
-          <span class="text-h6 text-truncate">{item.callHash}</span>
-          <VBtn
-            rounded={false}
-            size="small"
-            color={'secondary-btn'}
-            class="ml-8"
-            onClick={() => onSelect(item)}
-          >
-            View
-          </VBtn>
-        </VSheet>
-      ));
+    const renderView = () => {
+      if (selectedTransaction.value) {
+        return (
+          <ApprovalDetails
+            pendingApproval={selectedTransaction.value}
+            onClick:cancel={onCloseDetailsView}
+          />
+        );
+      }
 
-    return () => (
-      <>
-        {renderApprovalsList()}
-        <ApprovalDetailsModal
-          isOpen={isOpen.value}
-          pendingApproval={selectedTransaction.value}
-          onClick:cancel={() => (isOpen.value = false)}
-        />
-      </>
-    );
+      return <ApprovalsList onClick:select={onOpenDetailsView} />;
+    };
+
+    return renderView;
   }
 });

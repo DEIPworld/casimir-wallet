@@ -43,6 +43,7 @@ export interface IWallet extends IKeyPair {
 export interface ISignatory {
   address: string;
   name: string;
+  isApproved?: boolean;
 }
 
 export interface IMultisigWallet {
@@ -65,7 +66,5 @@ export interface IMultisigTransaction extends IMultisigTransactionData {
   threshold: number;
   approvals: number;
   status: string;
-  signatories: ISignatory[] & {
-    isApproved?: boolean
-  }
+  signatories: ISignatory[]
 }
