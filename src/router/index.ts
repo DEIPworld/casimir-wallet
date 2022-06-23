@@ -21,7 +21,6 @@ import { MultisigVestingView } from '@/components/MultisigVestingView';
 import { MultisigVestingDetails } from '@/components/MultisigVestingDetails';
 import { MultisigDetailsView } from '@/components/MultisigDetailsView';
 import { MultisigActionSend } from '@/components/MultisigActionSend';
-import { MultisigActionReceive } from '@/components/MultisigActionReceive';
 
 import { WalletBalances } from '@/components/WalletBalances';
 import { WalletTransactions } from '@/components/WalletTransactions';
@@ -161,7 +160,7 @@ const router = createRouter({
                   path: 'receive',
                   name: 'multisig.action.receive',
                   props: true,
-                  component: MultisigActionReceive
+                  component: ActionReceive
                 }
               ]
             },

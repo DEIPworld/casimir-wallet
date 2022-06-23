@@ -1,17 +1,25 @@
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { VBtn, VSheet, VSpacer } from 'vuetify/components';
 
 import VueQrcode from '@chenfengyuan/vue-qrcode';
 import { DisplayAddress } from '@/components/DisplayAddress';
 import { useAccountStore } from '@/stores/account';
-import { InnerContainer } from '@/components/InnerContainer';
 
 export const ActionReceive = defineComponent({
   setup() {
+    const route = useRoute();
 
     const accountStore = useAccountStore();
-    const { address } = storeToRefs(accountStore);
+    const { address, multisigAccountDetails } = storeToRefs(accountStore);
+
+    const isMultiSigView = computed(() => route.path.includes('multisig'));
+    const activeAddress = computed(() => 
+      isMultiSigView.value
+      ? multisigAccountDetails.value?.address
+      : address.value
+    );
 
     return () => (
       <>
@@ -21,11 +29,11 @@ export const ActionReceive = defineComponent({
         </div>
 
         <VSheet maxWidth={240} class="mx-auto">
-          <VueQrcode value={address.value} tag="svg" />
+          <VueQrcode value={activeAddress.value} tag="svg" />
         </VSheet>
 
         <div class="d-flex mt-12">
-          <DisplayAddress address={address.value} variant="accent" />
+          <DisplayAddress address={activeAddress.value} variant="accent" />
           <VSpacer/>
           <VBtn
             color="secondary-btn"
