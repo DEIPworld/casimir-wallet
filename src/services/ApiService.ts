@@ -7,9 +7,7 @@ import {
   mnemonicValidate,
   mnemonicToMiniSecret,
   decodeAddress,
-  encodeAddress,
   encodeMultiAddress,
-  createKeyMulti,
   sortAddresses
 } from '@polkadot/util-crypto';
 import { u8aToHex, hexToU8a } from '@polkadot/util';
@@ -19,7 +17,7 @@ import { emitter } from '@/utils/eventBus';
 
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
-import type { IAccount, IKeyPair, IVestingPlan, ITransaction } from '../../types';
+import type { IAccount, IKeyPair, IVestingPlan, ITransaction, IMultisigTransactionData } from '../../types';
 
 import type { BN } from '@polkadot/util';
 import type { AccountInfo } from '@polkadot/types/interfaces/system/types';
@@ -250,34 +248,29 @@ export class ApiService {
     }
   }
 
+  createMultisigTransaction(recipient: string, amount: number): IMultisigTransactionData {
+    const transaction = this.api.tx.balances.transfer(
+      recipient,
+      new BigNumber(amount).shiftedBy(18).toString()
+    );
+
+    return {
+      callHash: u8aToHex(transaction.method.hash),
+      callData: transaction.method.toHex()
+    };
+  }
+
   async initMultisigTransaction(
-    recipient: string,
+    txHash: string,
     account: CreateResult,
     otherSignatories: any[],
-    threshold: number,
-    amount: number
+    threshold: number
   ): Promise<any> {
     try {
       const weight = 640000000; //TODO: calculate if possible or set fixed value
-      const transaction = this.api.tx.balances.transfer(
-        recipient,
-        new BigNumber(amount).shiftedBy(18).toString()
-      );
-  
-      const txHash = await this.api.tx.multisig
-        .approveAsMulti(threshold, otherSignatories.sort(), null, transaction.method.hash, weight) // TODO: sort other signatories by using polkadot utils method
+      await this.api.tx.multisig
+        .approveAsMulti(threshold, otherSignatories.sort(), null, txHash, weight) // TODO: sort other signatories by using polkadot utils method
         .signAndSend(account.pair);
-  
-      console.clear();
-      console.log("DATA");
-      console.log(u8aToHex(txHash));
-      console.log(u8aToHex(transaction.method.hash));
-      console.log(transaction.method.toHex());
-
-      return {
-        callHash: u8aToHex(transaction.method.hash),
-        callData: transaction.method.toHex()
-      };
     } catch (error) {
       console.clear();
       console.error(error);
@@ -352,7 +345,7 @@ export class ApiService {
               const isWithdraw = sender && this.activeAddresses.has(sender.toString());
 
               const relatedTransfer = isDeposit || isWithdraw;
-              
+
               if (event.method === 'Transfer' && relatedTransfer) {
                 const relatedAddress = isDeposit ? recipient.toString() : sender.toString();
 

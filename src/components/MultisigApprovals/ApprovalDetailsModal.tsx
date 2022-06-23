@@ -5,7 +5,6 @@ import {
   VDialog,
   VCard,
   VCardTitle,
-  VCardSubtitle,
   VTextField,
   VIcon
 } from 'vuetify/components';
