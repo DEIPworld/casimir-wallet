@@ -1,5 +1,3 @@
-import { string } from 'yup';
-
 export interface IAccount {
   nonce: number;
   consumers: number;
@@ -52,4 +50,22 @@ export interface IMultisigWallet {
   name: string;
   threshold: number,
   signatories: ISignatory[];
+}
+
+export interface IMultisigTransactionData {
+  callData: string;
+  callHash: string;
+}
+
+export interface IMultisigTransaction extends IMultisigTransactionData {
+  address: string;
+  recipient: string;
+  amount: number;
+  initiator: string;
+  threshold: number;
+  approvals: number;
+  status: string;
+  signatories: ISignatory[] & {
+    isApproved?: boolean
+  }
 }

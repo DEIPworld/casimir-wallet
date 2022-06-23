@@ -7,7 +7,7 @@ import { emitter } from '@/utils/eventBus';
 
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
-import type { IAccount, ITransaction } from '../../types';
+import type { IAccount, ITransaction, IMultisigTransactionData } from '../../types';
 
 const apiService = ApiService.getInstance();
 
@@ -66,16 +66,37 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     );
   };
 
-  const initMultisigTransaction = async (
+  const createMultisigTransaction = (
     recipient: string,
+    amount: number
+  ): IMultisigTransactionData => {
+    return apiService.createMultisigTransaction(recipient, amount);
+  };
+
+  const initMultisigTransaction = async (data: {
+    address: string,
+    recipient: string,
+    callHash: string,
+    callData: string,
     sender: {
       account: KeyringPair$Json,
       password: string,
     },
-    otherSignatories: any[],
+    otherSignatories: string[],
     threshold: number,
     amount: number
-  ): Promise<any> => {
+  }): Promise<any> => {
+    const {
+      address,
+      recipient,
+      callData,
+      callHash,
+      sender,
+      otherSignatories,
+      threshold,
+      amount
+    } = data;
+
     const {
       account,
       password
@@ -83,16 +104,15 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
 
     const restoredAccount: CreateResult = await apiService.restoreAccount(account, password);
 
-    const { callHash, callData } = await apiService.initMultisigTransaction(
-      recipient,
+    await apiService.initMultisigTransaction(
+      callHash,
       restoredAccount,
       otherSignatories,
-      threshold,
-      amount
+      threshold
     );
 
-    const data = {
-      address: '5H7nVfrWNcDdVAwZt1FJd7joBehjMbuT5j9AFtp2ixDH1wsv', //TODO: replace with multisig address
+    const params = {
+      address,
       recipient,
       amount,
       initiator: account.address,
@@ -101,7 +121,7 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
       callData
     };
 
-    const { data: result } = await HttpService.post('/transaction/create', data);
+    const { data: result } = await HttpService.post('/transaction/create', params);
 
     return result;
   };
@@ -141,6 +161,7 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     getAccountBalance,
     getPendingApprovals,
 
+    createMultisigTransaction,
     initMultisigTransaction,
     approveMultisigTransaction,
     subscribeToTransfers,
