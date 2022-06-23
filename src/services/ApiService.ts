@@ -17,7 +17,14 @@ import { emitter } from '@/utils/eventBus';
 
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
-import type { IAccount, IKeyPair, IVestingPlan, ITransaction, IMultisigTransactionData } from '../../types';
+import type {
+  IAccount,
+  IKeyPair,
+  IVestingPlan,
+  ITransaction,
+  IMultisigTransactionData,
+  IMultisigTransactionObject
+} from '../../types';
 
 import type { BN } from '@polkadot/util';
 import type { AccountInfo } from '@polkadot/types/interfaces/system/types';
@@ -260,45 +267,48 @@ export class ApiService {
     };
   }
 
-  async initMultisigTransaction(
-    txHash: string,
-    account: CreateResult,
-    otherSignatories: any[],
-    threshold: number
-  ): Promise<any> {
+  async approveMultisigTransaction(isFirstApproval: boolean, {
+    callHash,
+    multisigAddress,
+    account,
+    otherSignatories,
+    threshold
+  }: IMultisigTransactionObject): Promise<void> {
     try {
       const weight = 640000000; //TODO: calculate if possible or set fixed value
+      let timePoint = null;
+
+      if (!isFirstApproval) {
+        const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash)); //TODO: took from transaction.method.hash
+        timePoint = info.unwrap().when;
+      }
+
       await this.api.tx.multisig
-        .approveAsMulti(threshold, otherSignatories.sort(), null, txHash, weight) // TODO: sort other signatories by using polkadot utils method
+        .approveAsMulti(threshold, otherSignatories.sort(), timePoint, callHash, weight) // TODO: sort other signatories by using polkadot utils method
         .signAndSend(account.pair);
     } catch (error) {
-      console.clear();
       console.error(error);
     }
   }
 
-  async approveMultisigTransaction(
-    account: CreateResult,
-    otherSignatories: any[],
-    threshold: number
-  ): Promise<any> {
+  async approveAndSendMultisigTransaction({
+    callHash,
+    callData,
+    multisigAddress,
+    account,
+    otherSignatories,
+    threshold
+  }: IMultisigTransactionObject): Promise<any> {
     const weight = 640000000; //TODO: calculate if possible or set fixed value
-    const multisigAddress = '5H7nVfrWNcDdVAwZt1FJd7joBehjMbuT5j9AFtp2ixDH1wsv'; //TODO: replace with actual value
 
-    // 4. Send 1 WND to Charlie account
     try {
-      const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a('0xdf10f1b47ae4e1f0e93b57f4e35c1d453caca1d06c905dc8d2824a389cc9b099')); //TODO: took from transaction.method.hash
+      const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash)); //TODO: took from transaction.method.hash
       const timePoint = info.unwrap().when;
 
-      const txHash = await this.api.tx.multisig
-        .asMulti(threshold, otherSignatories.sort(), timePoint, '0x040000245233f6f31cdf26937e58dc67009d28599d203b2f46173fe9eec86235f23e4413000064a7b3b6e00d', false, weight) //TODO: took from transaction.method.toHex()
+      await this.api.tx.multisig
+        .asMulti(threshold, otherSignatories.sort(), timePoint, callData, false, weight) //TODO: took from transaction.method.toHex()
         .signAndSend(account.pair);
-
-      console.clear();
-      console.log("DONE AND SEND!!!");
-
     } catch (error) {
-      console.clear();
       console.error(error);
     }
   }

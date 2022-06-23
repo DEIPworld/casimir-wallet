@@ -1,3 +1,5 @@
+import type { CreateResult } from '@polkadot/ui-keyring/types';
+
 export interface IAccount {
   nonce: number;
   consumers: number;
@@ -58,7 +60,17 @@ export interface IMultisigTransactionData {
   callHash: string;
 }
 
+export interface IMultisigTransactionObject { //TODO: change naming
+  callHash: string;
+  callData?: string;
+  account: CreateResult,
+  multisigAddress?: string,
+  otherSignatories: string[],
+  threshold: number,
+}
+
 export interface IMultisigTransaction extends IMultisigTransactionData {
+  _id: string;
   address: string;
   recipient: string;
   amount: number;
