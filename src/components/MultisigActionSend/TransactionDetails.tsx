@@ -12,8 +12,8 @@ export const TransactionDetails = defineComponent({
   emits: ['click:cancel', 'click:confirm'],
   props: {
     transactionData: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   setup(props, { emit }) {
     const { toClipboard } = useClipboard();
@@ -37,14 +37,30 @@ export const TransactionDetails = defineComponent({
         <VCardTitle class="text-h6 text-white">Authorize transaction</VCardTitle>
         <div class="ms-4 text-subtitle-1">
           <div class="d-flex justify-space-between align-center mt-4">
-            <span>Sending from</span>
+            <div class="d-flex align-center">
+              <span>Sending from</span>
+              <div
+                class="dw-tooltip dw-tooltip__right ml-4 text-body-1"
+                data-tooltip="The sending account that will be used to send this transaction.\nAny applicable fees will be paid by this account"
+              >
+                <VIcon size="x-small">mdi-help-circle-outline</VIcon>
+              </div>
+            </div>
             <div class="d-flex align-center">
               <span class="mr-4">{multisigAccountDetails.value?.name}</span>
               <DisplayAddress address={multisigAccountDetails.value?.address} hideCopyButton />
             </div>
           </div>
           <div class="d-flex justify-space-between align-center mt-4">
-            <span>Multisig signatory</span>
+            <div class="d-flex align-center">
+              <span>Multisig signatory</span>
+              <div
+                class="dw-tooltip dw-tooltip__right ml-4 text-body-1"
+                data-tooltip="The signatory is one of the allowed accounts on the multisig,\nmaking a recorded approval for the transaction"
+              >
+                <VIcon size="x-small">mdi-help-circle-outline</VIcon>
+              </div>
+            </div>
             <DisplayAddress address={address.value} hideCopyButton />
           </div>
 
@@ -60,7 +76,11 @@ export const TransactionDetails = defineComponent({
             </div>
             <div class="d-flex align-center mt-2">
               <span class="text-truncate">{props.transactionData?.callData}</span>
-              <VIcon class="ml-4" size="16px" onClick={() => onCopy(props.transactionData?.callData)}>
+              <VIcon
+                class="ml-4"
+                size="16px"
+                onClick={() => onCopy(props.transactionData?.callData)}
+              >
                 mdi-content-copy
               </VIcon>
             </div>
@@ -77,7 +97,11 @@ export const TransactionDetails = defineComponent({
             </div>
             <div class="d-flex align-center mt-2">
               <span class="text-truncate">{props.transactionData?.callHash}</span>
-              <VIcon class="ml-4" size="16px" onClick={() => onCopy(props.transactionData?.callHash)}>
+              <VIcon
+                class="ml-4"
+                size="16px"
+                onClick={() => onCopy(props.transactionData?.callHash)}
+              >
                 mdi-content-copy
               </VIcon>
             </div>
@@ -94,5 +118,5 @@ export const TransactionDetails = defineComponent({
         </div>
       </>
     );
-  },
+  }
 });

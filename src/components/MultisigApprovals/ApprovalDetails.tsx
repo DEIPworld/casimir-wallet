@@ -30,9 +30,6 @@ export const ApprovalDetails = defineComponent({
         (item: ISignatory) => item.address === props.pendingApproval.initiator
       )
     );
-    const existingApprovals = computed(() =>
-      props.pendingApproval.signatories.filter((item: ISignatory) => item.isApproved)
-    );
     const isApprovedByUser = computed(() =>
       props.pendingApproval.signatories.some(
         (item: ISignatory) => item.address === address.value && item.isApproved
@@ -49,7 +46,7 @@ export const ApprovalDetails = defineComponent({
     };
 
     const renderSignatories = () =>
-      existingApprovals.value.map((signatory: ISignatory) => (
+      props.pendingApproval.signatories.map((signatory: ISignatory) => (
         <div class="d-flex align-center justify-end">
           <span class="mr-4">{signatory.name}</span>
           <DisplayAddress address={signatory.address} hideCopyButton />
