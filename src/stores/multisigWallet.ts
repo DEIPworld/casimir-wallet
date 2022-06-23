@@ -14,7 +14,7 @@ const apiService = ApiService.getInstance();
 export const useMultisigWalletStore = defineStore('multisigBalance', () => {
   const balance = ref<IAccount | undefined>();
   const transactions = ref<ITransaction[]>([]);
-  const pendingApprovals = ref<any[]>([]); // TODO: add type when schema is defined
+  const pendingApprovals = ref<IMultisigTransactionData[]>([]);
 
   const freeBalance = computed(() =>
     parseFloat(balance.value?.data.free.replace(',', '') || '')
