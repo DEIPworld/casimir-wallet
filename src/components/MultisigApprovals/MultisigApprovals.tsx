@@ -8,8 +8,8 @@ import { useAccountStore } from '@/stores/account';
 import { useMultisigWalletStore } from '@/stores/multisigWallet';
 import { useNotify } from '@/composable/notify';
 
-import { ApprovalsList } from './ApprovalsList';
-import { ApprovalDetails } from './ApprovalDetails';
+import { MultisigApprovalsList } from './MultisigApprovalsList';
+import { MultisigApprovalDetails } from './MultisigApprovalDetails';
 
 import type { IMultisigTransactionItem } from '../../../types';
 
@@ -86,7 +86,7 @@ export const MultisigApprovals = defineComponent({
     const renderView = () => {
       if (selectedTransaction.value) {
         return (
-          <ApprovalDetails
+          <MultisigApprovalDetails
             pendingApproval={selectedTransaction.value}
             onClick:cancel={onCloseDetailsView}
             onClick:confirm={() => (isConfirmActionModalOpen.value = true)}
@@ -94,7 +94,7 @@ export const MultisigApprovals = defineComponent({
         );
       }
 
-      return <ApprovalsList onClick:select={onOpenDetailsView} />;
+      return <MultisigApprovalsList onClick:select={onOpenDetailsView} />;
     };
 
     return () => (

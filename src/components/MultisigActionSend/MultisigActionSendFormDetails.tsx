@@ -8,7 +8,7 @@ import { DisplayAddress } from '@/components/DisplayAddress';
 import { useNotify } from '@/composable/notify';
 import { useAccountStore } from '@/stores/account';
 
-export const TransactionDetails = defineComponent({
+export const MultisigActionSendFormDetails = defineComponent({
   emits: ['click:cancel', 'click:confirm'],
   props: {
     transactionData: {

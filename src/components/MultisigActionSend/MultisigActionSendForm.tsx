@@ -21,7 +21,7 @@ Likewise if the sending account balance drops below the same value,the account w
 removed from the state
 `;
 
-export const SendView = defineComponent({
+export const MultisigActionSendForm = defineComponent({
   emits: ['click:cancel', 'click:confirm'],
   props: {
     address: {

@@ -10,7 +10,7 @@ import { useNotify } from '@/composable/notify';
 
 import type { ISignatory } from 'types';
 
-export const ApprovalDetails = defineComponent({
+export const MultisigApprovalDetails = defineComponent({
   emits: ['click:cancel', 'click:confirm'],
   props: {
     pendingApproval: {
