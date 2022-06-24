@@ -10,7 +10,7 @@ import { useField, useForm } from 'vee-validate';
 
 import { useYup } from '@/composable/validate';
 
-export const AddSignatoryModal = defineComponent({
+export const AccountCreateSignatoryModal = defineComponent({
   emits: ['click:confirm', 'click:cancel'],
   props: {
     isOpen: {

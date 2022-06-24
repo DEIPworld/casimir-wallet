@@ -11,11 +11,11 @@ import { useAccountStore } from '@/stores/account';
 import { useYup } from '@/composable/validate';
 import { useNotify } from '@/composable/notify';
 
-import { AddSignatoryModal } from './AddSignatoryModal';
+import { AccountCreateSignatoryModal } from './AccountCreateSignatoryModal';
 
 import type { ISignatory } from '../../../types';
 
-export const MultisigAccountCreate = defineComponent({
+export const AccountCreateMulti = defineComponent({
   setup() {
     const accountStore = useAccountStore();
     const { address: userAddress } = storeToRefs(accountStore);
@@ -137,7 +137,7 @@ export const MultisigAccountCreate = defineComponent({
           </div>
         </InnerContainer>
 
-        <AddSignatoryModal
+        <AccountCreateSignatoryModal
           isOpen={isAddSignatoryModalOpen.value}
           signatorySchema={signatorySchema}
           signatoryError={signatoryError.value}

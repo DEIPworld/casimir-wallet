@@ -4,7 +4,7 @@ import { VSheet, VBtn } from 'vuetify/components';
 
 import { useMultisigWalletStore } from '@/stores/multisigWallet';
 
-export const ApprovalsList = defineComponent({
+export const MultisigApprovalsList = defineComponent({
   emits: ['click:select'],
   setup(props, { emit }) {
     const multisigStore = useMultisigWalletStore();

@@ -8,8 +8,8 @@ import { useAccountStore } from '@/stores/account';
 import { useMultisigWalletStore } from '@/stores/multisigWallet';
 import { useNotify } from '@/composable/notify';
 
-import { SendView } from './SendView';
-import { TransactionDetails } from './TransactionDetails';
+import { MultisigActionSendForm } from './MultisigActionSendForm';
+import { MultisigActionSendFormDetails } from './MultisigActionSendFormDetails';
 
 import type { IMultisigTransactionData } from '../../../types';
 
@@ -89,7 +89,7 @@ export const MultisigActionSend = defineComponent({
     const renderActiveView = () => {
       if (isDetailsViewOpen.value) {
         return (
-          <TransactionDetails
+          <MultisigActionSendFormDetails
             transactionData={transactionData.value}
             onClick:cancel={() => (isDetailsViewOpen.value = false)}
             onClick:confirm={() => (isConfirmActionModalOpen.value = true)}
@@ -97,7 +97,7 @@ export const MultisigActionSend = defineComponent({
         );
       }
       return (
-        <SendView
+        <MultisigActionSendForm
           address={props.address}
           onClick:cancel={() => router.push({ name: 'multisig.wallet' })}
           onClick:confirm={onConfirm}

@@ -12,7 +12,6 @@ import { AccountCreate } from '@/components/AccountCreate';
 import { AccountImport } from '@/components/AccountImport';
 
 import { MultisigView } from '@/components/MultisigView';
-import { MultisigAccountCreate } from '@/components/MultisigAccountCreate';
 import { MultisigWalletView } from '@/components/MultisigWalletView';
 import { MultisigBalances } from '@/components/MultisigBalances';
 import { MultisigTransactions } from '@/components/MultisigTransactions';
@@ -112,7 +111,10 @@ const router = createRouter({
         {
           path: 'create',
           name: 'multisig.create',
-          component: MultisigAccountCreate
+          props: {
+            accountType: 'multi'
+          },
+          component: AccountCreate
         },
         {
           path: ':address',
