@@ -1,0 +1,1 @@
+export { MultisigApprovalDetails } from './MultisigApprovalDetails';

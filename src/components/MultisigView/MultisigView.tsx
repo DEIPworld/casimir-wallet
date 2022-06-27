@@ -16,7 +16,7 @@ export const MultisigView = defineComponent({
     const address = toRef(props, 'address');
     const accountStore = useAccountStore();
 
-    onBeforeMount(async () => {
+    onBeforeMount(() => {
       accountStore.getMultisigAccountDetails(props.address);
       multisigStore.subscribeToTransfers(props.address);
       multisigStore.getAccountBalance(props.address);
