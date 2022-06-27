@@ -37,7 +37,6 @@ export const MultisigWalletView = defineComponent({
               <VBtn
                 size="small"
                 color="primary"
-                rounded={false}
                 to={{ name: 'multisig.action.send' }}
               >
                 Send
@@ -47,7 +46,6 @@ export const MultisigWalletView = defineComponent({
                 size="small"
                 color={'secondary-btn'}
                 class={'ml-2'}
-                rounded={false}
                 to={{ name: 'multisig.details' }}
               >
                 Edit

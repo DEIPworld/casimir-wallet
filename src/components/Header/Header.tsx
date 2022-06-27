@@ -74,11 +74,11 @@ export const Header = defineComponent({
       ));
 
     const renderMenu = () => (
-      <VBtn width="180" color="secondary-btn" variant="contained" size="small" rounded={false}>
+      <VBtn width="180" color="secondary-btn" class="text-capitalize" variant="contained" size="small" rounded={false}>
         Accounts
         <VMenu activator="parent" location="bottom">
           <VList>
-            <VListItem to={{ name: 'wallet' }}>my wallet</VListItem>
+            <VListItem to={{ name: 'wallet' }}>My wallet</VListItem>
             <VListItem to={{ name: 'multisig.create' }}>
               <VIcon size="small" class="ml-n2">
                 mdi-plus
@@ -86,7 +86,7 @@ export const Header = defineComponent({
               <span>Add multisig</span>
             </VListItem>
             {renderMultisigAccounts()}
-            <VListItem onClick={() => emit('click:logout')}>log out</VListItem>
+            <VListItem onClick={() => emit('click:logout')}>Log out</VListItem>
           </VList>
         </VMenu>
       </VBtn>

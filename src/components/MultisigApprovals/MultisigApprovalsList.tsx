@@ -20,7 +20,6 @@ export const MultisigApprovalsList = defineComponent({
         >
           <span class="text-h6 text-truncate">{item.callHash}</span>
           <VBtn
-            rounded={false}
             size="small"
             color={'secondary-btn'}
             class="ml-8"

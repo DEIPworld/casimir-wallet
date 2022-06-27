@@ -91,9 +91,13 @@ export const AccountCreateMulti = defineComponent({
       <>
         <InnerContainer>
           <div>
-            <div class="text-h6 mb-2">Add multisig account</div>
+            <div class="text-h4 mb-2">Add multisig account</div>
             <div class="text-body-large">
-              The signatories have the ability to create transactions using the multisig and TBD
+              The signatories has the ability to create transactions using the multisig and approve
+              transactions sent by others. Once the threshold is reached with approvals, the
+              multisig transaction is enacted on-chain. Since the multisig function is like any
+              other account, once created it is available for selection anywhere accounts are user
+              and needs to be funded before use.
             </div>
           </div>
 
@@ -102,7 +106,6 @@ export const AccountCreateMulti = defineComponent({
               color="secondary-btn"
               onClick={() => (isAddSignatoryModalOpen.value = true)}
               size="small"
-              rounded={false}
             >
               Add signatory
             </VBtn>
@@ -128,7 +131,7 @@ export const AccountCreateMulti = defineComponent({
           </div>
 
           <div class="d-flex align-center justify-end mt-4">
-            <VBtn color="secondary-btn" to={{ name: 'wallet' }} size="small">
+            <VBtn color="tertiary-btn" to={{ name: 'wallet' }} size="small">
               cancel
             </VBtn>
             <VBtn class="ml-2" disabled={!formState.value.valid} onClick={onConfirm} size="small">

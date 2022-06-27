@@ -2,7 +2,7 @@ import { defineComponent, computed } from 'vue';
 import useClipboard from 'vue-clipboard3';
 import { storeToRefs } from 'pinia';
 
-import { VBtn, VIcon } from 'vuetify/components';
+import { VBtn, VSheet, VIcon } from 'vuetify/components';
 import { DisplayAddress } from '@/components/DisplayAddress';
 
 import { useAccountStore } from '@/stores/account';
@@ -48,34 +48,21 @@ export const MultisigApprovalDetails = defineComponent({
     const renderSignatories = () =>
       props.pendingApproval.signatories.map((signatory: ISignatory) => (
         <div class="d-flex align-center justify-end">
-          <span class="mr-4">{signatory.name}</span>
+          <span class="mr-4 text-subtitle-1">{signatory.name}</span>
           <DisplayAddress address={signatory.address} hideCopyButton />
         </div>
       ));
 
     return () => (
-      <div class="text-body-1">
-        <div class="d-flex align-center">
-          <span>Pending call hash</span>
-          <div
-            class="dw-tooltip dw-tooltip__right ml-2"
-            data-tooltip="The call hash as calculated for this transaction"
-          >
-            <VIcon size="x-small">mdi-help-circle-outline</VIcon>
-          </div>
-        </div>
-
-        <div class="d-flex align-center">
-          <span class="text-truncate">{props.pendingApproval.callHash}</span>
-          <VIcon class="ml-4" size="16px" onClick={() => onCopy(props.pendingApproval.callHash)}>
-            mdi-content-copy
-          </VIcon>
-        </div>
-
+      <>
         <div>
-          <div class="d-flex justify-space-between align-center mt-4">
+          <VSheet
+            rounded
+            color="rgba(255,255,255,.05)"
+            class="pa-4 d-flex align-center justify-space-between mb-2"
+          >
             <div class="d-flex align-center">
-              <span>Depositor</span>
+              <span class="text-h6">Depositor</span>
               <div
                 class="dw-tooltip dw-tooltip__right ml-2"
                 data-tooltip="The creator for this multisig"
@@ -84,13 +71,17 @@ export const MultisigApprovalDetails = defineComponent({
               </div>
             </div>
             <div class="d-flex align-center">
-              <span class="mr-4">{depositor.value.name}</span>
+              <span class="mr-4 text-subtitle-1">{depositor.value.name}</span>
               <DisplayAddress address={depositor.value.address} hideCopyButton />
             </div>
-          </div>
-          <div class="d-flex justify-space-between align-center mt-4">
+          </VSheet>
+          <VSheet
+            rounded
+            color="rgba(255,255,255,.05)"
+            class="pa-4 d-flex align-center justify-space-between mb-2"
+          >
             <div class="d-flex align-center">
-              <span>Existing approvals</span>
+              <span class="text-h6">Existing approvals</span>
               <div
                 class="dw-tooltip dw-tooltip__right ml-2"
                 data-tooltip="The current approvals applied to this multisig"
@@ -98,22 +89,49 @@ export const MultisigApprovalDetails = defineComponent({
                 <VIcon size="x-small">mdi-help-circle-outline</VIcon>
               </div>
             </div>
-            <span class="pr-0 text-right">
+            <span class="pr-0 text-right text-subtitle-1">
               {props.pendingApproval.approvals}/{props.pendingApproval.threshold}
             </span>
-          </div>
-          <div class="d-flex justify-space-between align-start mt-4">
+          </VSheet>
+          <VSheet
+            rounded
+            color="rgba(255,255,255,.05)"
+            class="pa-4 d-flex align-center justify-space-between mb-2"
+          >
             <div class="d-flex align-center">
-              <span class="pt-0">Signatories</span>
+              <span class="text-h6">Signatories</span>
               <div class="dw-tooltip dw-tooltip__right ml-2" data-tooltip="Who approved">
                 <VIcon size="x-small">mdi-help-circle-outline</VIcon>
               </div>
             </div>
             <div>{renderSignatories()}</div>
-          </div>
+          </VSheet>
 
-          <div class="d-flex align-center mt-8">
-            <span>Call data for final approval</span>
+          <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 mb-2">
+            <div class="d-flex align-center">
+              <span class="text-h6">Pending call hash</span>
+              <div
+                class="dw-tooltip dw-tooltip__right ml-2"
+                data-tooltip="The call hash as calculated for this transaction"
+              >
+                <VIcon size="x-small">mdi-help-circle-outline</VIcon>
+              </div>
+            </div>
+            <div class="d-flex justify-space-between align-center">
+              <span class="text-truncate">{props.pendingApproval.callHash}</span>
+              <VIcon
+                class="ml-4"
+                size="16px"
+                onClick={() => onCopy(props.pendingApproval.callHash)}
+              >
+                mdi-content-copy
+              </VIcon>
+            </div>
+          </VSheet>
+
+          <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 mb-2">
+          <div class="d-flex align-center">
+            <span class="text-h6">Call data for final approval</span>
             <div
               class="dw-tooltip dw-tooltip__right ml-2"
               data-tooltip="The full call data that can be supplied\n to a final call to multi approvals"
@@ -121,12 +139,13 @@ export const MultisigApprovalDetails = defineComponent({
               <VIcon size="x-small">mdi-help-circle-outline</VIcon>
             </div>
           </div>
-          <div class="d-flex align-center">
+          <div class="d-flex justify-space-between align-center">
             <span class="text-truncate">{props.pendingApproval.callData}</span>
             <VIcon class="ml-4" size="16px" onClick={() => onCopy(props.pendingApproval.callData)}>
               mdi-content-copy
             </VIcon>
           </div>
+          </VSheet>
 
           <div class="d-flex justify-end align-center mt-8">
             <VBtn color="secondary-btn" onClick={() => emit('click:cancel')}>
@@ -139,7 +158,7 @@ export const MultisigApprovalDetails = defineComponent({
             )}
           </div>
         </div>
-      </div>
+      </>
     );
   }
 });
