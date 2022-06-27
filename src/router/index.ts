@@ -16,6 +16,7 @@ import { MultisigWalletView } from '@/components/MultisigWalletView';
 import { MultisigBalances } from '@/components/MultisigBalances';
 import { MultisigTransactions } from '@/components/MultisigTransactions';
 import { MultisigApprovals } from '@/components/MultisigApprovals';
+import { MultisigApprovalDetails } from '@/components/MultisigApprovalDetails';
 import { MultisigVestingView } from '@/components/MultisigVestingView';
 import { MultisigVestingDetails } from '@/components/MultisigVestingDetails';
 import { MultisigDetailsView } from '@/components/MultisigDetailsView';
@@ -144,6 +145,12 @@ const router = createRouter({
                   path: 'approvals',
                   name: 'multisig.approvals',
                   component: MultisigApprovals
+                },
+                {
+                  path: 'approval/:approvalId',
+                  name: 'multisig.approvalDetails',
+                  props: true,
+                  component: MultisigApprovalDetails
                 }
               ]
             },

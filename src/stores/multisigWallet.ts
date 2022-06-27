@@ -7,14 +7,14 @@ import { emitter } from '@/utils/eventBus';
 
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
-import type { IAccount, ITransaction, IMultisigTransactionData } from '../../types';
+import type { IAccount, ITransaction, IMultisigTransactionData, IMultisigTransactionItem } from '../../types';
 
 const apiService = ApiService.getInstance();
 
 export const useMultisigWalletStore = defineStore('multisigBalance', () => {
   const balance = ref<IAccount | undefined>();
   const transactions = ref<ITransaction[]>([]);
-  const pendingApprovals = ref<IMultisigTransactionData[]>([]);
+  const pendingApprovals = ref<IMultisigTransactionItem[]>([]);
 
   const freeBalance = computed(() =>
     parseFloat(balance.value?.data.free.replace(',', '') || '')
