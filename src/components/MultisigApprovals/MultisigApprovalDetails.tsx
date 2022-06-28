@@ -2,7 +2,7 @@ import { defineComponent, computed } from 'vue';
 import useClipboard from 'vue-clipboard3';
 import { storeToRefs } from 'pinia';
 
-import { VBtn, VSheet, VIcon } from 'vuetify/components';
+import { VBtn, VSheet, VIcon, VSpacer } from 'vuetify/components';
 import { DisplayAddress } from '@/components/DisplayAddress';
 
 import { useAccountStore } from '@/stores/account';
@@ -56,11 +56,7 @@ export const MultisigApprovalDetails = defineComponent({
     return () => (
       <>
         <div>
-          <VSheet
-            rounded
-            color="rgba(255,255,255,.05)"
-            class="pa-4 d-flex align-center justify-space-between mb-2"
-          >
+          <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 d-flex align-center mb-2">
             <div class="d-flex align-center">
               <span class="text-h6">Depositor</span>
               <div
@@ -70,16 +66,13 @@ export const MultisigApprovalDetails = defineComponent({
                 <VIcon size="x-small">mdi-help-circle-outline</VIcon>
               </div>
             </div>
+            <VSpacer />
             <div class="d-flex align-center">
               <span class="mr-4 text-subtitle-1">{depositor.value.name}</span>
               <DisplayAddress address={depositor.value.address} hideCopyButton />
             </div>
           </VSheet>
-          <VSheet
-            rounded
-            color="rgba(255,255,255,.05)"
-            class="pa-4 d-flex align-center justify-space-between mb-2"
-          >
+          <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 d-flex align-center mb-2">
             <div class="d-flex align-center">
               <span class="text-h6">Existing approvals</span>
               <div
@@ -89,21 +82,19 @@ export const MultisigApprovalDetails = defineComponent({
                 <VIcon size="x-small">mdi-help-circle-outline</VIcon>
               </div>
             </div>
+            <VSpacer />
             <span class="pr-0 text-right text-subtitle-1">
               {props.pendingApproval.approvals}/{props.pendingApproval.threshold}
             </span>
           </VSheet>
-          <VSheet
-            rounded
-            color="rgba(255,255,255,.05)"
-            class="pa-4 d-flex align-center justify-space-between mb-2"
-          >
+          <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 d-flex align-center mb-2">
             <div class="d-flex align-center">
               <span class="text-h6">Signatories</span>
               <div class="dw-tooltip dw-tooltip__right ml-2" data-tooltip="Who approved">
                 <VIcon size="x-small">mdi-help-circle-outline</VIcon>
               </div>
             </div>
+            <VSpacer />
             <div>{renderSignatories()}</div>
           </VSheet>
 
@@ -117,8 +108,9 @@ export const MultisigApprovalDetails = defineComponent({
                 <VIcon size="x-small">mdi-help-circle-outline</VIcon>
               </div>
             </div>
-            <div class="d-flex justify-space-between align-center">
+            <div class="d-flex align-center">
               <span class="text-truncate">{props.pendingApproval.callHash}</span>
+              <VSpacer />
               <VIcon
                 class="ml-4"
                 size="16px"
@@ -130,21 +122,26 @@ export const MultisigApprovalDetails = defineComponent({
           </VSheet>
 
           <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 mb-2">
-          <div class="d-flex align-center">
-            <span class="text-h6">Call data for final approval</span>
-            <div
-              class="dw-tooltip dw-tooltip__right ml-2"
-              data-tooltip="The full call data that can be supplied\n to a final call to multi approvals"
-            >
-              <VIcon size="x-small">mdi-help-circle-outline</VIcon>
+            <div class="d-flex align-center">
+              <span class="text-h6">Call data for final approval</span>
+              <div
+                class="dw-tooltip dw-tooltip__right ml-2"
+                data-tooltip="The full call data that can be supplied\n to a final call to multi approvals"
+              >
+                <VIcon size="x-small">mdi-help-circle-outline</VIcon>
+              </div>
             </div>
-          </div>
-          <div class="d-flex justify-space-between align-center">
-            <span class="text-truncate">{props.pendingApproval.callData}</span>
-            <VIcon class="ml-4" size="16px" onClick={() => onCopy(props.pendingApproval.callData)}>
-              mdi-content-copy
-            </VIcon>
-          </div>
+            <div class="d-flex align-center">
+              <span class="text-truncate">{props.pendingApproval.callData}</span>
+              <VSpacer />
+              <VIcon
+                class="ml-4"
+                size="16px"
+                onClick={() => onCopy(props.pendingApproval.callData)}
+              >
+                mdi-content-copy
+              </VIcon>
+            </div>
           </VSheet>
 
           <div class="d-flex justify-end align-center mt-8">
