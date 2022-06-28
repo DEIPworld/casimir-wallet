@@ -36,7 +36,11 @@ export const VestingView = defineComponent({
           months: vesting.value?.cliffDuration as number
         });
         isNotAvailable.value = isBefore(new Date(), endTime);
+
+        return;
       }
+
+      isNotAvailable.value = false;
     });
 
     onMounted(async () => {
