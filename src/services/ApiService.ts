@@ -385,6 +385,7 @@ export class ApiService {
                 emitter.emit(`wallet:transfer:${relatedAddress}`, {
                   hash: extrinsic.hash.toString(),
                   from: sender.toString(),
+                  to: recipient.toString(),
                   date: new Date().getTime(),
                   amount: ApiService.formatCurrency(amount, !isDeposit)
                 });
