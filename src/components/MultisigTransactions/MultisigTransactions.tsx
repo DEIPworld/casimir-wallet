@@ -17,6 +17,7 @@ export const MultisigTransactions = defineComponent({
 
     const renderRow = (data: ITransaction) => {
       const isPositive = !(data.amount as string).includes('-');
+      const addressRow = isPositive ? `From ${data.from}` : `To ${data.to}`;
 
       return (
         <VSheet
@@ -49,7 +50,7 @@ export const MultisigTransactions = defineComponent({
               </div>
             </div>
             <VSheet maxWidth={240} class="text-truncate">
-              {isPositive ? 'From' : 'To'}: {data.from}
+              {addressRow}
             </VSheet>
           </div>
           <VSpacer />
