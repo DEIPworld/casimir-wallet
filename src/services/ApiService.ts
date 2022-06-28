@@ -228,6 +228,73 @@ export class ApiService {
     }
   }
 
+  async approveVestingClaim(data: {
+    account: CreateResult,
+    multisigAddress: string,
+    threshold: number,
+    otherSignatories: string[],
+    isFirstApproval: boolean,
+    isFinalApproval: boolean,
+  }): Promise<any> {
+    const {
+      account,
+      multisigAddress,
+      threshold,
+      otherSignatories,
+      isFirstApproval = true,
+      isFinalApproval = false
+    } = data;
+
+    try {
+      const transaction = await this.api.tx.deipVesting
+        .unlock();
+
+      const { weight } = await transaction
+        .paymentInfo(multisigAddress);
+
+      const callHash = u8aToHex(transaction.method.hash);
+      const callData = transaction.method.toHex();
+
+      let timePoint = null;
+
+      if (!isFirstApproval) {
+        const info = await this.api.query.multisig.multisigs(
+          multisigAddress,
+          hexToU8a(callHash)
+        );
+        timePoint = info.unwrap().when;
+      }
+
+
+      if (isFinalApproval) {
+        await this.api.tx.multisig
+          .asMulti(
+            threshold,
+            otherSignatories.sort(),
+            timePoint,
+            callData,
+            false,
+            parseInt(weight)
+          )
+          .signAndSend(account.pair);
+
+          return;
+      }
+
+      await this.api.tx.multisig
+        .approveAsMulti(
+          threshold,
+          otherSignatories.sort(),
+          timePoint,
+          callHash,
+          parseInt(weight)
+        )
+        .signAndSend(account.pair);
+    } catch (error: any) {
+      console.error(error);
+    }
+  }
+
   async getAccountBalance(address: string): Promise<IAccount> {
     try {
       const res = await this.api.query.system.account(address);
@@ -300,8 +367,8 @@ export class ApiService {
     threshold
   }: IMultisigTransaction): Promise<void> {
     const { weight } = await this.api.tx.balances
-        .transfer(recipient, amount)
-        .paymentInfo(multisigAddress);
+      .transfer(recipient, amount)
+      .paymentInfo(multisigAddress);
     let timePoint = null;
 
     if (!isFirstApproval) {
@@ -325,8 +392,8 @@ export class ApiService {
     threshold
   }: IMultisigTransaction): Promise<void> {
     const { weight } = await this.api.tx.balances
-        .transfer(recipient, amount)
-        .paymentInfo(multisigAddress);
+      .transfer(recipient, amount)
+      .paymentInfo(multisigAddress);
 
     const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash));
     const timePoint = info.unwrap().when;

@@ -182,6 +182,7 @@ const router = createRouter({
             },
             {
               path: 'vesting',
+              props: true,
               component: MultisigVestingView,
               children: [
                 {

@@ -7,6 +7,7 @@ import { InnerContainer } from '@/components/InnerContainer';
 import { ConfirmActionModal } from '@/components/ConfirmActionModal';
 import { DisplayAddress } from '@/components/DisplayAddress';
 
+import { useAccountStore } from '@/stores/account';
 import { useVestingStore } from '@/stores/vesting';
 import { useDate } from '@/composable/date';
 
@@ -18,16 +19,17 @@ export const MultisigVestingView = defineComponent({
     }
   },
   setup(props) {
+    const accountStore = useAccountStore();
     const vestingStore = useVestingStore();
+    const { accountJson, address, multisigAccountDetails } = storeToRefs(accountStore);
     const { vesting } = storeToRefs(vestingStore);
-    const { getVestingPlan, claimVesting } = vestingStore;
 
     const { addTimePeriod, isBefore } = useDate();
 
     const isLoading = ref<boolean>(false);
     const isConfirmationModalOpen = ref<boolean>(false);
     const passwordError = ref<string>();
-    const isNotAvailable = ref<boolean>(true);
+    const isNotAvailable = ref<boolean>(false);
 
     const isActive = computed(() => vesting.value?.startTime);
 
@@ -37,15 +39,39 @@ export const MultisigVestingView = defineComponent({
           months: vesting.value?.cliffDuration as number
         });
         isNotAvailable.value = isBefore(new Date(), endTime);
+
+        return;
       }
+
+      isNotAvailable.value = false;
     });
 
     onMounted(async () => {
-      await getVestingPlan(props.address);
+      await vestingStore.getVestingPlan(props.address);
     });
 
     const onConfirm = async (password: string): Promise<void> => {
-      // TODO Add claim vesting logic for multisig wallet
+      isLoading.value = true;
+
+      setTimeout(async () => {
+        try {
+          if (accountJson.value && multisigAccountDetails.value) {
+            vestingStore.approveVestingClaim({
+              sender: { account: accountJson.value, password },
+              multisigAddress: multisigAccountDetails.value.address,
+              threshold: multisigAccountDetails.value.threshold,
+              otherSignatories: multisigAccountDetails.value?.signatories
+              .filter((item) => item.address !== address.value)
+              .map((item) => item.address)
+            });
+          }
+          isConfirmationModalOpen.value = false;
+        } catch (error: any) {
+          passwordError.value = error.message;
+        } finally {
+          isLoading.value = false;
+        }
+      }, 500);
     };
 
     const openConfirmModal = (): void => {
