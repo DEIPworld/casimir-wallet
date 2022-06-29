@@ -37,7 +37,7 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
   };
 
   const getPendingApprovals = async (address: string): Promise<void> => {
-    const { data } = await HttpService.get('/transaction', { address, status: 'pending' });
+    const { data } = await HttpService.get('/multisig-transaction', { address, status: 'pending' });
 
     if (data) pendingApprovals.value = data;
   };
@@ -126,7 +126,7 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
       callData
     };
 
-    const { data: result } = await HttpService.post('/transaction/create', params);
+    const { data: result } = await HttpService.post('/multisig-transaction/create', params);
 
     return result;
   };
@@ -190,7 +190,7 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
       approverAddress: account.address
     };
 
-    await HttpService.patch(`/transaction/approve/${transactionId}`, params);
+    await HttpService.patch(`/multisig-transaction/approve/${transactionId}`, params);
   };
 
 
