@@ -39,6 +39,15 @@ class HttpClient {
     });
   }
 
+  patch(url: string, data = {}, requestConfig = {}) {
+    return this.api({
+      method: 'patch',
+      url,
+      data,
+      ...requestConfig
+    });
+  }
+ 
   delete(url: string, data = {}, requestConfig = {}) {
     return this.api({
       method: 'delete',

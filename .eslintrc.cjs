@@ -25,8 +25,13 @@ module.exports = {
     radix: ['error', 'as-needed'],
     'max-len': [
       'error',
-      { code: 100, ignoreComments: true }
+      {
+        code: 100,
+        ignoreComments: true,
+        ignoreStrings: true,
+        ignoreTemplateLiterals: true
+      }
     ],
-    semi: ['error', 'always'],
+    semi: ['error', 'always']
   }
-}
+};

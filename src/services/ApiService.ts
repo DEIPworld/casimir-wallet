@@ -6,16 +6,25 @@ import {
   mnemonicGenerate,
   mnemonicValidate,
   mnemonicToMiniSecret,
-  decodeAddress
+  decodeAddress,
+  encodeMultiAddress
 } from '@polkadot/util-crypto';
-import { u8aToHex } from '@polkadot/util';
-
-import type { IAccount, IKeyPair, IVestingPlan, ITransaction } from '../../types';
-import type { CreateResult } from '@polkadot/ui-keyring/types';
-import type { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
+import { u8aToHex, hexToU8a } from '@polkadot/util';
 
 import { singleton } from '@/utils/singleton';
 import { emitter } from '@/utils/eventBus';
+
+import type { CreateResult } from '@polkadot/ui-keyring/types';
+import type { KeyringPair$Json, KeyringPair } from '@polkadot/keyring/types';
+import type {
+  IAccount,
+  IKeyPair,
+  IVestingPlan,
+  ITransaction,
+  IMultisigTransactionData,
+  IMultisigTransaction
+} from '../../types';
+
 import type { BN } from '@polkadot/util';
 import type { AccountInfo } from '@polkadot/types/interfaces/system/types';
 
@@ -43,6 +52,8 @@ export class ApiService {
   private static millisecondsToMonth(milliseconds: number): number {
     return Math.floor(milliseconds / 2.628e+9);
   }
+
+  private activeAddresses: Set<string> = new Set();
 
   async loadApi(): Promise<void> {
     try {
@@ -102,6 +113,10 @@ export class ApiService {
         reject(new Error('password is incorrect'));
       }
     });
+  }
+
+  addMultisigAccount(addresses: string[], threshold: number): string {
+    return encodeMultiAddress(addresses, threshold);
   }
 
   getAccountKeyPair(
@@ -239,6 +254,64 @@ export class ApiService {
     }
   }
 
+  createMultisigTransaction(recipient: string, amount: number): IMultisigTransactionData {
+    const transaction = this.api.tx.balances.transfer(
+      recipient,
+      new BigNumber(amount).shiftedBy(18).toString()
+    );
+
+    return {
+      callHash: u8aToHex(transaction.method.hash),
+      callData: transaction.method.toHex()
+    };
+  }
+
+  async approveMultisigTransaction(isFirstApproval: boolean, {
+    callHash,
+    recipient,
+    amount,
+    multisigAddress,
+    account,
+    otherSignatories,
+    threshold
+  }: IMultisigTransaction): Promise<void> {
+    const { weight } = await this.api.tx.balances
+        .transfer(recipient, amount)
+        .paymentInfo(multisigAddress);
+    let timePoint = null;
+
+    if (!isFirstApproval) {
+      const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash));
+      timePoint = info.unwrap().when;
+    }
+
+    await this.api.tx.multisig
+      .approveAsMulti(threshold, otherSignatories.sort(), timePoint, callHash, parseInt(weight))
+      .signAndSend(account.pair);
+  }
+
+  async approveAndSendMultisigTransaction({
+    callHash,
+    callData,
+    recipient,
+    amount,
+    multisigAddress,
+    account,
+    otherSignatories,
+    threshold
+  }: IMultisigTransaction): Promise<void> {
+    const { weight } = await this.api.tx.balances
+        .transfer(recipient, amount)
+        .paymentInfo(multisigAddress);
+
+    const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash));
+    const timePoint = info.unwrap().when;
+
+    await this.api.tx.multisig
+      .asMulti(threshold, otherSignatories.sort(), timePoint, callData, false, parseInt(weight))
+      .signAndSend(account.pair);
+  }
+
   subscribeToBalance(address: string): void {
     try {
       this.api.query.system.account(address, (data: AccountInfo) => {
@@ -253,10 +326,15 @@ export class ApiService {
   }
 
   subscribeToTransfers(address: string): void {
+    this.activeAddresses.add(address);
+
+    if (this.activeAddresses.size > 1) {
+      return;
+    }
+
     try {
       this.api.rpc.chain.subscribeFinalizedHeads(
         async (header: any) => {
-
           const [{ block }, records] = await Promise.all([
             this.api.rpc.chain.getBlock(header.hash),
             this.api.query.system.events.at(header.hash)
@@ -272,17 +350,19 @@ export class ApiService {
             events.forEach(({ event }: any) => {
               const [sender, recipient, amount] = event.data;
 
-              const isDeposit = recipient && recipient.toString() === address;
-              const isWithdraw = sender && sender.toString() === address;
+              const isDeposit = recipient && this.activeAddresses.has(recipient.toString());
+              const isWithdraw = sender && this.activeAddresses.has(sender.toString());
 
               const relatedTransfer = isDeposit || isWithdraw;
 
               if (event.method === 'Transfer' && relatedTransfer) {
-                emitter.emit('wallet:transfer', {
+                const relatedAddress = isDeposit ? recipient.toString() : sender.toString();
+
+                emitter.emit(`wallet:transfer:${relatedAddress}`, {
                   hash: extrinsic.hash.toString(),
                   from: sender.toString(),
                   date: new Date().getTime(),
-                  amount: ApiService.formatCurrency(amount, isWithdraw)
+                  amount: ApiService.formatCurrency(amount, !isDeposit)
                 });
               }
             });
@@ -292,6 +372,10 @@ export class ApiService {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  unsubscribeFromTransfers(address: string): void {
+    this.activeAddresses.delete(address);
   }
 
   static readonly getInstance = singleton(() => new ApiService());
