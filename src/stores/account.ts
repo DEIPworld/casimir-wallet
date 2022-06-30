@@ -6,7 +6,7 @@ import HttpService from '@/services/HttpService';
 
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
-import type { IMultisigWallet, ISignatory } from '@/types/';
+import type { IMultisigWallet, ISignatory } from '@/types';
 
 const apiService = ApiService.getInstance();
 const deipService = DeipService.getInstance();
