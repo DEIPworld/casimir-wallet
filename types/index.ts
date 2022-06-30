@@ -80,6 +80,7 @@ export interface IMultisigTransaction {
 
 export interface IMultisigTransactionItem extends IMultisigTransactionData {
   _id: string;
+  type: string;
   address: string;
   recipient: string;
   amount: number;
@@ -87,5 +88,18 @@ export interface IMultisigTransactionItem extends IMultisigTransactionData {
   threshold: number;
   approvals: number;
   status: string;
-  signatories: ISignatory[]
+  signatories: ISignatory[];
 }
+
+export interface IMultisigVestingItem extends IMultisigTransaction {
+  _id: string;
+  type: string;
+  address: string;
+  initiator: string;
+  threshold: number;
+  approvals: number;
+  status: string;
+  signatories: ISignatory[];
+}
+
+export type ApprovalType = 'transfer' | 'vesting';

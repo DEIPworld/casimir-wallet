@@ -154,7 +154,7 @@ const router = createRouter({
                   component: MultisigApprovals
                 },
                 {
-                  path: 'approval/:approvalId',
+                  path: 'approval/:approvalId/:approvalType',
                   name: 'multisig.approvalDetails',
                   props: true,
                   component: MultisigApprovalDetails

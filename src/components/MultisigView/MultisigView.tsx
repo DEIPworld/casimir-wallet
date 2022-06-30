@@ -2,6 +2,7 @@ import { defineComponent, onBeforeMount, onBeforeUnmount, watch, toRef } from 'v
 import { RouterView } from 'vue-router';
 
 import { useMultisigWalletStore } from '@/stores/multisigWallet';
+import { useVestingStore } from '@/stores/vesting';
 import { useAccountStore } from '@/stores/account';
 
 export const MultisigView = defineComponent({
@@ -13,14 +14,18 @@ export const MultisigView = defineComponent({
   },
   setup(props) {
     const multisigStore = useMultisigWalletStore();
-    const address = toRef(props, 'address');
+    const vestingStore = useVestingStore();
     const accountStore = useAccountStore();
+
+    const address = toRef(props, 'address');
 
     onBeforeMount(() => {
       accountStore.getMultisigAccountDetails(props.address);
-      multisigStore.subscribeToTransfers(props.address);
       multisigStore.getAccountBalance(props.address);
+      multisigStore.subscribeToTransfers(props.address);
+
       multisigStore.getPendingApprovals(props.address);
+      vestingStore.getPendingApprovals(props.address);
     });
 
     onBeforeUnmount(() => {
@@ -30,13 +35,14 @@ export const MultisigView = defineComponent({
 
     watch(address, (currentAddress, prevAddress) => {
       multisigStore.clear();
+      multisigStore.unsubscribeFromTransfers(prevAddress);
 
       accountStore.getMultisigAccountDetails(currentAddress);
-      multisigStore.subscribeToTransfers(currentAddress);
       multisigStore.getAccountBalance(currentAddress);
-      multisigStore.getPendingApprovals(currentAddress);
+      multisigStore.subscribeToTransfers(currentAddress);
 
-      multisigStore.unsubscribeFromTransfers(prevAddress);
+      multisigStore.getPendingApprovals(currentAddress);
+      vestingStore.getPendingApprovals(props.address);
     });
 
     return () => (

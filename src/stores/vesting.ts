@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import { ApiService } from '@/services/ApiService';
 import HttpService from '@/services/HttpService';
 
-import type { IVestingPlan } from '../../types';
+import type { IVestingPlan, IMultisigVestingItem } from '../../types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 
@@ -12,11 +12,20 @@ const apiService = ApiService.getInstance();
 
 export const useVestingStore = defineStore('vesting', () => {
   const vesting = ref<IVestingPlan | undefined>();
+  const pendingApprovals = ref<IMultisigVestingItem[]>([]);
 
   const getVestingPlan = async (address: string | undefined): Promise<void> => {
     if (address) {
       const res = await apiService.getVestingPlan(address);
       if (res) vesting.value = res;
+    }
+  };
+
+  const getPendingApprovals = async(address: string | undefined): Promise<void> => {
+    if (address) {
+      const { data } = await HttpService.get('/multisig-vesting', { address, status: 'pending' });
+
+      if (data) pendingApprovals.value = data;
     }
   };
 
@@ -63,9 +72,8 @@ export const useVestingStore = defineStore('vesting', () => {
       await HttpService.patch(`/multisig-vesting/approve/${pendingApproval._id}`, {
         approverAddress: account.address
       });
-
     } else {
-      await apiService.approveVestingClaim({
+      const { callHash, callData } = await apiService.approveVestingClaim({
         account: restoredAccount,
         multisigAddress,
         threshold,
@@ -77,15 +85,19 @@ export const useVestingStore = defineStore('vesting', () => {
       await HttpService.post('/multisig-vesting/create', {
         address: multisigAddress,
         threshold,
-        approverAddress: account.address
+        initiator: account.address,
+        callHash,
+        callData
       });
     }
   };
 
   return {
     vesting,
+    pendingApprovals,
 
     getVestingPlan,
+    getPendingApprovals,
     claimVesting,
     approveVestingClaim
   };

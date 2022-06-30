@@ -1,5 +1,5 @@
 import { computed, defineComponent, onMounted, watchEffect, ref } from 'vue';
-import { RouterView } from 'vue-router';
+import { useRouter, RouterView } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import { VBtn } from 'vuetify/components';
@@ -10,6 +10,7 @@ import { DisplayAddress } from '@/components/DisplayAddress';
 import { useAccountStore } from '@/stores/account';
 import { useVestingStore } from '@/stores/vesting';
 import { useDate } from '@/composable/date';
+import { useNotify } from '@/composable/notify';
 
 export const MultisigVestingView = defineComponent({
   props: {
@@ -19,6 +20,9 @@ export const MultisigVestingView = defineComponent({
     }
   },
   setup(props) {
+    const router = useRouter();
+    const { showSuccess } = useNotify();
+
     const accountStore = useAccountStore();
     const vestingStore = useVestingStore();
     const { accountJson, address, multisigAccountDetails } = storeToRefs(accountStore);
@@ -66,6 +70,9 @@ export const MultisigVestingView = defineComponent({
             });
           }
           isConfirmationModalOpen.value = false;
+
+          showSuccess('Successfully approved transaction');
+          router.push({ name: 'multisig.wallet' });
         } catch (error: any) {
           passwordError.value = error.message;
         } finally {
