@@ -43,7 +43,7 @@ export const useWalletStore = defineStore('balance', () => {
   const subscribeToTransfers = (address: string) => {
     apiService.subscribeToTransfers(address);
 
-    emitter.on('wallet:transfer', (data: ITransaction) => {
+    emitter.on(`wallet:transfer:${address}`, (data: ITransaction) => {
       transactions.value.push(data);
     });
   };

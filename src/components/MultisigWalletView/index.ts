@@ -1,0 +1,1 @@
+export { MultisigWalletView } from './MultisigWalletView';

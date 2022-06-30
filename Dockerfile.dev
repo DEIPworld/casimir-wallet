@@ -15,16 +15,15 @@ COPY . .
 
 
 
-FROM node:alpine as main
+FROM nginx:alpine as main
+
+WORKDIR /app
 
 COPY --from=build /var/app ./
-RUN npm install -g http-server
-COPY . .
 
+RUN ls
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 8080
-
-CMD [ "http-server", "dist" ]
-
 
 

@@ -2,9 +2,11 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { ApiService } from '@/services/ApiService';
 import { DeipService } from '@/services/DeipService';
+import HttpService from '@/services/HttpService';
 
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
+import type { IMultisigWallet, ISignatory } from '@/types/';
 
 const apiService = ApiService.getInstance();
 const deipService = DeipService.getInstance();
@@ -14,6 +16,8 @@ export const useAccountStore = defineStore(
   () => {
     const accountJson = ref<KeyringPair$Json>();
     const accountDao = ref();
+    const multisigAccounts = ref<IMultisigWallet[]>();
+    const multisigAccountDetails = ref<IMultisigWallet>();
 
     const tempSeed = ref<string>('');
 
@@ -50,6 +54,43 @@ export const useAccountStore = defineStore(
       return signature;
     }
 
+    async function getMultisigAccounts(): Promise<void> {
+      const { data } = await HttpService.get('/multisig/getUserMultisig', { address: address.value });
+
+      multisigAccounts.value = data;
+    }
+
+    async function getMultisigAccountDetails(walletAddress: string): Promise<void> {
+      const { data } = await HttpService.get('/multisig/getById', { address: walletAddress });
+
+      multisigAccountDetails.value = data;
+    }
+
+    async function createMultisigAccount(
+      addresses: ISignatory[],
+      threshold: number,
+      name: string
+    ): Promise<IMultisigWallet> {
+      if (!address.value) {
+        throw new Error('user address is not defined');
+      }
+
+      const signatories = [{ name: 'Owner', address: address.value }, ...addresses];
+      const multisigAddress = apiService.addMultisigAccount(
+        signatories.map((signatory) => signatory.address),
+        threshold
+      );
+
+      const { data } = await HttpService.post('/multisig/create', {
+        address: multisigAddress,
+        threshold,
+        name,
+        signatories
+      });
+
+      return data;
+    }
+
     function logOut() {
       accountJson.value = undefined;
       accountDao.value = undefined;
@@ -58,6 +99,8 @@ export const useAccountStore = defineStore(
     return {
       accountJson,
       accountDao,
+      multisigAccounts,
+      multisigAccountDetails,
 
       tempSeed,
 
@@ -69,6 +112,10 @@ export const useAccountStore = defineStore(
 
       addAccount,
       restoreAccount,
+      getMultisigAccounts,
+      getMultisigAccountDetails,
+      createMultisigAccount,
+
       logOut
     };
   },

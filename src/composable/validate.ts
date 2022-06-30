@@ -42,10 +42,25 @@ export function useYup() {
 
   // ////////////////////////
 
+  const thresholdTest = (value: any, { parent }: any): boolean => {
+    /*
+      threshold value should not be bigger than amount of signatories plus account who creates multisig wallet
+    */
+    return value <= parent.signatories?.length + 1;
+  };
+
+  const thresholdValidator = {
+    message: 'Threshold should be lesser or equal to amount of signatories',
+    test: thresholdTest
+  };
+
+  // ////////////////////////
+
   return {
     makeError,
 
     addressValidator,
-    mnemonicValidator
+    mnemonicValidator,
+    thresholdValidator
   };
 }

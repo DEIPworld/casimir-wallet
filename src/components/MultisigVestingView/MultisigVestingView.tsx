@@ -1,22 +1,23 @@
 import { computed, defineComponent, onMounted, watchEffect, ref } from 'vue';
-import { useAccountStore } from '@/stores/account';
+import { RouterView } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
-import { RouterView } from 'vue-router';
 import { VBtn } from 'vuetify/components';
-
-import { useVestingStore } from '@/stores/vesting';
-import { useDate } from '@/composable/date';
-
 import { InnerContainer } from '@/components/InnerContainer';
 import { ConfirmActionModal } from '@/components/ConfirmActionModal';
 import { DisplayAddress } from '@/components/DisplayAddress';
 
-export const VestingView = defineComponent({
-  setup() {
-    const accountStore = useAccountStore();
-    const { accountJson, address } = storeToRefs(accountStore);
+import { useVestingStore } from '@/stores/vesting';
+import { useDate } from '@/composable/date';
 
+export const MultisigVestingView = defineComponent({
+  props: {
+    address: {
+      type: String,
+      required: true
+    }
+  },
+  setup(props) {
     const vestingStore = useVestingStore();
     const { vesting } = storeToRefs(vestingStore);
     const { getVestingPlan, claimVesting } = vestingStore;
@@ -40,22 +41,11 @@ export const VestingView = defineComponent({
     });
 
     onMounted(async () => {
-      await getVestingPlan(address.value);
+      await getVestingPlan(props.address);
     });
 
     const onConfirm = async (password: string): Promise<void> => {
-      isLoading.value = true;
-
-      setTimeout(async () => {
-        try {
-          accountJson.value && (await claimVesting(accountJson.value, password));
-          isConfirmationModalOpen.value = false;
-        } catch (error: any) {
-          passwordError.value = error.message;
-        } finally {
-          isLoading.value = false;
-        }
-      }, 500);
+      // TODO Add claim vesting logic for multisig wallet
     };
 
     const openConfirmModal = (): void => {
@@ -98,7 +88,7 @@ export const VestingView = defineComponent({
         <div class="d-flex justify-space-between mb-6 align-end">
           <div>
             <div class="text-h3 mb-2">Vesting contract</div>
-            <DisplayAddress address={address.value} />
+            <DisplayAddress address={props.address} />
           </div>
 
           {renderClaimBtn()}

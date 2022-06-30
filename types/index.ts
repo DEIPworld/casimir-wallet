@@ -1,3 +1,5 @@
+import type { CreateResult } from '@polkadot/ui-keyring/types';
+
 export interface IAccount {
   nonce: number;
   consumers: number;
@@ -47,3 +49,43 @@ export interface IWallet extends IKeyPair {
   portal: IPortal;
 }
 
+export interface ISignatory {
+  address: string;
+  name: string;
+  isApproved?: boolean;
+}
+
+export interface IMultisigWallet {
+  address: string;
+  name: string;
+  threshold: number,
+  signatories: ISignatory[];
+}
+
+export interface IMultisigTransactionData {
+  callData: string;
+  callHash: string;
+}
+
+export interface IMultisigTransaction {
+  callHash: string;
+  callData?: string;
+  recipient: string;
+  amount: number;
+  account: CreateResult,
+  multisigAddress?: string,
+  otherSignatories: string[],
+  threshold: number,
+}
+
+export interface IMultisigTransactionItem extends IMultisigTransactionData {
+  _id: string;
+  address: string;
+  recipient: string;
+  amount: number;
+  initiator: string;
+  threshold: number;
+  approvals: number;
+  status: string;
+  signatories: ISignatory[]
+}

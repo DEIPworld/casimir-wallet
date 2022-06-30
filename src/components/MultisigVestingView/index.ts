@@ -1,0 +1,1 @@
+export { MultisigVestingView } from './MultisigVestingView';
