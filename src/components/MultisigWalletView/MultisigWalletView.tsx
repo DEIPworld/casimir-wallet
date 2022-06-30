@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
 import { RouterView } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
@@ -8,6 +8,7 @@ import { DisplayAddress } from '@/components/DisplayAddress';
 
 import { useAccountStore } from '@/stores/account';
 import { useMultisigWalletStore } from '@/stores/multisigWallet';
+import { useVestingStore } from '@/stores/vesting';
 
 export const MultisigWalletView = defineComponent({
   props: {
@@ -19,9 +20,15 @@ export const MultisigWalletView = defineComponent({
   setup(props) {
     const accountStore = useAccountStore();
     const multisigStore = useMultisigWalletStore();
+    const vestingStore = useVestingStore();
 
     const { multisigAccountDetails } = storeToRefs(accountStore);
-    const { balance, pendingApprovals } = storeToRefs(multisigStore);
+    const { balance, pendingApprovals: pendingTransactions } = storeToRefs(multisigStore);
+    const { pendingApprovals: pendingVestingClaims } = storeToRefs(vestingStore);
+
+    const pendingApprovals = computed(() =>
+      (pendingTransactions.value?.length || 0) + (pendingVestingClaims.value?.length || 0)
+    );
 
     return () => (
       <InnerContainer>
@@ -72,11 +79,11 @@ export const MultisigWalletView = defineComponent({
             to={{ name: 'multisig.approvals', params: { address: props.address } }}
           >
             <span>approvals</span>
-            {pendingApprovals.value.length > 0 && (
+            {pendingApprovals.value > 0 && (
               <VBadge
                 class="ml-2"
                 inline
-                content={pendingApprovals.value.length}
+                content={pendingApprovals.value}
                 textColor="white"
                 color="#f44336"
               />

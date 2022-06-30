@@ -235,7 +235,7 @@ export class ApiService {
     otherSignatories: string[],
     isFirstApproval: boolean,
     isFinalApproval: boolean,
-  }): Promise<any> {
+  }): Promise<IMultisigTransactionData> {
     const {
       account,
       multisigAddress,
@@ -277,11 +277,8 @@ export class ApiService {
             parseInt(weight)
           )
           .signAndSend(account.pair);
-
-          return;
-      }
-
-      await this.api.tx.multisig
+      } else {
+        await this.api.tx.multisig
         .approveAsMulti(
           threshold,
           otherSignatories.sort(),
@@ -290,8 +287,15 @@ export class ApiService {
           parseInt(weight)
         )
         .signAndSend(account.pair);
+      }
+
+      return {
+        callHash,
+        callData
+      };
     } catch (error: any) {
       console.error(error);
+      throw error;
     }
   }
 
