@@ -8,7 +8,7 @@ import {
   mnemonicToMiniSecret,
   decodeAddress
 } from '@polkadot/util-crypto';
-import { u8aToHex } from '@polkadot/util';
+import { u8aToHex, stringToU8a } from '@polkadot/util';
 
 import HttpService from './HttpService';
 
@@ -85,7 +85,18 @@ export class ApiService {
     return mnemonicValidate(seedPhrase);
   }
 
-  addAccount(seedPhrase: string, password: string): CreateResult {
+  signMessage(account: CreateResult, message: string): string {
+    const signature = account.pair.sign(stringToU8a(message));
+    const isValid = account.pair.verify(message, signature, account.pair.publicKey);
+
+    if (!isValid) {
+      throw new Error(`Signed message: ${message} is invalid`);
+    }
+
+    return u8aToHex(signature);
+  }
+
+  addAccount(seedPhrase: string, password?: string): CreateResult {
     if (this.validateSeedPhrase(seedPhrase)) {
       return Keyring.addUri(seedPhrase, password);
     }
@@ -106,7 +117,7 @@ export class ApiService {
     });
   }
 
-  async getAccountDAO(address: string): Promise<any> {
+  async getAccountDao(address: string): Promise<any> {
     try {
       const publicKey = u8aToHex(decodeAddress(address));
 
@@ -236,7 +247,6 @@ export class ApiService {
     account: CreateResult,
     amount: number
   ): Promise<ITransaction> {
-
     try {
       const hash = await this.api.tx.balances
         .transfer(recipient, new BigNumber(amount).shiftedBy(18).toString())

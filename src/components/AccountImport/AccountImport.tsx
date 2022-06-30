@@ -65,7 +65,7 @@ export const AccountImport = defineComponent({
             <AccountImportSuccess
               onClick:next={goToWallet}
               onClick:oauth={goToOAuth}
-              isHasPortal={!!router.currentRoute.value.query.portal}
+              hasPortal={!!router.currentRoute.value.query.portalId}
             />
           </VWindowItem>
           <VWindowItem value="error" class="pa-12">

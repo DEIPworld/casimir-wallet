@@ -13,7 +13,7 @@ export const useAccountStore = defineStore(
   'account',
   () => {
     const accountJson = ref<KeyringPair$Json>();
-    const accountDAO = ref();
+    const accountDao = ref();
 
     const tempSeed = ref<string>('');
 
@@ -26,39 +26,39 @@ export const useAccountStore = defineStore(
 
     async function addAccount(seedPhrase: string, password: string): Promise<void> {
       const { json } = apiService.addAccount(seedPhrase, password);
-      const DAO = await apiService.getAccountDAO(json.address);
+      const DAO = await apiService.getAccountDao(json.address);
 
       accountJson.value = json;
-      accountDAO.value = DAO;
+      accountDao.value = DAO;
     }
 
     function restoreAccount(json: KeyringPair$Json, password: string): Promise<CreateResult> {
       return apiService.restoreAccount(json, password);
     }
 
-    async function connectPortal(portal: any): Promise<void> {
+    async function connectPortal(portal: any): Promise<string> {
       const keys = apiService.getAccountKeyPair(tempSeed.value, address.value);
+      const account = apiService.addAccount(tempSeed.value);
+      const signature = apiService.signMessage(account, portal.seed);
 
-      const DAO = await deipService.createDaoTransactionMessage({
+      accountDao.value = await deipService.createDaoTransactionMessage({
         address: address.value,
         publicKey: keys.publicKey.slice(2),
         privateKey: keys.privateKey.slice(2),
         portal
       });
 
-      accountDAO.value = DAO;
-
-      return DAO;
+      return signature;
     }
 
     function logOut() {
       accountJson.value = undefined;
-      accountDAO.value = undefined;
+      accountDao.value = undefined;
     }
 
     return {
       accountJson,
-      accountDAO,
+      accountDao,
 
       tempSeed,
 

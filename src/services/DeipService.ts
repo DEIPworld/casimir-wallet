@@ -19,7 +19,7 @@ export class DeipService {
   async init(): Promise<void> {
     this.chainService = await ChainService.getInstanceAsync({
       PROTOCOL: parseFloat(import.meta.env.DW_PROTOCOL),
-      DEIP_FULL_NODE_URL: import.meta.env.DW_DEIP_FULL_NODE_URL,
+      DEIP_FULL_NODE_URL: import.meta.env.DW_NETWORK,
       CORE_ASSET: JSON.parse(import.meta.env.DW_CORE_ASSET)
     });
 
@@ -73,9 +73,9 @@ export class DeipService {
       portal
     };
 
-    const { data: DAO } = await HttpService.post('/dao/create', data);
+    const { data: dao } = await HttpService.post('/dao/create', data);
 
-    return DAO;
+    return dao;
   }
 
   static readonly getInstance = singleton(() => new DeipService());

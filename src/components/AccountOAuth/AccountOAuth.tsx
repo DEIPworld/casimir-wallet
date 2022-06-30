@@ -24,7 +24,7 @@ export const AccountOAuth = defineComponent({
     const accountStore = useAccountStore();
 
     const { showSuccess } = useNotify();
-    const { isLoggedIn, accountDAO } = storeToRefs(accountStore);
+    const { isLoggedIn, accountDao } = storeToRefs(accountStore);
 
     const balanceStore = useWalletStore();
     const { balance } = storeToRefs(balanceStore);
@@ -38,7 +38,7 @@ export const AccountOAuth = defineComponent({
           initialStep.value = 'unsigned';
           break;
 
-        case !accountDAO.value && Number(balance.value?.data.actual) < 10:
+        case !accountDao.value && Number(balance.value?.data.actual) < 10:
           initialStep.value = 'paywall';
           break;
 
@@ -68,12 +68,20 @@ export const AccountOAuth = defineComponent({
       isLoading.value = true;
 
       try {
-        await accountStore.connectPortal(
+        const signature = await accountStore.connectPortal(
           router.currentRoute.value.query
         );
 
         showSuccess('Portal is successfully connected.');
-        await router.push({ name: 'wallet' });
+
+        window.open(
+          `
+            ${router.currentRoute.value.query.url}
+            ?signature=${signature}
+            &daoId=${accountDao.value.daoId}
+          `.replace(/\s+/g, ''),
+          '_self'
+        );
       } finally {
         isLoading.value = false;
       }

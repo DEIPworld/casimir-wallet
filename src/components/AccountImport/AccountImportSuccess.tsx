@@ -8,7 +8,7 @@ export const AccountImportSuccess = defineComponent({
   ],
 
   props: {
-    isHasPortal: {
+    hasPortal: {
       type: Boolean,
       default: false
     }
@@ -30,7 +30,7 @@ export const AccountImportSuccess = defineComponent({
         <div class="d-flex mt-12">
           <VSpacer/>
 
-          {props.isHasPortal ? (
+          {props.hasPortal ? (
             <>
               <VBtn
                 color="secondary-btn"

@@ -16,7 +16,7 @@ export const AccountCreateFinish = defineComponent({
   ],
 
   props: {
-    isHasPortal: {
+    hasPortal: {
       type: Boolean,
       default: false
     }
@@ -50,7 +50,7 @@ export const AccountCreateFinish = defineComponent({
           >
             Go to wallet
           </VBtn>
-          {props.isHasPortal && (
+          {props.hasPortal && (
             <VBtn
               class="ml-4"
               onClick={() => emit('click:oauth')}
