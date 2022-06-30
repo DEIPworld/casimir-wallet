@@ -26,10 +26,9 @@ export const useAccountStore = defineStore(
 
     async function addAccount(seedPhrase: string, password: string): Promise<void> {
       const { json } = apiService.addAccount(seedPhrase, password);
-      const DAO = await apiService.getAccountDao(json.address);
 
+      accountDao.value = await apiService.getAccountDao(json.address);
       accountJson.value = json;
-      accountDao.value = DAO;
     }
 
     function restoreAccount(json: KeyringPair$Json, password: string): Promise<CreateResult> {
