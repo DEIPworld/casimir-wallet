@@ -1,6 +1,7 @@
 import { defineComponent, watchEffect, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRouter, useRoute } from 'vue-router';
+import qs from 'qs';
 
 import {
   VWindow,
@@ -69,32 +70,24 @@ export const AccountOAuth = defineComponent({
       isLoading.value = true;
 
       try {
-        const signature = await accountStore.connectPortal(route.query);
+        const { signature, publicKey } = await accountStore.connectPortal(route.query);
 
         showSuccess('Portal is successfully connected.');
 
-        if (window.opener) {
-          const message = {
-            signature,
-            daoId: accountDao.value.daoId,
-            channel: 'Deip.Wallet'
-          };
+        const msgData = {
+          signature,
+          publicKey,
+          daoId: accountDao.value.daoId,
+          channel: 'Deip.Wallet'
+        };
 
-          window.opener.postMessage(
-            message,
-            '*'
-          );
+        if (window.opener) {
+          window.opener.postMessage(msgData, '*');
 
           window.close();
         } else {
-          const redirectUrl = [
-            route.query.url,
-            `?signature=${signature}`,
-            `&daoId=${accountDao.value.daoId}`
-          ].join('');
-
           window.open(
-            redirectUrl,
+            qs.stringify(msgData, { addQueryPrefix: true }),
             '_self'
           );
         }

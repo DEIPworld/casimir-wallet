@@ -39,19 +39,23 @@ export const useAccountStore = defineStore(
       return apiService.restoreAccount(json, password);
     }
 
-    async function connectPortal(portal: any): Promise<string> {
+    async function connectPortal(portal: any): Promise<{ signature: string, publicKey: string }> {
       const keys = apiService.getAccountKeyPair(tempSeed.value, address.value);
       const account = apiService.addAccount(tempSeed.value);
       const signature = apiService.signMessage(account, portal.seed);
 
+      const publicKey = keys.publicKey.slice(2);
+      const privateKey = keys.privateKey.slice(2);
+
+
       accountDao.value = await deipService.createDaoTransactionMessage({
         address: address.value,
-        publicKey: keys.publicKey.slice(2),
-        privateKey: keys.privateKey.slice(2),
+        publicKey,
+        privateKey,
         portal
       });
 
-      return signature;
+      return { signature, publicKey };
     }
 
     async function getMultisigAccounts(): Promise<void> {
