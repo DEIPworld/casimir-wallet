@@ -12,8 +12,8 @@ export const ActionView = defineComponent({
     return () => (
       <InnerContainer>
         <VTabs class="mt-n12 mx-n12" style="height: 64px" grow>
-          <VTab to={{ name: `${routePrefix.value}action.send` }}>send</VTab>
-          <VTab to={{ name: `${routePrefix.value}action.receive` }}>receive</VTab>
+          <VTab style="height: auto" to={{ name: `${routePrefix.value}action.send` }}>send</VTab>
+          <VTab style="height: auto" to={{ name: `${routePrefix.value}action.receive` }}>receive</VTab>
         </VTabs>
 
         <VDivider class="mx-n12 mb-12"/>

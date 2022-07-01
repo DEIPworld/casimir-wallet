@@ -65,7 +65,7 @@ export const DisplayAddress = defineComponent({
 
     const renderDefaultVariant = () => (
       <VSheet maxWidth={200} class="d-flex align-center">
-        <div class="text-subtitle-1 text-truncate">{middleTruncate(props.address)}</div>
+        <div class="text-subtitle-1 text-truncate mr-2">{middleTruncate(props.address)}</div>
         {renderCopyButton(true)}
       </VSheet>
     );

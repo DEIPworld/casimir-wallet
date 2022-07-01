@@ -1,5 +1,5 @@
 import { defineComponent, watchEffect } from 'vue';
-import { RouterView, useRouter } from 'vue-router';
+import { RouterView, useRouter, useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import {
@@ -19,6 +19,7 @@ export const App = defineComponent({
     const accountStore = useAccountStore();
     const walletStore = useWalletStore();
     const router = useRouter();
+    const route = useRoute();
 
     const { address } = storeToRefs(accountStore);
 
@@ -37,7 +38,7 @@ export const App = defineComponent({
 
     return () => (
       <VApp>
-        <Header onClick:logout={logOut} />
+        {!route?.query?.ext && <Header onClick:logout={logOut} />}
         <VMain>
           <RouterView />
         </VMain>

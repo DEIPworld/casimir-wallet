@@ -55,11 +55,22 @@ export const MultisigWalletView = defineComponent({
         </div>
 
         <VTabs class="mx-n6" style="height: 64px">
-          <VTab to={{ name: 'multisig.balances', params: { address: props.address } }}>assets</VTab>
-          <VTab to={{ name: 'multisig.transactions', params: { address: props.address } }}>
+          <VTab
+            style="height: auto"
+            to={{ name: 'multisig.balances', params: { address: props.address } }}
+          >
+            assets
+          </VTab>
+          <VTab
+            style="height: auto"
+            to={{ name: 'multisig.transactions', params: { address: props.address } }}
+          >
             transactions
           </VTab>
-          <VTab to={{ name: 'multisig.approvals', params: { address: props.address } }}>
+          <VTab
+            style="height: auto"
+            to={{ name: 'multisig.approvals', params: { address: props.address } }}
+          >
             <span>approvals</span>
             {pendingApprovals.value.length > 0 && (
               <VBadge

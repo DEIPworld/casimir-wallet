@@ -49,8 +49,8 @@ export const WalletView = defineComponent({
         </div>
 
         <VTabs class="mx-n6" style="height: 64px">
-          <VTab to={{ name: 'wallet' }}>assets</VTab>
-          <VTab to={{ name: 'wallet.transactions' }}>transactions</VTab>
+          <VTab style="height: auto" to={{ name: 'wallet' }}>assets</VTab>
+          <VTab style="height: auto" to={{ name: 'wallet.transactions' }}>transactions</VTab>
         </VTabs>
 
         <VDivider class="mx-n12 mb-12"/>

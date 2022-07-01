@@ -44,7 +44,7 @@ export const Header = defineComponent({
       const items = [];
       if (isMultiSigView.value) {
         items.push(
-          <VTab to={{ name: 'multisig.details' }} exact-path>
+          <VTab style="height: auto" to={{ name: 'multisig.details' }} exact-path>
             Multisig details
           </VTab>
         );

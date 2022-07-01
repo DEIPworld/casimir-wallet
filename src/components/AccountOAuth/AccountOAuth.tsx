@@ -1,6 +1,6 @@
 import { defineComponent, watchEffect, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 import {
   VWindow,
@@ -21,6 +21,7 @@ export const AccountOAuth = defineComponent({
 
   setup() {
     const router = useRouter();
+    const route = useRoute();
     const accountStore = useAccountStore();
 
     const { showSuccess } = useNotify();
@@ -68,20 +69,35 @@ export const AccountOAuth = defineComponent({
       isLoading.value = true;
 
       try {
-        const signature = await accountStore.connectPortal(
-          router.currentRoute.value.query
-        );
+        const signature = await accountStore.connectPortal(route.query);
 
         showSuccess('Portal is successfully connected.');
 
-        window.open(
-          `
-            ${router.currentRoute.value.query.url}
-            ?signature=${signature}
-            &daoId=${accountDao.value.daoId}
-          `.replace(/\s+/g, ''),
-          '_self'
-        );
+        if (window.opener) {
+          const message = {
+            signature,
+            daoId: accountDao.value.daoId,
+            channel: 'Deip.Wallet'
+          };
+
+          window.opener.postMessage(
+            message,
+            '*'
+          );
+
+          window.close();
+        } else {
+          const redirectUrl = [
+            route.query.url,
+            `?signature=${signature}`,
+            `&daoId=${accountDao.value.daoId}`
+          ].join('');
+
+          window.open(
+            redirectUrl,
+            '_self'
+          );
+        }
       } finally {
         isLoading.value = false;
       }
@@ -118,7 +134,7 @@ export const AccountOAuth = defineComponent({
             <AccountOAuthAllow
               onClick:cancel={goToStart}
               onClick:allow={onAllowConnect}
-              portal={router.currentRoute.value.query}
+              portal={route.query}
               isLoading={isLoading.value}
             />
           </VWindowItem>
