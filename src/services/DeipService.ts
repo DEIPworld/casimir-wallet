@@ -34,48 +34,53 @@ export class DeipService {
     privateKey,
     portal
   }: IWallet): Promise<any> {
-    const daoId = genRipemd160Hash(randomAsHex(20));
+    try {
+      const daoId = genRipemd160Hash(randomAsHex(20));
 
-    const createDaoTx = await this.chainTxBuilder.begin()
-      .then((txBuilder: any) => {
-        const createDaoCmd = new CreateDaoCmd({
-          entityId: daoId,
-          authority: {
-            owner: {
-              auths: [{ key: publicKey, weight: 1 }],
-              weight: 1
-            }
-          },
-          creator: address,
-          description: genSha256Hash({ description: `${address} DAO` }),
-          isTeamAccount: false,
-          attributes: []
+      const createDaoTx = await this.chainTxBuilder.begin()
+        .then((txBuilder: any) => {
+          const createDaoCmd = new CreateDaoCmd({
+            entityId: daoId,
+            authority: {
+              owner: {
+                auths: [{ key: publicKey, weight: 1 }],
+                weight: 1
+              }
+            },
+            creator: address,
+            description: genSha256Hash({ description: `${address} DAO` }),
+            isTeamAccount: false,
+            attributes: []
+          });
+
+          txBuilder.addCmd(createDaoCmd);
+          return txBuilder.end();
         });
 
-        txBuilder.addCmd(createDaoCmd);
-        return txBuilder.end();
-      });
+      /*
+        1st approval from user DAO (final)
+      */
+      const createUserDaoByUserTx = await createDaoTx.signAsync(
+        privateKey,
+        this.api
+      );
 
-    /*
-      1st approval from user DAO (final)
-    */
-    const createUserDaoByUserTx = await createDaoTx.signAsync(
-      privateKey,
-      this.api
-    );
+      const message = new JsonDataMsg(createUserDaoByUserTx.getPayload()).getHttpBody().envelope;
 
-    const message = new JsonDataMsg(createUserDaoByUserTx.getPayload()).getHttpBody().envelope;
+      const data = {
+        message,
+        daoId,
+        publicKey: `0x${publicKey}`,
+        portal
+      };
 
-    const data = {
-      message,
-      daoId,
-      publicKey: `0x${publicKey}`,
-      portal
-    };
+      const { data: dao } = await HttpService.post('/dao/create', data);
 
-    const { data: dao } = await HttpService.post('/dao/create', data);
-
-    return dao;
+      return dao;
+    } catch (error) {
+      console.log(error);
+      return error as any;
+    }
   }
 
   static readonly getInstance = singleton(() => new DeipService());

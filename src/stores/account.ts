@@ -40,22 +40,27 @@ export const useAccountStore = defineStore(
     }
 
     async function connectPortal(portal: any): Promise<{ signature: string, publicKey: string }> {
-      const keys = apiService.getAccountKeyPair(tempSeed.value, address.value);
-      const account = apiService.addAccount(tempSeed.value);
-      const signature = apiService.signMessage(account, portal.seed);
+      try {
+        const keys = apiService.getAccountKeyPair(tempSeed.value, address.value);
+        const account = apiService.addAccount(tempSeed.value);
+        const signature = apiService.signMessage(account, portal.seed);
 
-      const publicKey = keys.publicKey.slice(2);
-      const privateKey = keys.privateKey.slice(2);
+        const publicKey = keys.publicKey.slice(2);
+        const privateKey = keys.privateKey.slice(2);
 
 
-      accountDao.value = await deipService.createDaoTransactionMessage({
-        address: address.value,
-        publicKey,
-        privateKey,
-        portal
-      });
+        accountDao.value = await deipService.createDaoTransactionMessage({
+          address: address.value,
+          publicKey,
+          privateKey,
+          portal
+        });
 
-      return { signature, publicKey };
+        return { signature, publicKey };
+      } catch (error) {
+        console.log(error);
+        return error as any;
+      }
     }
 
     async function getMultisigAccounts(): Promise<void> {
