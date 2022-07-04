@@ -279,14 +279,14 @@ export class ApiService {
           .signAndSend(account.pair);
       } else {
         await this.api.tx.multisig
-        .approveAsMulti(
-          threshold,
-          otherSignatories.sort(),
-          timePoint,
-          callHash,
-          parseInt(weight)
-        )
-        .signAndSend(account.pair);
+          .approveAsMulti(
+            threshold,
+            otherSignatories.sort(),
+            timePoint,
+            callHash,
+            parseInt(weight)
+          )
+          .signAndSend(account.pair);
       }
 
       return {
@@ -418,6 +418,10 @@ export class ApiService {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  getExistentialDeposit(): string {
+    return ApiService.formatCurrency(this.api.consts.balances.existentialDeposit.toBigInt());
   }
 
   subscribeToTransfers(address: string): void {
