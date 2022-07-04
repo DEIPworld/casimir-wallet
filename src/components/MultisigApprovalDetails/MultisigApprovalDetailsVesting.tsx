@@ -89,7 +89,7 @@ export const MultisigApprovalDetailsVesting = defineComponent({
 
     const renderSignatories = () =>
       pendingApproval.value?.signatories.map((signatory: ISignatory) => (
-        <div class="d-flex align-center w-50 text-break">
+        <div class="d-flex align-center justify-end">
           <span class="mr-4 text-subtitle-1">{signatory.name}</span>
           <DisplayAddress address={signatory.address} hideCopyButton />
         </div>
@@ -114,7 +114,7 @@ export const MultisigApprovalDetailsVesting = defineComponent({
             </div>
           </div>
           <VSpacer />
-          <div class="d-flex align-center w-50 text-break">
+          <div class="d-flex align-center justify-end w-50 text-break">
             <span class="mr-4 text-subtitle-1">{depositor.value?.name}</span>
             <DisplayAddress address={depositor.value?.address} hideCopyButton />
           </div>
@@ -150,7 +150,7 @@ export const MultisigApprovalDetailsVesting = defineComponent({
             </div>
           </div>
           <VSpacer />
-          {renderSignatories()}
+          <div class="w-50 text-break">{renderSignatories()}</div>
         </VSheet>
 
         <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 mb-2">
