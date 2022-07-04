@@ -3,7 +3,7 @@ import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import useClipboard from 'vue-clipboard3';
 
-import { VBtn, VSheet, VIcon } from 'vuetify/components';
+import { VBtn, VSheet, VSpacer, VIcon } from 'vuetify/components';
 import { DisplayAddress } from '@/components/DisplayAddress';
 import { ConfirmActionModal } from '@/components/ConfirmActionModal';
 
@@ -103,7 +103,7 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
 
     const renderSignatories = () =>
       pendingApproval.value?.signatories.map((signatory: ISignatory) => (
-        <div class="d-flex align-center justify-end">
+        <div class="d-flex align-center w-50 text-break">
           <span class="mr-4 text-subtitle-1">{signatory.name}</span>
           <DisplayAddress address={signatory.address} hideCopyButton />
         </div>
@@ -116,7 +116,7 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
         <VSheet
           rounded
           color="rgba(255,255,255,.05)"
-          class="mt-4 pa-4 d-flex align-center justify-space-between mb-2"
+          class="mt-4 pa-4 d-flex align-center mb-2"
         >
           <div class="d-flex align-center">
             <span class="text-h6">Depositor</span>
@@ -127,7 +127,8 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
               <VIcon size="x-small">mdi-help-circle-outline</VIcon>
             </div>
           </div>
-          <div class="d-flex align-center">
+          <VSpacer />
+          <div class="d-flex align-center w-50 text-break">
             <span class="mr-4 text-subtitle-1">{depositor.value?.name}</span>
             <DisplayAddress address={depositor.value?.address} hideCopyButton />
           </div>
@@ -135,7 +136,7 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
         <VSheet
           rounded
           color="rgba(255,255,255,.05)"
-          class="pa-4 d-flex align-center justify-space-between mb-2"
+          class="pa-4 d-flex align-center mb-2"
         >
           <div class="d-flex align-center">
             <span class="text-h6">Existing approvals</span>
@@ -146,6 +147,7 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
               <VIcon size="x-small">mdi-help-circle-outline</VIcon>
             </div>
           </div>
+          <VSpacer />
           <span class="pr-0 text-right text-subtitle-1">
             {pendingApproval.value?.approvals}/{pendingApproval.value?.threshold}
           </span>
@@ -153,7 +155,7 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
         <VSheet
           rounded
           color="rgba(255,255,255,.05)"
-          class="pa-4 d-flex align-center justify-space-between mb-2"
+          class="pa-4 d-flex align-center mb-2"
         >
           <div class="d-flex align-center">
             <span class="text-h6">Signatories</span>
@@ -161,7 +163,8 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
               <VIcon size="x-small">mdi-help-circle-outline</VIcon>
             </div>
           </div>
-          <div>{renderSignatories()}</div>
+          <VSpacer />
+          {renderSignatories()}
         </VSheet>
 
         <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 mb-2">

@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue';
 import { storeToRefs } from 'pinia';
 
-import { VBtn, VRow, VSheet } from 'vuetify/components';
+import { VBtn, VSpacer, VSheet } from 'vuetify/components';
 import { InnerContainer } from '@/components/InnerContainer';
 import { DisplayAddress } from '@/components/DisplayAddress';
 
@@ -27,19 +27,21 @@ export const MultisigDetailsView = defineComponent({
         <VSheet
           rounded
           color="rgba(255,255,255,.05)"
-          class="mt-8 pa-4 d-flex align-center justify-space-between mb-2"
+          class="mt-8 pa-4 d-flex align-center mb-2"
         >
           <div class="text-h6">Treshhold</div>
+          <VSpacer />
           <div class="text-subtitle-1">{multisigAccountDetails.value?.threshold}</div>
         </VSheet>
 
         <VSheet
           rounded
           color="rgba(255,255,255,.05)"
-          class="mt-4 pa-4 d-flex align-center justify-space-between mb-2"
+          class="mt-4 pa-4 d-flex align-center mb-2"
         >
           <div class="text-h6">Signatories</div>
-          <div class="text-subtitle-1">{renderSignatories()}</div>
+          <VSpacer />
+          <div class="w-50 text-subtitle-1 text-right text-break">{renderSignatories()}</div>
         </VSheet>
 
         <div class="d-flex justify-end mt-4">
