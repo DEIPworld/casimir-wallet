@@ -193,6 +193,9 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     await HttpService.patch(`/multisig-transaction/approve/${transactionId}`, params);
   };
 
+  const getExistentialDeposit = (): string => {
+    return apiService.getExistentialDeposit();
+  };
 
   return {
     balance,
@@ -209,8 +212,9 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     createMultisigTransaction,
     initMultisigTransaction,
     approveMultisigTransaction,
-    subscribeToTransfers,
+    getExistentialDeposit,
 
+    subscribeToTransfers,
     unsubscribeFromTransfers,
     clear
   };

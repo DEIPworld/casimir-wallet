@@ -1,4 +1,4 @@
-import { computed, defineComponent, ref, watchEffect } from 'vue';
+import { defineComponent, ref, computed, watchEffect } from 'vue';
 import { storeToRefs } from 'pinia';
 import {
   VBtn,
@@ -16,11 +16,6 @@ import { useYup } from '@/composable/validate';
 import { useField, useForm } from 'vee-validate';
 import { string, number, object } from 'yup';
 
-const existentialDepositHelpText = `If the recipient account is new, the balance needs to be more than the existential deposit.
-Likewise if the sending account balance drops below the same value,the account will be
-removed from the state
-`;
-
 export const MultisigActionSendForm = defineComponent({
   emits: ['click:cancel', 'click:confirm'],
   props: {
@@ -32,8 +27,6 @@ export const MultisigActionSendForm = defineComponent({
     const multisigStore = useMultisigWalletStore();
 
     const { actualBalance } = storeToRefs(multisigStore);
-
-    const { getTransactionFee } = useMultisigWalletStore();
 
     const { makeError, addressValidator } = useYup();
 
@@ -60,7 +53,7 @@ export const MultisigActionSendForm = defineComponent({
     } = useField<number>('amount');
 
     const fee = ref<string>('0');
-    const existentialDeposit = ref<string>('0'); // TODO Add method to retrieve this amount
+    const existentialDeposit = computed(() => multisigStore.getExistentialDeposit());
     const isLoading = ref<boolean>(false);
 
     const totalSend = computed(() => {
@@ -74,7 +67,11 @@ export const MultisigActionSendForm = defineComponent({
       if (amountMeta.valid && amount.value && props.address) {
         isLoading.value = true;
 
-        fee.value = await getTransactionFee(recipient.value, props.address, amount.value);
+        fee.value = await multisigStore.getTransactionFee(
+          recipient.value,
+          props.address,
+          amount.value
+        );
 
         isLoading.value = false;
       } else {
@@ -113,11 +110,14 @@ export const MultisigActionSendForm = defineComponent({
         <VRow>
           <VCol class="d-flex">
             <span>Existential deposit</span>
-            <div class="dw-tooltip ml-2 text-body-1" data-tooltip={existentialDepositHelpText}>
+            <div
+              class="dw-tooltip ml-2 text-body-1"
+              data-tooltip="The minimum amount that an account should have to be deemed active"
+            >
               <VIcon size="x-small">mdi-help-circle-outline</VIcon>
             </div>
           </VCol>
-          <VCol class="text-right">{existentialDeposit.value} milli</VCol>
+          <VCol class="text-right">{existentialDeposit.value} DEIP</VCol>
         </VRow>
 
         <VDivider class="my-4" />
