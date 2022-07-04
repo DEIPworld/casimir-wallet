@@ -97,6 +97,8 @@ export const useAccountStore = defineStore(
         signatories
       });
 
+      multisigAccounts.value?.push(data);
+
       return data;
     }
 

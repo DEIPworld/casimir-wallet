@@ -71,6 +71,7 @@ export const AccountCreateMulti = defineComponent({
         parseInt(threshold.value),
         name.value
       );
+
       showSuccess('Multisig account succesfuly created');
       router.push({ name: 'multisig.wallet', params: { address: result.address } });
     };
