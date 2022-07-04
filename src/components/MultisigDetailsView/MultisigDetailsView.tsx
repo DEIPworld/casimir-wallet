@@ -24,21 +24,13 @@ export const MultisigDetailsView = defineComponent({
           <DisplayAddress address={multisigAccountDetails.value?.address} />
         </div>
 
-        <VSheet
-          rounded
-          color="rgba(255,255,255,.05)"
-          class="mt-8 pa-4 d-flex align-center mb-2"
-        >
+        <VSheet rounded color="rgba(255,255,255,.05)" class="mt-8 pa-4 d-flex align-center mb-2">
           <div class="text-h6">Treshhold</div>
           <VSpacer />
           <div class="text-subtitle-1">{multisigAccountDetails.value?.threshold}</div>
         </VSheet>
 
-        <VSheet
-          rounded
-          color="rgba(255,255,255,.05)"
-          class="mt-4 pa-4 d-flex align-center mb-2"
-        >
+        <VSheet rounded color="rgba(255,255,255,.05)" class="mt-4 pa-4 d-flex align-center mb-2">
           <div class="text-h6">Signatories</div>
           <VSpacer />
           <div class="w-50 text-subtitle-1 text-right text-break">{renderSignatories()}</div>
@@ -48,7 +40,7 @@ export const MultisigDetailsView = defineComponent({
           <VBtn color="secondary-btn" size="small">
             Edit
           </VBtn>
-          <VBtn class="ml-4" size="small" to={{ name: 'multisig.action.send' }}>
+          <VBtn class="ml-4" size="small">
             Send
           </VBtn>
         </div>

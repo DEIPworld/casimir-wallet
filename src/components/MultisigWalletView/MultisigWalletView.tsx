@@ -26,8 +26,8 @@ export const MultisigWalletView = defineComponent({
     const { balance, pendingApprovals: pendingTransactions } = storeToRefs(multisigStore);
     const { pendingApprovals: pendingVestingClaims } = storeToRefs(vestingStore);
 
-    const pendingApprovals = computed(() =>
-      (pendingTransactions.value?.length || 0) + (pendingVestingClaims.value?.length || 0)
+    const pendingApprovals = computed(
+      () => (pendingTransactions.value?.length || 0) + (pendingVestingClaims.value?.length || 0)
     );
 
     return () => (
@@ -41,20 +41,11 @@ export const MultisigWalletView = defineComponent({
           <div class="text-right">
             <div class="text-h4 mt-1 mb-3">{balance.value?.data.actual} DEIP</div>
             <div>
-              <VBtn
-                size="small"
-                color="primary"
-                to={{ name: 'multisig.action.send' }}
-              >
+              <VBtn size="small" color="primary" to={{ name: 'multisig.action.send' }}>
                 Send
               </VBtn>
 
-              <VBtn
-                size="small"
-                color={'secondary-btn'}
-                class={'ml-2'}
-                to={{ name: 'multisig.details' }}
-              >
+              <VBtn size="small" color={'secondary-btn'} class={'ml-2'}>
                 Edit
               </VBtn>
             </div>
