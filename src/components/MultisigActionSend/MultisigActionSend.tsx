@@ -38,9 +38,11 @@ export const MultisigActionSend = defineComponent({
     const recipient = ref<string>();
     const amount = ref<number>();
 
-    const onConfirm = (recipientAddress: string, amountToSend: number): void => {
-      const data = multisigStore.createMultisigTransaction(recipientAddress, amountToSend);
-
+    const onConfirm = async (
+      recipientAddress: string,
+      amountToSend: number,
+      data: IMultisigTransactionData
+    ): Promise<void> => {
       transactionData.value = data;
       recipient.value = recipientAddress;
       amount.value = amountToSend;
@@ -74,7 +76,7 @@ export const MultisigActionSend = defineComponent({
             threshold: multisigAccountDetails.value?.threshold,
             amount: amount.value
           });
-  
+
           showSuccess('Successfully initiate transaction');
           router.push({ name: 'multisig.wallet' });
         } catch (error: any) {
@@ -83,7 +85,6 @@ export const MultisigActionSend = defineComponent({
           isLoading.value = false;
         }
       }, 500);
-      
     };
 
     const renderActiveView = () => {

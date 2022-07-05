@@ -347,6 +347,52 @@ export class ApiService {
     }
   }
 
+  async getMultisigTransactionFee(data: {
+    isFirstApproval: boolean,
+    isFinalApproval: boolean,
+    callHash: string,
+    callData: string,
+    threshold: number,
+    otherSignatories: string[],
+    multisigAddress: string,
+    personalAddress: string,
+  }): Promise<string> {
+    const {
+      isFirstApproval,
+      isFinalApproval,
+      callHash,
+      callData,
+      threshold,
+      otherSignatories,
+      multisigAddress,
+      personalAddress
+    } = data;
+    const weight = 640000000;
+
+    if (isFinalApproval) {
+      const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash));
+      const timePoint = info.unwrap().when;
+
+      const { partialFee } = await this.api.tx.multisig
+      .asMulti(threshold, otherSignatories.sort(), timePoint, callData, false, weight)
+      .paymentInfo(personalAddress);
+
+      return ApiService.formatCurrency(partialFee);
+    }
+
+    let timePoint = null;
+    if (!isFirstApproval) {
+      const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash));
+      timePoint = info.unwrap().when;
+    }
+
+    const { partialFee } = await this.api.tx.multisig
+      .approveAsMulti(threshold, otherSignatories.sort(), timePoint, callHash, weight).
+      paymentInfo(personalAddress);
+
+    return ApiService.formatCurrency(partialFee);
+  }
+
   createMultisigTransaction(recipient: string, amount: number): IMultisigTransactionData {
     const transaction = this.api.tx.balances.transfer(
       recipient,
