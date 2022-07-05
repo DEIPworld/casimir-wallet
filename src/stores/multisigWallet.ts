@@ -50,16 +50,17 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     if (data) pendingApprovals.value = data;
   };
 
-  const getTransactionFee = async (
-    recipient: string,
-    address: string,
-    amount: number
-  ) => {
-    return await apiService.getTransactionFee(
-      recipient,
-      address,
-      amount
-    );
+  const getMultisigTransactionFee = async (data: {
+    isFirstApproval: boolean,
+    isFinalApproval: boolean,
+    callHash: string,
+    callData: string,
+    threshold: number,
+    otherSignatories: string[],
+    multisigAddress: string,
+    personalAddress: string,
+  }): Promise<string> => {
+    return apiService.getMultisigTransactionFee(data);
   };
 
   const createMultisigTransaction = (
@@ -202,8 +203,8 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     pendingApprovals,
 
     getTransactionHistory,
+    getMultisigTransactionFee,
     getAccountBalance,
-    getTransactionFee,
     getPendingApprovals,
 
     createMultisigTransaction,

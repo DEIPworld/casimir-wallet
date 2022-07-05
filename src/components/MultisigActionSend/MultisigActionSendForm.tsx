@@ -5,27 +5,32 @@ import {
   VRow,
   VCol,
   VTextField,
-  VDivider,
   VProgressCircular,
   VIcon
 } from 'vuetify/components';
 
+import { useAccountStore } from '@/stores/account';
 import { useMultisigWalletStore } from '@/stores/multisigWallet';
 import { useYup } from '@/composable/validate';
 
 import { useField, useForm } from 'vee-validate';
 import { string, number, object } from 'yup';
 
+import type { IMultisigTransactionData } from '../../../types';
+
 export const MultisigActionSendForm = defineComponent({
   emits: ['click:cancel', 'click:confirm'],
   props: {
     address: {
-      type: String
+      type: String,
+      required: true
     }
   },
   setup(props, { emit }) {
+    const accountStore = useAccountStore();
     const multisigStore = useMultisigWalletStore();
 
+    const { address: personalAddress, multisigAccountDetails } = storeToRefs(accountStore);
     const { actualBalance } = storeToRefs(multisigStore);
 
     const { makeError, addressValidator } = useYup();
@@ -45,6 +50,7 @@ export const MultisigActionSendForm = defineComponent({
     });
 
     const { value: recipient, errorMessage: recipientError } = useField<string>('recipient');
+    const transactionData = ref<IMultisigTransactionData>();
 
     const {
       value: amount,
@@ -56,23 +62,33 @@ export const MultisigActionSendForm = defineComponent({
     const existentialDeposit = computed(() => multisigStore.getExistentialDeposit());
     const isLoading = ref<boolean>(false);
 
-    const totalSend = computed(() => {
-      if (amount.value) {
-        return amount.value + parseFloat(fee.value);
-      }
-      return 0;
-    });
-
     watchEffect(async () => {
-      if (amountMeta.valid && amount.value && props.address) {
+      if (amountMeta.valid && amount.value && personalAddress.value) {
         isLoading.value = true;
 
-        fee.value = await multisigStore.getTransactionFee(
-          recipient.value,
-          props.address,
-          amount.value
-        );
+        try {
+          if (!multisigAccountDetails.value) {
+            return;
+          }
 
+          const data = multisigStore.createMultisigTransaction(recipient.value, amount.value);
+
+          transactionData.value = data;
+          fee.value = await multisigStore.getMultisigTransactionFee({
+            isFirstApproval: true,
+            isFinalApproval: false,
+            callHash: data.callHash,
+            callData: data.callData,
+            threshold: multisigAccountDetails.value?.threshold,
+            otherSignatories: multisigAccountDetails.value?.signatories
+              .filter((item) => item.address !== personalAddress.value)
+              .map((item) => item.address),
+            multisigAddress: props.address,
+            personalAddress: personalAddress.value
+          });
+        } catch (error: any) {
+          console.error(error);
+        }
         isLoading.value = false;
       } else {
         fee.value = '0';
@@ -100,11 +116,11 @@ export const MultisigActionSendForm = defineComponent({
         </VRow>
 
         <VRow>
-          <VCol>Will be sent</VCol>
+          <VCol>Will be sent (from multisig account)</VCol>
           <VCol class="text-right">{amount.value || 0} DEIP</VCol>
         </VRow>
         <VRow>
-          <VCol>Platform fee</VCol>
+          <VCol>Platform fee (from personal account)</VCol>
           <VCol class="text-right">{fee.value} DEIP</VCol>
         </VRow>
         <VRow>
@@ -120,19 +136,12 @@ export const MultisigActionSendForm = defineComponent({
           <VCol class="text-right">{existentialDeposit.value} DEIP</VCol>
         </VRow>
 
-        <VDivider class="my-4" />
-
-        <VRow>
-          <VCol>Total</VCol>
-          <VCol class="text-right">{totalSend.value} DEIP</VCol>
-        </VRow>
-
         <div class="d-flex mt-12 justify-end align-center">
           <VBtn class="ml-4" color="secondary-btn" onClick={() => emit('click:cancel')}>
             cancel
           </VBtn>
           <VBtn
-            onClick={() => emit('click:confirm', recipient.value, amount.value)}
+            onClick={() => emit('click:confirm', recipient.value, amount.value, transactionData.value)}
             class="ml-4"
             disabled={!formState.value.valid || isLoading.value}
           >
