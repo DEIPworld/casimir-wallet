@@ -89,6 +89,7 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
               threshold: multisigAccountDetails.value?.threshold
             }
           );
+          isConfirmActionModalOpen.value = false;
 
           showSuccess('Successfully approved');
           multisigStore.getAccountBalance(address.value);

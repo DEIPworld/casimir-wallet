@@ -9,6 +9,7 @@ import { ConfirmActionModal } from '@/components/ConfirmActionModal';
 
 import { useAccountStore } from '@/stores/account';
 import { useVestingStore } from '@/stores/vesting';
+import { useMultisigWalletStore } from '@/stores/multisigWallet';
 import { useNotify } from '@/composable/notify';
 
 import type { ISignatory, IMultisigVestingItem } from '../../../types';
@@ -27,6 +28,7 @@ export const MultisigApprovalDetailsVesting = defineComponent({
 
     const accountStore = useAccountStore();
     const vestingStore = useVestingStore();
+    const multisigStore = useMultisigWalletStore();
 
     const { address, accountJson, multisigAccountDetails } = storeToRefs(accountStore);
     const { pendingApprovals } = storeToRefs(vestingStore);
@@ -40,9 +42,7 @@ export const MultisigApprovalDetailsVesting = defineComponent({
       )
     );
     const isApprovedByUser = computed(() =>
-      pendingApproval.value?.signatories.some(
-        (item: ISignatory) => item.address === address.value
-      )
+      pendingApproval.value?.signatories.some((item: ISignatory) => item.address === address.value)
     );
 
     const isConfirmActionModalOpen = ref<boolean>(false);
@@ -65,19 +65,21 @@ export const MultisigApprovalDetailsVesting = defineComponent({
 
       setTimeout(async () => {
         try {
-          if (accountJson.value && multisigAccountDetails.value) {
-            vestingStore.approveVestingClaim({
-              sender: { account: accountJson.value, password },
-              multisigAddress: multisigAccountDetails.value.address,
-              threshold: multisigAccountDetails.value.threshold,
-              otherSignatories: multisigAccountDetails.value?.signatories
+          if (!accountJson.value || !multisigAccountDetails.value) {
+            return;
+          }
+          vestingStore.approveVestingClaim({
+            sender: { account: accountJson.value, password },
+            multisigAddress: multisigAccountDetails.value.address,
+            threshold: multisigAccountDetails.value.threshold,
+            otherSignatories: multisigAccountDetails.value?.signatories
               .filter((item) => item.address !== address.value)
               .map((item) => item.address)
-            });
-          }
+          });
           isConfirmActionModalOpen.value = false;
 
           showSuccess('Successfully approved transaction');
+          multisigStore.getAccountBalance(multisigAccountDetails.value.address);
           router.push({ name: 'multisig.wallet' });
         } catch (error: any) {
           passwordError.value = error.message;
@@ -99,11 +101,7 @@ export const MultisigApprovalDetailsVesting = defineComponent({
       <div>
         <p class="ml-4 text-h6">Pending vesting claim</p>
 
-        <VSheet
-          rounded
-          color="rgba(255,255,255,.05)"
-          class="mt-4 pa-4 d-flex align-center mb-2"
-        >
+        <VSheet rounded color="rgba(255,255,255,.05)" class="mt-4 pa-4 d-flex align-center mb-2">
           <div class="d-flex align-center">
             <span class="text-h6">Depositor</span>
             <div
@@ -119,11 +117,7 @@ export const MultisigApprovalDetailsVesting = defineComponent({
             <DisplayAddress address={depositor.value?.address} hideCopyButton />
           </div>
         </VSheet>
-        <VSheet
-          rounded
-          color="rgba(255,255,255,.05)"
-          class="pa-4 d-flex align-center mb-2"
-        >
+        <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 d-flex align-center mb-2">
           <div class="d-flex align-center">
             <span class="text-h6">Existing approvals</span>
             <div
@@ -138,11 +132,7 @@ export const MultisigApprovalDetailsVesting = defineComponent({
             {pendingApproval.value?.approvals}/{pendingApproval.value?.threshold}
           </span>
         </VSheet>
-        <VSheet
-          rounded
-          color="rgba(255,255,255,.05)"
-          class="pa-4 d-flex align-center mb-2"
-        >
+        <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 d-flex align-center mb-2">
           <div class="d-flex align-center">
             <span class="text-h6">Signatories</span>
             <div class="dw-tooltip dw-tooltip__right ml-2" data-tooltip="Who approved">
@@ -193,9 +183,13 @@ export const MultisigApprovalDetailsVesting = defineComponent({
           <VBtn color="secondary-btn" onClick={() => router.push({ name: 'multisig.approvals' })}>
             cancel
           </VBtn>
-            <VBtn class="ml-4" disabled={isApprovedByUser.value} onClick={() => isConfirmActionModalOpen.value = true}>
-              {isApprovedByUser.value ? 'Approved' : 'Approve'}
-            </VBtn>
+          <VBtn
+            class="ml-4"
+            disabled={isApprovedByUser.value}
+            onClick={() => (isConfirmActionModalOpen.value = true)}
+          >
+            {isApprovedByUser.value ? 'Approved' : 'Approve'}
+          </VBtn>
         </div>
       </div>
     );
