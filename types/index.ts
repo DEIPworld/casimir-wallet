@@ -33,6 +33,17 @@ export interface ITransaction {
   amount: number | string;
 }
 
+export interface ITransactionHistoryItem {
+  _id: string;
+  data: {
+    from: string;
+    to: string;
+    amount: number;
+  },
+  upcoming: boolean;
+  createdOn: string;
+}
+
 export interface IKeyPair {
   publicKey: string;
   privateKey: string;
