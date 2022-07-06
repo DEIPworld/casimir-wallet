@@ -22,7 +22,6 @@ export const MultisigView = defineComponent({
     onBeforeMount(() => {
       accountStore.getMultisigAccountDetails(props.address);
       multisigStore.getAccountBalance(props.address);
-      multisigStore.subscribeToTransfers(props.address);
 
       multisigStore.getPendingApprovals(props.address);
       vestingStore.getPendingApprovals(props.address);
@@ -30,16 +29,13 @@ export const MultisigView = defineComponent({
 
     onBeforeUnmount(() => {
       multisigStore.clear();
-      multisigStore.unsubscribeFromTransfers(props.address);
     });
 
-    watch(address, (currentAddress, prevAddress) => {
+    watch(address, (currentAddress) => {
       multisigStore.clear();
-      multisigStore.unsubscribeFromTransfers(prevAddress);
 
       accountStore.getMultisigAccountDetails(currentAddress);
       multisigStore.getAccountBalance(currentAddress);
-      multisigStore.subscribeToTransfers(currentAddress);
 
       multisigStore.getPendingApprovals(currentAddress);
       vestingStore.getPendingApprovals(props.address);

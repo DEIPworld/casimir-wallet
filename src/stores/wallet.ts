@@ -1,8 +1,11 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
+
 import { ApiService } from '@/services/ApiService';
+import HttpService from '@/services/HttpService';
 import { emitter } from '@/utils/eventBus';
-import type { IAccount, ITransaction } from '@/types';
+
+import type { IAccount, ITransaction, ITransactionHistoryItem } from '@/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 
@@ -11,6 +14,7 @@ const apiService = ApiService.getInstance();
 export const useWalletStore = defineStore('balance', () => {
   const balance = ref<IAccount | undefined>();
   const transactions = ref<ITransaction[]>([]);
+  const transactionHistory = ref<ITransactionHistoryItem[]>([]);
 
   const freeBalance = computed(() =>
     parseFloat(balance.value?.data.free.replace(',', '') || '')
@@ -30,6 +34,12 @@ export const useWalletStore = defineStore('balance', () => {
       const res = await apiService.getAccountBalance(address);
       if (res) balance.value = res;
     }
+  };
+
+  const getTransactionHistory = async (address: string): Promise<void> => {
+    const { data } = await HttpService.get('/transaction-history', { address });
+
+    if (data) transactionHistory.value = data;
   };
 
   const subscribeToBalance = async (address: string) => {
@@ -93,8 +103,10 @@ export const useWalletStore = defineStore('balance', () => {
     actualBalance,
 
     transactions,
+    transactionHistory,
 
     getAccountBalance,
+    getTransactionHistory,
     getTransactionFee,
     makeTransaction,
 

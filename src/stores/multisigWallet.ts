@@ -3,17 +3,16 @@ import { computed, ref } from 'vue';
 
 import { ApiService } from '@/services/ApiService';
 import HttpService from '@/services/HttpService';
-import { emitter } from '@/utils/eventBus';
 
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
-import type { IAccount, ITransaction, IMultisigTransactionData, IMultisigTransactionItem } from '../../types';
+import type { IAccount, IMultisigTransactionData, IMultisigTransactionItem, ITransactionHistoryItem } from '../../types';
 
 const apiService = ApiService.getInstance();
 
 export const useMultisigWalletStore = defineStore('multisigBalance', () => {
   const balance = ref<IAccount | undefined>();
-  const transactions = ref<ITransaction[]>([]);
+  const transactionHistory = ref<ITransactionHistoryItem[]>([]);
   const pendingApprovals = ref<IMultisigTransactionItem[]>([]);
 
   const freeBalance = computed(() =>
@@ -25,7 +24,6 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
 
   const clear = () => {
     balance.value = undefined;
-    transactions.value = [];
     pendingApprovals.value = [];
   };
 
@@ -36,22 +34,16 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     }
   };
 
+  const getTransactionHistory = async (address: string): Promise<void> => {
+    const { data } = await HttpService.get('/transaction-history', { address });
+
+    if (data) transactionHistory.value = data;
+  };
+
   const getPendingApprovals = async (address: string): Promise<void> => {
     const { data } = await HttpService.get('/multisig-transaction', { address, status: 'pending' });
 
     if (data) pendingApprovals.value = data;
-  };
-
-  const subscribeToTransfers = (address: string) => {
-    apiService.subscribeToTransfers(address);
-
-    emitter.on(`wallet:transfer:${address}`, (data: ITransaction) => {
-      transactions.value.push(data);
-    });
-  };
-
-  const unsubscribeFromTransfers = (address: string) => {
-    apiService.unsubscribeFromTransfers(address);
   };
 
   const getTransactionFee = async (
@@ -202,11 +194,12 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     freeBalance,
     actualBalance,
 
-    transactions,
+    transactionHistory,
     pendingApprovals,
 
-    getTransactionFee,
+    getTransactionHistory,
     getAccountBalance,
+    getTransactionFee,
     getPendingApprovals,
 
     createMultisigTransaction,
@@ -214,8 +207,6 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     approveMultisigTransaction,
     getExistentialDeposit,
 
-    subscribeToTransfers,
-    unsubscribeFromTransfers,
     clear
   };
 });

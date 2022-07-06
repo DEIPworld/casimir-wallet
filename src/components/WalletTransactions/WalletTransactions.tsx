@@ -1,23 +1,52 @@
-import { defineComponent } from 'vue';
+import { defineComponent, ref, watchEffect } from 'vue';
 import { storeToRefs } from 'pinia';
+
 import { VIcon, VSheet, VSpacer } from 'vuetify/components';
+
+import { useAccountStore } from '@/stores/account';
 import { useWalletStore } from '@/stores/wallet';
+import { useNumber } from '@/composable/number';
 import { useDate } from '@/composable/date';
-import type { ITransaction } from '../../../types';
+import { useNotify } from '@/composable/notify';
+
+import type { ITransactionHistoryItem } from '../../../types';
 
 export const WalletTransactions = defineComponent({
   setup() {
+    const accountStore = useAccountStore();
     const walletStore = useWalletStore();
-    const { transactions } = storeToRefs(walletStore);
+
+    const { address } = storeToRefs(accountStore);
+    const { transactionHistory } = storeToRefs(walletStore);
 
     const { formatDate } = useDate();
+    const { formatToken } = useNumber();
+    const { showError } = useNotify();
 
-    const renderRow = (data: ITransaction) => {
-      const isPositive = !(data.amount as string).includes('-');
-      const addressRow = isPositive ? `From ${data.from}` : `To ${data.to}`;
+    const isLoading = ref<boolean>(false);
+
+    watchEffect(() => {
+      if(address.value) {
+        isLoading.value = true;
+
+        try {
+          walletStore.getTransactionHistory(address.value);
+        } catch (error) {
+          showError('Error loading transaction history');
+          console.error(error);
+        } finally {
+          isLoading.value = false;
+        }
+      }
+    });
+
+    const renderRow = (item: ITransactionHistoryItem) => {
+      const { _id, upcoming, data, createdOn } = item;
+      const addressRow = item.upcoming ? `From ${data.from}` : `To ${data.to}`;
 
       return (
         <VSheet
+          key={_id}
           rounded="lg"
           color="rgba(255,255,255,.05)"
           class="pa-4 d-flex align-center mb-2"
@@ -32,18 +61,18 @@ export const WalletTransactions = defineComponent({
           >
 
             <VIcon>
-              {isPositive ? 'mdi-arrow-down' : 'mdi-arrow-up'}
+              {item.upcoming ? 'mdi-arrow-up' : 'mdi-arrow-down'}
             </VIcon>
           </VSheet>
 
           <div>
             <div class="d-flex mb-2">
               <span class="text-h6">
-                {isPositive ? 'Received' : 'Sent'}
+                {upcoming ? 'Sent' : 'Received'}
               </span>
               <span class="mx-2">•</span>
               <div class="text-body-1 text-medium-emphasis">
-                {formatDate(data.date, 'dd MMMM yyyy, h:m a')}
+                {formatDate(new Date(createdOn), 'dd MMMM yyyy, h:m a')}
               </div>
             </div>
             <VSheet maxWidth={240} class="text-truncate">
@@ -53,8 +82,8 @@ export const WalletTransactions = defineComponent({
           <VSpacer />
           <div>
             <div class="text-h6">
-              {isPositive && '+'}
-              {data.amount} DEIP
+              {!upcoming && '+'}
+              {formatToken(data.amount)}
             </div>
             {/*(+$100.00)*/}
           </div>
@@ -62,6 +91,6 @@ export const WalletTransactions = defineComponent({
       );
     };
 
-    return () => transactions.value.slice().reverse().map(renderRow);
+    return () => transactionHistory.value.map(renderRow);
   }
 });
