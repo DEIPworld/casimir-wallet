@@ -26,6 +26,7 @@
     "@sentry/tracing": "^7.5.1",
     "@sentry/vue": "^7.5.1",
     "@types/qs": "^6.9.7",
+    "@vueuse/core": "^8.9.0",
     "axios": "^0.27.2",
     "bignumber.js": "^9.0.2",
     "cryptext": "^1.1.4",

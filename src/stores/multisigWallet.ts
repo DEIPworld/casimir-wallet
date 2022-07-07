@@ -34,10 +34,14 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     }
   };
 
-  const getTransactionHistory = async (address: string): Promise<void> => {
-    const { data } = await HttpService.get('/transaction-history', { address });
+  const getTransactionHistory = async (data: { address: string, page: number }): Promise<void> => {
+    const { data: result } = await HttpService.get('/transaction-history', data);
 
-    if (data) transactionHistory.value = data;
+    if (result) {
+      data.page > 1
+        ? transactionHistory.value = transactionHistory.value.concat(result)
+        : transactionHistory.value = result;
+    }
   };
 
   const getPendingApprovals = async (address: string): Promise<void> => {
