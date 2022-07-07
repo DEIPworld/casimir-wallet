@@ -54,8 +54,6 @@ export class ApiService {
     return Math.floor(milliseconds / 2.628e+9);
   }
 
-  private activeAddresses: Set<string> = new Set();
-
   async loadApi(): Promise<void> {
     try {
       const provider = new WsProvider(import.meta.env.DW_NETWORK);
@@ -419,63 +417,9 @@ export class ApiService {
       console.error(error);
     }
   }
-
+  
   getExistentialDeposit(): string {
     return ApiService.formatCurrency(this.api.consts.balances.existentialDeposit.toBigInt());
-  }
-
-  subscribeToTransfers(address: string): void {
-    this.activeAddresses.add(address);
-
-    if (this.activeAddresses.size > 1) {
-      return;
-    }
-
-    try {
-      this.api.rpc.chain.subscribeFinalizedHeads(
-        async (header: any) => {
-          const [{ block }, records] = await Promise.all([
-            this.api.rpc.chain.getBlock(header.hash),
-            this.api.query.system.events.at(header.hash)
-          ]);
-
-          block.extrinsics.forEach((extrinsic: any, index: any) => {
-            // Retrieve all events for this extrinsic
-            const events = records.filter(
-              ({ phase }: any) => phase.isApplyExtrinsic && phase.asApplyExtrinsic.eq(index)
-            );
-
-            // Search if it is a transfer
-            events.forEach(({ event }: any) => {
-              const [sender, recipient, amount] = event.data;
-
-              const isDeposit = recipient && this.activeAddresses.has(recipient.toString());
-              const isWithdraw = sender && this.activeAddresses.has(sender.toString());
-
-              const relatedTransfer = isDeposit || isWithdraw;
-
-              if (event.method === 'Transfer' && relatedTransfer) {
-                const relatedAddress = isDeposit ? recipient.toString() : sender.toString();
-
-                emitter.emit(`wallet:transfer:${relatedAddress}`, {
-                  hash: extrinsic.hash.toString(),
-                  from: sender.toString(),
-                  to: recipient.toString(),
-                  date: new Date().getTime(),
-                  amount: ApiService.formatCurrency(amount, !isDeposit)
-                });
-              }
-            });
-          });
-        }
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  unsubscribeFromTransfers(address: string): void {
-    this.activeAddresses.delete(address);
   }
 
   static readonly getInstance = singleton(() => new ApiService());

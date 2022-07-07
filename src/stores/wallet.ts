@@ -13,7 +13,6 @@ const apiService = ApiService.getInstance();
 
 export const useWalletStore = defineStore('balance', () => {
   const balance = ref<IAccount | undefined>();
-  const transactions = ref<ITransaction[]>([]);
   const transactionHistory = ref<ITransactionHistoryItem[]>([]);
 
   const freeBalance = computed(() =>
@@ -25,7 +24,7 @@ export const useWalletStore = defineStore('balance', () => {
 
   const clear = () => {
     balance.value = undefined;
-    transactions.value = [];
+    transactionHistory.value = [];
   };
 
   // theoretically not required
@@ -52,19 +51,6 @@ export const useWalletStore = defineStore('balance', () => {
     emitter.on('wallet:balanceChange', (data: IAccount) => {
       balance.value = data;
     });
-  };
-
-  const subscribeToTransfers = (address: string) => {
-    apiService.subscribeToTransfers(address);
-
-    emitter.on(`wallet:transfer:${address}`, (data: ITransaction) => {
-      transactions.value.push(data);
-    });
-  };
-
-  const subscribeToUpdates = (address: string) => {
-    subscribeToBalance(address);
-    subscribeToTransfers(address);
   };
 
   const getTransactionFee = async (
@@ -106,7 +92,6 @@ export const useWalletStore = defineStore('balance', () => {
     freeBalance,
     actualBalance,
 
-    transactions,
     transactionHistory,
 
     getAccountBalance,
@@ -114,9 +99,7 @@ export const useWalletStore = defineStore('balance', () => {
     getTransactionFee,
     makeTransaction,
 
-    subscribeToUpdates,
     subscribeToBalance,
-    subscribeToTransfers,
 
     clear
   };
