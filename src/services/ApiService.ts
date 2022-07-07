@@ -334,7 +334,7 @@ export class ApiService {
   ): Promise<ITransaction> {
     try {
       const hash = await this.api.tx.balances
-        .transfer(recipient, new BigNumber(amount).shiftedBy(18).toString())
+        .transfer(recipient, new BigNumber(amount).shiftedBy(18).toFixed())
         .signAndSend(account.pair);
 
       return {
@@ -352,7 +352,7 @@ export class ApiService {
   createMultisigTransaction(recipient: string, amount: number): IMultisigTransactionData {
     const transaction = this.api.tx.balances.transfer(
       recipient,
-      new BigNumber(amount).shiftedBy(18).toString()
+      new BigNumber(amount).shiftedBy(18).toFixed()
     );
 
     return {
