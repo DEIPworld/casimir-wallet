@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
+import { defineStore } from 'pinia';
 
 import { ApiService } from '@/services/ApiService';
 import HttpService from '@/services/HttpService';
@@ -36,10 +36,14 @@ export const useWalletStore = defineStore('balance', () => {
     }
   };
 
-  const getTransactionHistory = async (address: string): Promise<void> => {
-    const { data } = await HttpService.get('/transaction-history', { address });
+  const getTransactionHistory = async (data: { address: string, page: number }): Promise<void> => {
+    const { data: result } = await HttpService.get('/transaction-history', data);
 
-    if (data) transactionHistory.value = data;
+    if (result) {
+      data.page > 1
+        ? transactionHistory.value = transactionHistory.value.concat(result)
+        : transactionHistory.value = result;
+    }
   };
 
   const subscribeToBalance = async (address: string) => {
@@ -118,6 +122,7 @@ export const useWalletStore = defineStore('balance', () => {
   };
 }, {
   persistedState: {
-    key: 'DEIP:wallet'
+    key: 'DEIP:wallet',
+    includePaths: ['balance']
   }
 });
