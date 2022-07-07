@@ -26,7 +26,7 @@ export const App = defineComponent({
     watchEffect(() => {
       if (address.value) {
         accountStore.getMultisigAccounts();
-        walletStore.subscribeToUpdates(address.value);
+        walletStore.subscribeToBalance(address.value);
       }
     });
 
