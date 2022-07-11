@@ -15,9 +15,9 @@
   },
   "dependencies": {
     "@chenfengyuan/vue-qrcode": "^2.0.0",
-    "@deip/chain-service": "1.388.0",
-    "@deip/commands": "^1.388.0",
-    "@deip/messages": "^1.388.0",
+    "@deip/chain-service": "1.389.0",
+    "@deip/commands": "^1.389.0",
+    "@deip/messages": "^1.389.0",
     "@deip/toolbox": "^1.388.0",
     "@mdi/font": "^6.9.96",
     "@mdi/js": "^6.9.96",
