@@ -63,6 +63,13 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     return apiService.getMultisigTransactionFee(data);
   };
 
+  const getDepositInfo = async (
+    address: string,
+    threshold: number
+  ): Promise<any> => {
+    return await apiService.getDepositInfo(address, threshold);
+  };
+
   const createMultisigTransaction = (
     recipient: string,
     amount: number
@@ -205,6 +212,7 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     getTransactionHistory,
     getMultisigTransactionFee,
     getAccountBalance,
+    getDepositInfo,
     getPendingApprovals,
 
     createMultisigTransaction,
