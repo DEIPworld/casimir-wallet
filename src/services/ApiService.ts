@@ -176,6 +176,24 @@ export class ApiService {
 
   // ////////////////////////
 
+  async getDepositInfo(address: string, threshold: number): Promise<any> {
+
+    const { data: balance } = await this.api.query.system.account(address);
+
+    const actualBalance = Number(balance.free) - Number(balance.feeFrozen);
+
+    const depositBase = new BigNumber(this.api.consts.multisig.depositBase).toNumber();
+    const depositFactor = new BigNumber(this.api.consts.multisig.depositFactor).toNumber();
+
+    const requiredAmount = depositBase + (threshold * depositFactor);
+    const isSufficientBalance = actualBalance >= requiredAmount;
+
+    return {
+      requiredAmount: new BigNumber(requiredAmount).shiftedBy(-18).toFormat(BigNumber.ROUND_FLOOR),
+      isSufficientBalance
+    };
+  }
+
   async getVestingPlan(address: string): Promise<IVestingPlan> {
     try {
       const { value } = await this.api.query.deipVesting.vestingPlans(address);
@@ -463,7 +481,7 @@ export class ApiService {
       console.error(error);
     }
   }
-  
+
   getExistentialDeposit(): string {
     return ApiService.formatCurrency(this.api.consts.balances.existentialDeposit.toBigInt());
   }

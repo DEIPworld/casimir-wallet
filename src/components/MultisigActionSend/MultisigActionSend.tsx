@@ -22,7 +22,7 @@ export const MultisigActionSend = defineComponent({
   },
   setup(props) {
     const router = useRouter();
-    const { showSuccess } = useNotify();
+    const { showSuccess, showError } = useNotify();
 
     const accountStore = useAccountStore();
     const multisigStore = useMultisigWalletStore();
@@ -43,6 +43,18 @@ export const MultisigActionSend = defineComponent({
       amountToSend: number,
       data: IMultisigTransactionData
     ): Promise<void> => {
+      if (!address.value || !multisigAccountDetails.value) return;
+
+      const { isSufficientBalance, requiredAmount } = await multisigStore.getDepositInfo(
+        address.value,
+        multisigAccountDetails.value?.threshold
+      );
+
+      if (!isSufficientBalance) {
+        showError(`Insufficient balance. Required amount to init transaction - ${requiredAmount} DEIP`);
+        return;
+      }
+
       transactionData.value = data;
       recipient.value = recipientAddress;
       amount.value = amountToSend;

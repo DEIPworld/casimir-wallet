@@ -60,7 +60,7 @@ export const MultisigVestingView = defineComponent({
       setTimeout(async () => {
         try {
           if (accountJson.value && multisigAccountDetails.value) {
-            vestingStore.approveVestingClaim({
+            await vestingStore.approveVestingClaim({
               sender: { account: accountJson.value, password },
               multisigAddress: multisigAccountDetails.value.address,
               threshold: multisigAccountDetails.value.threshold,
