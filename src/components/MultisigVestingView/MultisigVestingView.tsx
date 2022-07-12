@@ -71,7 +71,6 @@ export const MultisigVestingView = defineComponent({
           }
           isConfirmationModalOpen.value = false;
 
-          showSuccess('Successfully approved transaction');
           router.push({ name: 'multisig.wallet' });
         } catch (error: any) {
           passwordError.value = error.message;
