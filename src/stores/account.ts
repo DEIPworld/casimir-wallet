@@ -39,11 +39,14 @@ export const useAccountStore = defineStore(
       return apiService.restoreAccount(json, password);
     }
 
-    async function connectPortal(portal: any): Promise<{ signature: string, publicKey: string }> {
+    async function connectPortal(portal: any): Promise<{
+      secretSigHex: string,
+      publicKey: string
+    }> {
       try {
         const keys = apiService.getAccountKeyPair(tempSeed.value, address.value);
         const account = apiService.addAccount(tempSeed.value);
-        const signature = apiService.signMessage(account, portal.seed);
+        const secretSigHex = apiService.signMessage(account, portal.seed);
 
         const publicKey = keys.publicKey.slice(2);
         const privateKey = keys.privateKey.slice(2);
@@ -56,7 +59,7 @@ export const useAccountStore = defineStore(
           portal
         });
 
-        return { signature, publicKey };
+        return { secretSigHex, publicKey };
       } catch (error) {
         console.log(error);
         return error as any;
