@@ -78,7 +78,6 @@ export const MultisigApprovalDetailsVesting = defineComponent({
           });
           isConfirmActionModalOpen.value = false;
 
-          showSuccess('Successfully approved transaction');
           multisigStore.getAccountBalance(multisigAccountDetails.value.address);
           router.push({ name: 'multisig.wallet' });
         } catch (error: any) {
