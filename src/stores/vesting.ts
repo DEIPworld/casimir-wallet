@@ -104,6 +104,40 @@ export const useVestingStore = defineStore('vesting', () => {
     showSuccess('Successfully approved transaction');
   };
 
+  const cancelVestingClaim = async (
+    transactionId: string,
+    data: {
+      sender: {
+        account: KeyringPair$Json,
+        password: string,
+      },
+      callHash: string,
+      multisigAddress: string,
+      otherSignatories: string[],
+      threshold: number
+    }
+  ): Promise<void> => {
+    const {
+      sender: { account, password },
+      callHash,
+      multisigAddress,
+      otherSignatories,
+      threshold
+    } = data;
+
+    const restoredAccount: CreateResult = await apiService.restoreAccount(account, password);
+    await apiService.cancelMultisigTransaction({
+      callHash,
+      multisigAddress,
+      account: restoredAccount,
+      otherSignatories,
+      threshold
+    });
+
+    await HttpService.post(`/multisig-vesting/cancel/${transactionId}`);
+    getPendingApprovals(account.address);
+  };
+
   return {
     vesting,
     pendingApprovals,
@@ -111,7 +145,8 @@ export const useVestingStore = defineStore('vesting', () => {
     getVestingPlan,
     getPendingApprovals,
     claimVesting,
-    approveVestingClaim
+    approveVestingClaim,
+    cancelVestingClaim
   };
 }, {
   persistedState: {
