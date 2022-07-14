@@ -469,6 +469,29 @@ export class ApiService {
       .signAndSend(account.pair);
   }
 
+  async cancelMultisigTransaction(data: {
+    callHash: string,
+    multisigAddress: string,
+    account: CreateResult,
+    otherSignatories: string[],
+    threshold: number
+  }): Promise<void> {
+    const {
+      callHash,
+      multisigAddress,
+      account,
+      otherSignatories,
+      threshold
+    } = data;
+
+    const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash));
+    const timePoint = info.unwrap().when;
+
+    await this.api.tx.multisig
+      .cancelAsMulti(threshold, otherSignatories.sort(), timePoint, callHash)
+      .signAndSend(account.pair);
+  }
+
   subscribeToBalance(address: string): void {
     try {
       this.api.query.system.account(address, (data: AccountInfo) => {

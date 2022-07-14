@@ -70,8 +70,10 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
     const isApprovedByUser = computed(() =>
       pendingApproval.value?.signatories.some((item: ISignatory) => item.address === address.value)
     );
+    const isAbleToCancel = computed(() => address.value === depositor.value?.address);
 
     const isConfirmActionModalOpen = ref<boolean>(false);
+    const isCancelAction = ref<boolean>(false);
     const isLoading = ref<boolean>(false);
     const platformFee = ref<string>('0');
     const passwordError = ref<string>();
@@ -95,41 +97,68 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
       }
     };
 
-    const onApprove = (password: string) => {
+    const cancelTransaction = async (password: string): Promise<void> => {
+      if (!accountJson.value || !multisigAccountDetails.value || !pendingApproval.value) {
+        return;
+      }
+
+      await multisigStore.cancelMultisigTransaction(pendingApproval.value._id, {
+        sender: {
+          account: accountJson.value,
+          password
+        },
+        callHash: pendingApproval.value.callHash,
+        multisigAddress: multisigAccountDetails.value?.address,
+        otherSignatories: multisigAccountDetails.value?.signatories
+          .filter((item) => item.address !== address.value)
+          .map((item) => item.address),
+        threshold: multisigAccountDetails.value?.threshold
+      });
+    };
+
+    const approveTransaction = async (password: string): Promise<void> => {
+      if (!accountJson.value || !multisigAccountDetails.value || !pendingApproval.value) {
+        return;
+      }
+
+      const isFinalApproval =
+        pendingApproval.value.approvals === pendingApproval.value.threshold - 1;
+
+      await multisigStore.approveMultisigTransaction(
+        pendingApproval.value._id,
+        isFinalApproval,
+        {
+          sender: {
+            account: accountJson.value,
+            password
+          },
+          recipient: pendingApproval.value.recipient,
+          amount: pendingApproval.value.amount,
+          callHash: pendingApproval.value.callHash,
+          callData: pendingApproval.value.callData,
+          multisigAddress: multisigAccountDetails.value.address,
+          otherSignatories: multisigAccountDetails.value?.signatories
+            .filter((item) => item.address !== address.value)
+            .map((item) => item.address),
+          threshold: multisigAccountDetails.value?.threshold
+        }
+      );
+    };
+
+    const onConfirm = (password: string) => {
       isLoading.value = true;
 
       setTimeout(async () => {
-        if (!accountJson.value || !multisigAccountDetails.value || !pendingApproval.value) {
-          return;
-        }
-
         try {
-          const isFinalApproval =
-            pendingApproval.value.approvals === pendingApproval.value.threshold - 1;
+          if (isCancelAction.value) {
+            await cancelTransaction(password);
+          } else {
+            await approveTransaction(password);
+          }
 
-          await multisigStore.approveMultisigTransaction(
-            pendingApproval.value._id,
-            isFinalApproval,
-            {
-              sender: {
-                account: accountJson.value,
-                password
-              },
-              recipient: pendingApproval.value.recipient,
-              amount: pendingApproval.value.amount,
-              callHash: pendingApproval.value.callHash,
-              callData: pendingApproval.value.callData,
-              multisigAddress: multisigAccountDetails.value.address,
-              otherSignatories: multisigAccountDetails.value?.signatories
-                .filter((item) => item.address !== address.value)
-                .map((item) => item.address),
-              threshold: multisigAccountDetails.value?.threshold
-            }
-          );
           isConfirmActionModalOpen.value = false;
 
-          showSuccess('Successfully approved');
-          multisigStore.getAccountBalance(address.value);
+          showSuccess(`Successfully ${isCancelAction.value ? 'revoked' : 'approved'}`);
           router.push({ name: 'multisig.wallet' });
         } catch (error: any) {
           passwordError.value = error.message;
@@ -137,6 +166,16 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
           isLoading.value = false;
         }
       }, 500);
+    };
+
+    const onRevoke = (): void => {
+      isConfirmActionModalOpen.value = true;
+      isCancelAction.value = true;
+    };
+
+    const onCloseConfirmActionModal = (): void => {
+      isConfirmActionModalOpen.value = false;
+      isCancelAction.value = false;
     };
 
     const renderSignatories = () =>
@@ -147,15 +186,31 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
         </div>
       ));
 
+    const renderActionButton = () => {
+      if (isAbleToCancel.value) {
+        return (
+          <VBtn class="ml-4" onClick={onRevoke}>
+            Revoke
+          </VBtn>
+        );
+      }
+
+      return (
+        <VBtn
+          class="ml-4"
+          disabled={isApprovedByUser.value}
+          onClick={() => (isConfirmActionModalOpen.value = true)}
+        >
+          {isApprovedByUser.value ? 'Approved' : 'Approve'}
+        </VBtn>
+      );
+    };
+
     const renderView = () => (
       <div>
         <p class="ml-4 text-h6">Pending transer</p>
 
-        <VSheet
-          rounded
-          color="rgba(255,255,255,.05)"
-          class="mt-4 pa-4 d-flex align-center mb-2"
-        >
+        <VSheet rounded color="rgba(255,255,255,.05)" class="mt-4 pa-4 d-flex align-center mb-2">
           <div class="d-flex align-center">
             <span class="text-h6">Depositor</span>
             <div
@@ -171,11 +226,7 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
             <DisplayAddress address={depositor.value?.address} hideCopyButton />
           </div>
         </VSheet>
-        <VSheet
-          rounded
-          color="rgba(255,255,255,.05)"
-          class="pa-4 d-flex align-center mb-2"
-        >
+        <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 d-flex align-center mb-2">
           <div class="d-flex align-center">
             <span class="text-h6">Existing approvals</span>
             <div
@@ -190,11 +241,7 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
             {pendingApproval.value?.approvals}/{pendingApproval.value?.threshold}
           </span>
         </VSheet>
-        <VSheet
-          rounded
-          color="rgba(255,255,255,.05)"
-          class="pa-4 d-flex align-center mb-2"
-        >
+        <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 d-flex align-center mb-2">
           <div class="d-flex align-center">
             <span class="text-h6">Signatories</span>
             <div class="dw-tooltip dw-tooltip__right ml-2" data-tooltip="Who approved">
@@ -254,9 +301,7 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
           <VBtn color="secondary-btn" onClick={() => router.push({ name: 'multisig.approvals' })}>
             cancel
           </VBtn>
-          <VBtn class="ml-4" disabled={isApprovedByUser.value} onClick={() => (isConfirmActionModalOpen.value = true)}>
-            {isApprovedByUser.value ? 'Approved' : 'Approve'}
-          </VBtn>
+          {renderActionButton()}
         </div>
       </div>
     );
@@ -269,8 +314,8 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
           isOpen={isConfirmActionModalOpen.value}
           isLoading={isLoading.value}
           error={passwordError.value}
-          onClick:cancel={() => (isConfirmActionModalOpen.value = false)}
-          onClick:confirm={onApprove}
+          onClick:cancel={onCloseConfirmActionModal}
+          onClick:confirm={onConfirm}
         />
       </>
     );
