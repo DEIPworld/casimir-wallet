@@ -70,11 +70,11 @@ export const TransactionHistory = defineComponent({
           </VSheet>
 
           <div>
-            <div class="d-flex mb-2">
+            <div class="d-flex mb-2 align-center">
               <span class="text-h6">{upcoming ? 'Sent' : 'Received'}</span>
               <span class="mx-2">•</span>
               <div class="text-body-1 text-medium-emphasis">
-                {formatDate(new Date(createdOn), 'dd MMMM yyyy, h:m a')}
+                {formatDate(new Date(createdOn), 'dd MMMM yyyy, h:mm a')}
               </div>
             </div>
             <VSheet maxWidth={240} class="text-truncate">
