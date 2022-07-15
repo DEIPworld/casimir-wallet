@@ -227,6 +227,11 @@ export const MultisigApprovalDetailsTransfer = defineComponent({
           </div>
         </VSheet>
         <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 d-flex align-center mb-2">
+          <span class="text-h6">Amount</span>
+          <VSpacer />
+          <span class="text-right text-subtitle-1">{pendingApproval.value?.amount} DEIP</span>
+        </VSheet>
+        <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 d-flex align-center mb-2">
           <div class="d-flex align-center">
             <span class="text-h6">Existing approvals</span>
             <div
