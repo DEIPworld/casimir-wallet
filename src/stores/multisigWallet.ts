@@ -112,6 +112,7 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
       true,
       {
         callHash,
+        callData,
         recipient,
         amount,
         multisigAddress,
@@ -132,6 +133,7 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
 
     const { data: result } = await HttpService.post('/multisig-transaction/create', params);
     getPendingApprovals(account.address);
+    getAccountBalance(account.address);
 
     return result;
   };
