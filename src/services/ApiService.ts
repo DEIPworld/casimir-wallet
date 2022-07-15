@@ -265,11 +265,19 @@ export class ApiService {
       const transaction = await this.api.tx.deipVesting
         .unlock();
 
-      const { weight } = await transaction
-        .paymentInfo(multisigAddress);
-
       const callHash = u8aToHex(transaction.method.hash);
       const callData = transaction.method.toHex();
+
+      if (threshold === 1) {
+        await this.api.tx.multisig
+          .asMultiThreshold1(otherSignatories.sort(), callData)
+          .signAndSend(account.pair);
+  
+        return { callHash, callData };
+      }
+
+      const { weight } = await transaction
+        .paymentInfo(multisigAddress);
 
       let timePoint = null;
 
@@ -425,6 +433,7 @@ export class ApiService {
 
   async approveMultisigTransaction(isFirstApproval: boolean, {
     callHash,
+    callData,
     recipient,
     amount,
     multisigAddress,
@@ -432,6 +441,14 @@ export class ApiService {
     otherSignatories,
     threshold
   }: IMultisigTransaction): Promise<void> {
+    if (threshold === 1) {
+      await this.api.tx.multisig
+        .asMultiThreshold1(otherSignatories.sort(), callData)
+        .signAndSend(account.pair);
+
+      return;
+    }
+
     const { weight } = await this.api.tx.balances
       .transfer(recipient, amount)
       .paymentInfo(multisigAddress);
