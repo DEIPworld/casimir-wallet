@@ -83,6 +83,19 @@ export class DeipService {
     }
   }
 
+  async signTransaction(transaction: any, privateKey?: string): Promise<any> {
+    try {
+      if (privateKey) {
+        return await transaction.signAsync(privateKey, this.api);
+      }
+
+      throw new Error('Private key is missing.');
+    } catch (error) {
+      console.log(error);
+      return error as any;
+    }
+  }
+
   static readonly getInstance = singleton(() => new DeipService());
 }
 
