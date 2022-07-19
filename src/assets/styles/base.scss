@@ -196,6 +196,27 @@ $heading-font-family: $body-font-family;
   font-style: normal;
 }
 
+ul, ol {
+  counter-reset: item;
+
+  & > ul, ol {
+    margin-top: 16px;
+  }
+
+  & > li:not(:last-child) {
+    margin-bottom: 16px;
+  }
+}
+
+li {
+  display: block;
+
+  &:before {
+  content: counters(item, ".") " ";
+  counter-increment: item;
+  }
+}
+
 .bg-secondary-btn {
   --v-theme-overlay-multiplier: var(--v-theme-secondary-overlay-multiplier);
   background: rgba(var(--v-theme-secondary), .1) !important;
