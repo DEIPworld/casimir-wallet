@@ -1,6 +1,6 @@
 import qs from 'qs';
 import { defineComponent, ref } from 'vue';
-import { VBtn, VSpacer } from 'vuetify/components';
+import { VBtn, VSpacer, VProgressCircular } from 'vuetify/components';
 
 import { InnerContainer } from '@/components/InnerContainer';
 import { useNotify } from '@/composable/notify';
@@ -62,9 +62,10 @@ export const SignTransaction = defineComponent({
 
           <VBtn
             class="ml-4"
+            disabled={isLoading.value}
             onClick={onApprove}
           >
-            Approve
+            {isLoading.value ? <VProgressCircular indeterminate={true} /> : 'Approve'}
           </VBtn>
         </div>
       </InnerContainer>
