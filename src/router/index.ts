@@ -33,6 +33,8 @@ import { ActionView } from '@/components/ActionView';
 import { ActionReceive } from '@/components/ActionReceive';
 import { ActionSend } from '@/components/ActionSend';
 
+import { SignTransaction } from '@/components/SignTransaction';
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -70,6 +72,11 @@ const router = createRouter({
           component: ActionReceive
         }
       ]
+    },
+
+    {
+      path: '/sign-transaction',
+      component: SignTransaction
     },
 
     {

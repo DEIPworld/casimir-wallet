@@ -6,7 +6,7 @@ import HttpService from '@/services/HttpService';
 
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
-import type { IMultisigWallet, ISignatory } from '@/types';
+import type { IMultisigWallet, ISignatory, IKeyPair } from '@/types';
 
 const apiService = ApiService.getInstance();
 const deipService = DeipService.getInstance();
@@ -16,6 +16,7 @@ export const useAccountStore = defineStore(
   () => {
     const accountJson = ref<KeyringPair$Json>();
     const accountDao = ref();
+    const accountKeys = ref<IKeyPair>();
     const multisigAccounts = ref<IMultisigWallet[]>();
     const multisigAccountDetails = ref<IMultisigWallet>();
 
@@ -30,9 +31,11 @@ export const useAccountStore = defineStore(
 
     async function addAccount(seedPhrase: string, password: string): Promise<void> {
       const { json } = apiService.addAccount(seedPhrase, password);
+      const keys = apiService.getAccountKeyPair(seedPhrase, json.address);
 
       accountDao.value = await apiService.getAccountDao(json.address);
       accountJson.value = json;
+      accountKeys.value = keys;
     }
 
     function restoreAccount(json: KeyringPair$Json, password: string): Promise<CreateResult> {
@@ -48,7 +51,6 @@ export const useAccountStore = defineStore(
         const publicKey = keys.publicKey.slice(2);
         const privateKey = keys.privateKey.slice(2);
 
-
         accountDao.value = await deipService.createDaoTransactionMessage({
           address: address.value,
           publicKey,
@@ -61,6 +63,10 @@ export const useAccountStore = defineStore(
         console.log(error);
         return error as any;
       }
+    }
+
+    function signTransaction(packedTx: any): Promise<any> {
+      return deipService.signTransaction(accountKeys?.value?.privateKey, packedTx);
     }
 
     async function getMultisigAccounts(): Promise<void> {
@@ -110,6 +116,7 @@ export const useAccountStore = defineStore(
     return {
       accountJson,
       accountDao,
+      accountKeys,
       multisigAccounts,
       multisigAccountDetails,
 
@@ -126,6 +133,7 @@ export const useAccountStore = defineStore(
       getMultisigAccounts,
       getMultisigAccountDetails,
       createMultisigAccount,
+      signTransaction,
 
       logOut
     };
@@ -133,7 +141,7 @@ export const useAccountStore = defineStore(
   {
     persistedState: {
       key: 'DEIP:account',
-      includePaths: ['accountJson', 'accountDAO']
+      includePaths: ['accountJson', 'accountDAO', 'accountKeys']
     }
   });
 
