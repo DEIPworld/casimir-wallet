@@ -1,4 +1,3 @@
-import qs from 'qs';
 import { defineComponent, ref, onMounted, onBeforeUnmount } from 'vue';
 import { VBtn, VSpacer, VProgressCircular } from 'vuetify/components';
 
@@ -19,11 +18,6 @@ export const SignTransaction = defineComponent({
     const handleOpener = (msgData: any, withClose = true) => {
       if (window.opener) {
         window.opener.postMessage(msgData, '*');
-      } else {
-        window.open(
-          qs.stringify(msgData, { addQueryPrefix: true }),
-          '_self'
-        );
       }
 
       if (withClose) {
@@ -61,7 +55,7 @@ export const SignTransaction = defineComponent({
     };
 
     onMounted(() => {
-      handleOpener({ channel: 'Deip.Wallet.Transaction.Ready' });
+      handleOpener({ channel: 'Deip.Wallet.Transaction.Ready' }, false);
       window.addEventListener('message', handleTransaction);
     });
 
