@@ -34,7 +34,12 @@ export const Header = defineComponent({
 
     const hideNavigation = computed(() => {
       const routeName = (route.name as string) || '';
-      const hideOnRoutes = ['account.import', 'account.create', 'account.oauth'].includes(routeName);
+      const hideOnRoutes = [
+        'account.import',
+        'account.create',
+        'account.oauth',
+        'sign.transaction'
+      ].includes(routeName);
       const hideOnWallet = routeName.includes('wallet') && !isLoggedIn.value;
 
       return hideOnRoutes || hideOnWallet;

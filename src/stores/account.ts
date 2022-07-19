@@ -66,7 +66,7 @@ export const useAccountStore = defineStore(
     }
 
     function signTransaction(packedTx: any): Promise<any> {
-      return deipService.signTransaction(accountKeys?.value?.privateKey, packedTx);
+      return deipService.signTransaction(packedTx, accountKeys?.value?.privateKey);
     }
 
     async function getMultisigAccounts(): Promise<void> {

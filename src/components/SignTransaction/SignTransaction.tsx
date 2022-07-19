@@ -1,5 +1,5 @@
 import qs from 'qs';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, onMounted, onBeforeUnmount } from 'vue';
 import { VBtn, VSpacer, VProgressCircular } from 'vuetify/components';
 
 import { InnerContainer } from '@/components/InnerContainer';
@@ -14,29 +14,45 @@ export const SignTransaction = defineComponent({
     const { showError } = useNotify();
 
     const isLoading = ref<boolean>(false);
+    const packedTx = ref();
 
-    const onDecline = () => window.close();
+    const handleOpener = (msgData: any, withClose = true) => {
+      if (window.opener) {
+        window.opener.postMessage(msgData, '*');
+      } else {
+        window.open(
+          qs.stringify(msgData, { addQueryPrefix: true }),
+          '_self'
+        );
+      }
+
+      if (withClose) {
+        window.close();
+      }
+    };
+
+    const handleTransaction = ({ data }: any) => {
+      if (data?.packedTx) {
+        packedTx.value = data.packedTx;
+      }
+    };
+
+    const onDecline = () => {
+      handleOpener({ channel: 'Deip.Wallet.Transaction.Close' });
+    };
+
     const onApprove = async () => {
       isLoading.value = true;
 
       try {
-        const transaction = await accountStore.signTransaction(window.packedTx);
+        const transaction = await accountStore.signTransaction(packedTx.value);
 
         const msgData = {
           transaction,
           channel: 'Deip.Wallet.Transaction'
         };
 
-        if (window.opener) {
-          window.opener.postMessage(msgData, '*');
-
-          window.close();
-        } else {
-          window.open(
-            qs.stringify(msgData, { addQueryPrefix: true }),
-            '_self'
-          );
-        }
+        handleOpener(msgData);
       } catch (error: any) {
         showError(error.message);
       } finally {
@@ -44,10 +60,25 @@ export const SignTransaction = defineComponent({
       }
     };
 
+    onMounted(() => {
+      handleOpener({ channel: 'Deip.Wallet.Transaction.Ready' });
+      window.addEventListener('message', handleTransaction);
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('message', handleTransaction);
+    });
+
     return () => (
       <InnerContainer>
         <div class="text-h3 mb-6">
           Approve transaction
+        </div>
+
+        <div class="text-body-large mb-6">
+          This is a DEIP wallet widget. From here you may approve transaction
+          initiated on the portal. The transaction amount and platform
+          fee will be charged from your DEIP wallet account.
         </div>
 
         <div class="d-flex mt-12">

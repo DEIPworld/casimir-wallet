@@ -76,6 +76,7 @@ const router = createRouter({
 
     {
       path: '/sign-transaction',
+      name: 'sign.transaction',
       component: SignTransaction
     },
 
