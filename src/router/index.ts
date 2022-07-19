@@ -6,6 +6,7 @@ import { useAccountStore } from '@/stores/account';
 // import { WalletView } from '@/components/WalletView';
 
 import { MainView } from '@/components/MainView';
+import { TermsOfUse } from '@/components/TermsOfUse';
 
 import { AccountView } from '@/components/AccountView';
 import { AccountCreate } from '@/components/AccountCreate';
@@ -54,6 +55,12 @@ const router = createRouter({
           component: WalletTransactions
         }
       ]
+    },
+
+    {
+      path: '/terms-of-use',
+      name: 'termsOfUse',
+      component: TermsOfUse
     },
 
     {

@@ -91,6 +91,7 @@ export const Header = defineComponent({
               <span>add multisig</span>
             </VListItem>
             {renderMultisigAccounts()}
+            <VListItem to={{ name: 'termsOfUse' }}>terms of use</VListItem>
             <VListItem onClick={() => emit('click:logout')}>log out</VListItem>
           </VList>
         </VMenu>
