@@ -70,12 +70,12 @@ export const AccountOAuth = defineComponent({
       isLoading.value = true;
 
       try {
-        const { signature, publicKey } = await accountStore.connectPortal(route.query);
+        const { secretSigHex, publicKey } = await accountStore.connectPortal(route.query);
 
         showSuccess('Portal is successfully connected.');
 
         const msgData = {
-          signature,
+          secretSigHex,
           publicKey,
           daoId: accountDao.value.daoId,
           channel: 'Deip.Wallet'

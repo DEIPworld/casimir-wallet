@@ -60,7 +60,7 @@ export const MultisigVestingView = defineComponent({
       setTimeout(async () => {
         try {
           if (accountJson.value && multisigAccountDetails.value) {
-            vestingStore.approveVestingClaim({
+            await vestingStore.approveVestingClaim({
               sender: { account: accountJson.value, password },
               multisigAddress: multisigAccountDetails.value.address,
               threshold: multisigAccountDetails.value.threshold,
@@ -71,7 +71,6 @@ export const MultisigVestingView = defineComponent({
           }
           isConfirmationModalOpen.value = false;
 
-          showSuccess('Successfully approved transaction');
           router.push({ name: 'multisig.wallet' });
         } catch (error: any) {
           passwordError.value = error.message;

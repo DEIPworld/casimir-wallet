@@ -4,13 +4,17 @@ import { ref } from 'vue';
 import { ApiService } from '@/services/ApiService';
 import HttpService from '@/services/HttpService';
 
-import type { IVestingPlan, IMultisigVestingItem } from '../../types';
+import { useNotify } from '@/composable/notify';
+
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
+import type { IVestingPlan, IMultisigVestingItem } from '../../types';
 
 const apiService = ApiService.getInstance();
 
 export const useVestingStore = defineStore('vesting', () => {
+  const { showError, showSuccess } = useNotify();
+
   const vesting = ref<IVestingPlan | undefined>();
   const pendingApprovals = ref<IMultisigVestingItem[]>([]);
 
@@ -21,17 +25,13 @@ export const useVestingStore = defineStore('vesting', () => {
     }
   };
 
-  const getPendingApprovals = async(address: string | undefined): Promise<void> => {
+  const getPendingApprovals = async (address: string | undefined): Promise<void> => {
     if (address) {
       const { data } = await HttpService.get('/multisig-vesting', { address, status: 'pending' });
 
       if (data) pendingApprovals.value = data;
     }
   };
-
-  // const claimVesting = async (account: CreateResult) => {
-  //   return await apiService.claimVesting(account);
-  // };
 
   const claimVesting = async (
     account: KeyringPair$Json,
@@ -47,7 +47,7 @@ export const useVestingStore = defineStore('vesting', () => {
     multisigAddress: string,
     threshold: number,
     otherSignatories: string[],
-  }): Promise<any> => {
+  }): Promise<void> => {
     const { multisigAddress, threshold, otherSignatories } = data;
     const { account, password } = data.sender;
 
@@ -66,13 +66,23 @@ export const useVestingStore = defineStore('vesting', () => {
         threshold,
         otherSignatories,
         isFirstApproval: false,
-        isFinalApproval: pendingApproval.approvals +1 >= pendingApproval.threshold
+        isFinalApproval: pendingApproval.approvals + 1 >= pendingApproval.threshold
       });
 
       await HttpService.patch(`/multisig-vesting/approve/${pendingApproval._id}`, {
         approverAddress: account.address
       });
     } else {
+      const {
+        isSufficientBalance,
+        requiredAmount
+      } = await apiService.getDepositInfo(account.address, threshold);
+
+      if (!isSufficientBalance) {
+        showError(`Insufficient balance. Required amount to init transaction - ${requiredAmount} DEIP`);
+        return;
+      }
+
       const { callHash, callData } = await apiService.approveVestingClaim({
         account: restoredAccount,
         multisigAddress,
@@ -90,6 +100,42 @@ export const useVestingStore = defineStore('vesting', () => {
         callData
       });
     }
+
+    showSuccess('Successfully approved transaction');
+  };
+
+  const cancelVestingClaim = async (
+    transactionId: string,
+    data: {
+      sender: {
+        account: KeyringPair$Json,
+        password: string,
+      },
+      callHash: string,
+      multisigAddress: string,
+      otherSignatories: string[],
+      threshold: number
+    }
+  ): Promise<void> => {
+    const {
+      sender: { account, password },
+      callHash,
+      multisigAddress,
+      otherSignatories,
+      threshold
+    } = data;
+
+    const restoredAccount: CreateResult = await apiService.restoreAccount(account, password);
+    await apiService.cancelMultisigTransaction({
+      callHash,
+      multisigAddress,
+      account: restoredAccount,
+      otherSignatories,
+      threshold
+    });
+
+    await HttpService.post(`/multisig-vesting/cancel/${transactionId}`);
+    getPendingApprovals(account.address);
   };
 
   return {
@@ -99,7 +145,8 @@ export const useVestingStore = defineStore('vesting', () => {
     getVestingPlan,
     getPendingApprovals,
     claimVesting,
-    approveVestingClaim
+    approveVestingClaim,
+    cancelVestingClaim
   };
 }, {
   persistedState: {

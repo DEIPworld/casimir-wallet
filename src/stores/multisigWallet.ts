@@ -6,7 +6,7 @@ import HttpService from '@/services/HttpService';
 
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
-import type { IAccount, IMultisigTransactionData, IMultisigTransactionItem, ITransactionHistoryItem } from '../../types';
+import type { IAccount, IMultisigTransaction, IMultisigTransactionData, IMultisigTransactionItem, ITransactionHistoryItem } from '../../types';
 
 const apiService = ApiService.getInstance();
 
@@ -50,16 +50,24 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     if (data) pendingApprovals.value = data;
   };
 
-  const getTransactionFee = async (
-    recipient: string,
+  const getMultisigTransactionFee = async (data: {
+    isFirstApproval: boolean,
+    isFinalApproval: boolean,
+    callHash: string,
+    callData: string,
+    threshold: number,
+    otherSignatories: string[],
+    multisigAddress: string,
+    personalAddress: string,
+  }): Promise<string> => {
+    return apiService.getMultisigTransactionFee(data);
+  };
+
+  const getDepositInfo = async (
     address: string,
-    amount: number
-  ) => {
-    return await apiService.getTransactionFee(
-      recipient,
-      address,
-      amount
-    );
+    threshold: number
+  ): Promise<any> => {
+    return await apiService.getDepositInfo(address, threshold);
   };
 
   const createMultisigTransaction = (
@@ -123,6 +131,7 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     };
 
     const { data: result } = await HttpService.post('/multisig-transaction/create', params);
+    getPendingApprovals(account.address);
 
     return result;
   };
@@ -187,6 +196,42 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     };
 
     await HttpService.patch(`/multisig-transaction/approve/${transactionId}`, params);
+    getPendingApprovals(account.address);
+    getAccountBalance(account.address);
+  };
+
+  const cancelMultisigTransaction = async (
+    transactionId: string,
+    data: {
+      sender: {
+        account: KeyringPair$Json,
+        password: string,
+      },
+      callHash: string,
+      multisigAddress: string,
+      otherSignatories: string[],
+      threshold: number
+    }
+  ): Promise<void> => {
+    const {
+      sender: { account, password },
+      callHash,
+      multisigAddress,
+      otherSignatories,
+      threshold
+    } = data;
+
+    const restoredAccount: CreateResult = await apiService.restoreAccount(account, password);
+    await apiService.cancelMultisigTransaction({
+      callHash,
+      multisigAddress,
+      account: restoredAccount,
+      otherSignatories,
+      threshold
+    });
+
+    await HttpService.post(`/multisig-transaction/cancel/${transactionId}`);
+    getPendingApprovals(account.address);
   };
 
   const getExistentialDeposit = (): string => {
@@ -202,13 +247,15 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
     pendingApprovals,
 
     getTransactionHistory,
+    getMultisigTransactionFee,
     getAccountBalance,
-    getTransactionFee,
+    getDepositInfo,
     getPendingApprovals,
 
     createMultisigTransaction,
     initMultisigTransaction,
     approveMultisigTransaction,
+    cancelMultisigTransaction,
     getExistentialDeposit,
 
     clear

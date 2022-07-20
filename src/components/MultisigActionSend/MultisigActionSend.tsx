@@ -22,7 +22,7 @@ export const MultisigActionSend = defineComponent({
   },
   setup(props) {
     const router = useRouter();
-    const { showSuccess } = useNotify();
+    const { showSuccess, showError } = useNotify();
 
     const accountStore = useAccountStore();
     const multisigStore = useMultisigWalletStore();
@@ -38,8 +38,22 @@ export const MultisigActionSend = defineComponent({
     const recipient = ref<string>();
     const amount = ref<number>();
 
-    const onConfirm = (recipientAddress: string, amountToSend: number): void => {
-      const data = multisigStore.createMultisigTransaction(recipientAddress, amountToSend);
+    const onConfirm = async (
+      recipientAddress: string,
+      amountToSend: number,
+      data: IMultisigTransactionData
+    ): Promise<void> => {
+      if (!address.value || !multisigAccountDetails.value) return;
+
+      const { isSufficientBalance, requiredAmount } = await multisigStore.getDepositInfo(
+        address.value,
+        multisigAccountDetails.value?.threshold
+      );
+
+      if (!isSufficientBalance) {
+        showError(`Insufficient balance. Required amount to init transaction - ${requiredAmount} DEIP`);
+        return;
+      }
 
       transactionData.value = data;
       recipient.value = recipientAddress;
@@ -74,7 +88,7 @@ export const MultisigActionSend = defineComponent({
             threshold: multisigAccountDetails.value?.threshold,
             amount: amount.value
           });
-  
+
           showSuccess('Successfully initiate transaction');
           router.push({ name: 'multisig.wallet' });
         } catch (error: any) {
@@ -83,7 +97,6 @@ export const MultisigActionSend = defineComponent({
           isLoading.value = false;
         }
       }, 500);
-      
     };
 
     const renderActiveView = () => {

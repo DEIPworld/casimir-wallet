@@ -44,8 +44,10 @@ export const MultisigApprovalDetailsVesting = defineComponent({
     const isApprovedByUser = computed(() =>
       pendingApproval.value?.signatories.some((item: ISignatory) => item.address === address.value)
     );
+    const isAbleToCancel = computed(() => address.value === depositor.value?.address);
 
     const isConfirmActionModalOpen = ref<boolean>(false);
+    const isCancelAction = ref<boolean>(false);
     const isLoading = ref<boolean>(false);
     const passwordError = ref<string>();
 
@@ -60,26 +62,57 @@ export const MultisigApprovalDetailsVesting = defineComponent({
       }
     };
 
-    const onApprove = async (password: string): Promise<void> => {
+    const cancelTransaction = async (password: string): Promise<void> => {
+      if (!accountJson.value || !multisigAccountDetails.value || !pendingApproval.value) {
+        return;
+      }
+
+      await vestingStore.cancelVestingClaim(pendingApproval.value._id, {
+        sender: {
+          account: accountJson.value,
+          password
+        },
+        callHash: pendingApproval.value.callHash,
+        multisigAddress: multisigAccountDetails.value?.address,
+        otherSignatories: multisigAccountDetails.value?.signatories
+          .filter((item) => item.address !== address.value)
+          .map((item) => item.address),
+        threshold: multisigAccountDetails.value?.threshold
+      });
+    };
+
+    const approveTransaction = async (password: string): Promise<void> => {
+      if (!accountJson.value || !multisigAccountDetails.value || !pendingApproval.value) {
+        return;
+      }
+
+      await vestingStore.approveVestingClaim({
+        sender: { account: accountJson.value, password },
+        multisigAddress: multisigAccountDetails.value.address,
+        threshold: multisigAccountDetails.value.threshold,
+        otherSignatories: multisigAccountDetails.value?.signatories
+          .filter((item) => item.address !== address.value)
+          .map((item) => item.address)
+      });
+
+      multisigStore.getAccountBalance(multisigAccountDetails.value.address);
+    };
+
+    const onConfirm = async (password: string): Promise<void> => {
       isLoading.value = true;
 
       setTimeout(async () => {
         try {
-          if (!accountJson.value || !multisigAccountDetails.value) {
-            return;
+          if (isCancelAction.value) {
+            await cancelTransaction(password);
+          } else {
+            await approveTransaction(password);
           }
-          vestingStore.approveVestingClaim({
-            sender: { account: accountJson.value, password },
-            multisigAddress: multisigAccountDetails.value.address,
-            threshold: multisigAccountDetails.value.threshold,
-            otherSignatories: multisigAccountDetails.value?.signatories
-              .filter((item) => item.address !== address.value)
-              .map((item) => item.address)
-          });
+
           isConfirmActionModalOpen.value = false;
 
-          showSuccess('Successfully approved transaction');
-          multisigStore.getAccountBalance(multisigAccountDetails.value.address);
+          showSuccess(`Successfully ${isCancelAction.value ? 'revoked' : 'approved'}`);
+
           router.push({ name: 'multisig.wallet' });
         } catch (error: any) {
           passwordError.value = error.message;
@@ -89,6 +122,16 @@ export const MultisigApprovalDetailsVesting = defineComponent({
       }, 500);
     };
 
+    const onRevoke = (): void => {
+      isConfirmActionModalOpen.value = true;
+      isCancelAction.value = true;
+    };
+
+    const onCloseConfirmActionModal = (): void => {
+      isConfirmActionModalOpen.value = false;
+      isCancelAction.value = false;
+    };
+
     const renderSignatories = () =>
       pendingApproval.value?.signatories.map((signatory: ISignatory) => (
         <div class="d-flex align-center justify-end">
@@ -96,6 +139,26 @@ export const MultisigApprovalDetailsVesting = defineComponent({
           <DisplayAddress address={signatory.address} hideCopyButton />
         </div>
       ));
+
+    const renderActionButton = () => {
+      if (isAbleToCancel.value) {
+        return (
+          <VBtn class="ml-4" onClick={onRevoke}>
+            Revoke
+          </VBtn>
+        );
+      }
+
+      return (
+        <VBtn
+          class="ml-4"
+          disabled={isApprovedByUser.value}
+          onClick={() => (isConfirmActionModalOpen.value = true)}
+        >
+          {isApprovedByUser.value ? 'Approved' : 'Approve'}
+        </VBtn>
+      );
+    };
 
     const renderView = () => (
       <div>
@@ -183,13 +246,7 @@ export const MultisigApprovalDetailsVesting = defineComponent({
           <VBtn color="secondary-btn" onClick={() => router.push({ name: 'multisig.approvals' })}>
             cancel
           </VBtn>
-          <VBtn
-            class="ml-4"
-            disabled={isApprovedByUser.value}
-            onClick={() => (isConfirmActionModalOpen.value = true)}
-          >
-            {isApprovedByUser.value ? 'Approved' : 'Approve'}
-          </VBtn>
+          {renderActionButton()}
         </div>
       </div>
     );
@@ -202,8 +259,8 @@ export const MultisigApprovalDetailsVesting = defineComponent({
           isOpen={isConfirmActionModalOpen.value}
           isLoading={isLoading.value}
           error={passwordError.value}
-          onClick:cancel={() => (isConfirmActionModalOpen.value = false)}
-          onClick:confirm={onApprove}
+          onClick:cancel={onCloseConfirmActionModal}
+          onClick:confirm={onConfirm}
         />
       </>
     );

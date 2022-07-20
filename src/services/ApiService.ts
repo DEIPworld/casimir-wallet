@@ -176,6 +176,24 @@ export class ApiService {
 
   // ////////////////////////
 
+  async getDepositInfo(address: string, threshold: number): Promise<any> {
+
+    const { data: balance } = await this.api.query.system.account(address);
+
+    const actualBalance = Number(balance.free) - Number(balance.feeFrozen);
+
+    const depositBase = new BigNumber(this.api.consts.multisig.depositBase).toNumber();
+    const depositFactor = new BigNumber(this.api.consts.multisig.depositFactor).toNumber();
+
+    const requiredAmount = depositBase + (threshold * depositFactor);
+    const isSufficientBalance = actualBalance >= requiredAmount;
+
+    return {
+      requiredAmount: new BigNumber(requiredAmount).shiftedBy(-18).toFormat(BigNumber.ROUND_FLOOR),
+      isSufficientBalance
+    };
+  }
+
   async getVestingPlan(address: string): Promise<IVestingPlan> {
     try {
       const { value } = await this.api.query.deipVesting.vestingPlans(address);
@@ -347,6 +365,52 @@ export class ApiService {
     }
   }
 
+  async getMultisigTransactionFee(data: {
+    isFirstApproval: boolean,
+    isFinalApproval: boolean,
+    callHash: string,
+    callData: string,
+    threshold: number,
+    otherSignatories: string[],
+    multisigAddress: string,
+    personalAddress: string,
+  }): Promise<string> {
+    const {
+      isFirstApproval,
+      isFinalApproval,
+      callHash,
+      callData,
+      threshold,
+      otherSignatories,
+      multisigAddress,
+      personalAddress
+    } = data;
+    const weight = 640000000;
+
+    if (isFinalApproval) {
+      const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash));
+      const timePoint = info.unwrap().when;
+
+      const { partialFee } = await this.api.tx.multisig
+      .asMulti(threshold, otherSignatories.sort(), timePoint, callData, false, weight)
+      .paymentInfo(personalAddress);
+
+      return ApiService.formatCurrency(partialFee);
+    }
+
+    let timePoint = null;
+    if (!isFirstApproval) {
+      const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash));
+      timePoint = info.unwrap().when;
+    }
+
+    const { partialFee } = await this.api.tx.multisig
+      .approveAsMulti(threshold, otherSignatories.sort(), timePoint, callHash, weight).
+      paymentInfo(personalAddress);
+
+    return ApiService.formatCurrency(partialFee);
+  }
+
   createMultisigTransaction(recipient: string, amount: number): IMultisigTransactionData {
     const transaction = this.api.tx.balances.transfer(
       recipient,
@@ -405,6 +469,29 @@ export class ApiService {
       .signAndSend(account.pair);
   }
 
+  async cancelMultisigTransaction(data: {
+    callHash: string,
+    multisigAddress: string,
+    account: CreateResult,
+    otherSignatories: string[],
+    threshold: number
+  }): Promise<void> {
+    const {
+      callHash,
+      multisigAddress,
+      account,
+      otherSignatories,
+      threshold
+    } = data;
+
+    const info = await this.api.query.multisig.multisigs(multisigAddress, hexToU8a(callHash));
+    const timePoint = info.unwrap().when;
+
+    await this.api.tx.multisig
+      .cancelAsMulti(threshold, otherSignatories.sort(), timePoint, callHash)
+      .signAndSend(account.pair);
+  }
+
   subscribeToBalance(address: string): void {
     try {
       this.api.query.system.account(address, (data: AccountInfo) => {
@@ -417,7 +504,7 @@ export class ApiService {
       console.error(error);
     }
   }
-  
+
   getExistentialDeposit(): string {
     return ApiService.formatCurrency(this.api.consts.balances.existentialDeposit.toBigInt());
   }
