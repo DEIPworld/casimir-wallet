@@ -333,7 +333,7 @@ export class ApiService {
   ): Promise<string> {
     try {
       const { partialFee } = await this.api.tx.balances
-        .transfer(recipient, amount)
+        .transfer(recipient, new BigNumber(amount).shiftedBy(18).toFixed())
         .paymentInfo(address);
 
       return ApiService.formatCurrency(partialFee);
