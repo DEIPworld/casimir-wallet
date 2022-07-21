@@ -73,7 +73,7 @@ export const Header = defineComponent({
 
     const renderMultisigAccounts = () =>
       multisigAccounts.value?.map((item) => (
-        <VListItem key={item.address} to={{ name: 'multisig.balances', params: { address: item.address } }}>
+        <VListItem active={route.params.address === item.address} key={item.address} to={{ name: 'multisig.balances', params: { address: item.address } }}>
           {item.name}
         </VListItem>
       ));
