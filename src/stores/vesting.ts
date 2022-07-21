@@ -21,6 +21,7 @@ export const useVestingStore = defineStore('vesting', () => {
   const getVestingPlan = async (address: string | undefined): Promise<void> => {
     if (address) {
       const res = await apiService.getVestingPlan(address);
+
       if (res) vesting.value = res;
     }
   };

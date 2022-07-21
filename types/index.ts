@@ -18,6 +18,7 @@ export interface IVestingPlan {
   cliffDuration: number;
   initialAmount: string;
   interval: number;
+  intervalsCount: number;
   startTime: number;
   endTime: number;
   totalAmount: string;

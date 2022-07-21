@@ -15,7 +15,7 @@ export const MultisigVestingDetails = defineComponent({
     const multisigStore = useMultisigWalletStore();
     const { balance } = storeToRefs(multisigStore);
 
-    const { formatDate } = useDate();
+    const { formatDate, millisecondsToMonth } = useDate();
 
     const renderRow = (label: string, data: any) => (
       <VSheet
@@ -38,7 +38,7 @@ export const MultisigVestingDetails = defineComponent({
             `${formatDate(vesting.value?.startTime, 'dd MMMM yyyy, h:m a')}`
           ) : null
         }
-        {renderRow('Vesting interval', `${vesting.value?.interval} month`)}
+        {renderRow('Vesting interval', `${millisecondsToMonth(vesting.value?.interval || 0)} month`)}
         {renderRow('Cliff vesting', `${vesting.value?.cliffDuration} month`)}
         {renderRow('Total vesting period', `${vesting.value?.totalDuration} month`)}
       </>

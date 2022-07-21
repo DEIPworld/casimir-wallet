@@ -9,8 +9,8 @@ import { DisplayAddress } from '@/components/DisplayAddress';
 
 import { useAccountStore } from '@/stores/account';
 import { useVestingStore } from '@/stores/vesting';
+import { useMultisigWalletStore } from '@/stores/multisigWallet';
 import { useDate } from '@/composable/date';
-import { useNotify } from '@/composable/notify';
 
 export const MultisigVestingView = defineComponent({
   props: {
@@ -21,19 +21,22 @@ export const MultisigVestingView = defineComponent({
   },
   setup(props) {
     const router = useRouter();
-    const { showSuccess } = useNotify();
 
     const accountStore = useAccountStore();
     const vestingStore = useVestingStore();
+    const multisigStore = useMultisigWalletStore();
+
     const { accountJson, address, multisigAccountDetails } = storeToRefs(accountStore);
     const { vesting } = storeToRefs(vestingStore);
+    const { balance } = storeToRefs(multisigStore);
 
-    const { addTimePeriod, isBefore } = useDate();
+    const { addTimePeriod, isBefore, formatDate } = useDate();
 
     const isLoading = ref<boolean>(false);
     const isConfirmationModalOpen = ref<boolean>(false);
     const passwordError = ref<string>();
     const isNotAvailable = ref<boolean>(false);
+    const tooltipMessage = ref<string>();
 
     const isActive = computed(() => vesting.value?.startTime);
 
@@ -43,6 +46,23 @@ export const MultisigVestingView = defineComponent({
           months: vesting.value?.cliffDuration as number
         });
         isNotAvailable.value = isBefore(new Date(), endTime);
+        tooltipMessage.value = 'No funds claim is possible until the end of the cliff period';
+
+        return;
+      }
+
+      if (vesting.value?.interval) {
+        const amountTaken =
+          Number(vesting.value.totalAmount) - Number(balance.value?.data.feeFrozen);
+        const amountPerInterval = Number(vesting.value.totalAmount) / vesting.value.intervalsCount;
+        const nextInterval = Math.ceil(amountTaken / amountPerInterval) + 1;
+
+        const nextTime = addTimePeriod(new Date(vesting.value?.startTime as number), {
+          seconds: (vesting.value.interval * nextInterval) / 1000
+        });
+
+        isNotAvailable.value = isBefore(new Date(), nextTime);
+        tooltipMessage.value = `Next claim will be available on ${formatDate(nextTime, 'dd MMMM yyyy, h:mm a')}`;
 
         return;
       }
@@ -92,7 +112,7 @@ export const MultisigVestingView = defineComponent({
         <div class="text-right">
           <div
             class={isNotAvailable.value ? 'dw-tooltip' : null}
-            data-tooltip="No funds claim is possible until the end of the cliff period"
+            data-tooltip={tooltipMessage.value}
           >
             <VBtn
               size="small"

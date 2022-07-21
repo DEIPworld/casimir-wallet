@@ -13,7 +13,7 @@ export const VestingDetails = defineComponent({
     const balanceStore = useWalletStore();
     const { balance } = storeToRefs(balanceStore);
 
-    const { formatDate } = useDate();
+    const { formatDate, millisecondsToMonth } = useDate();
 
     const renderRow = (label: string, data: any) => (
       <VSheet
@@ -36,7 +36,7 @@ export const VestingDetails = defineComponent({
             `${formatDate(vesting.value?.startTime, 'dd MMMM yyyy, h:m a')}`
           ) : null
         }
-        {renderRow('Vesting interval', `${vesting.value?.interval} month`)}
+        {renderRow('Vesting interval', `${millisecondsToMonth(vesting.value?.interval || 0)} month`)}
         {renderRow('Cliff vesting', `${vesting.value?.cliffDuration} month`)}
         {renderRow('Total vesting period', `${vesting.value?.totalDuration} month`)}
       </>

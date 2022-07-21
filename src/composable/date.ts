@@ -37,6 +37,10 @@ export function useDate() {
     });
   }
 
+  function millisecondsToMonth(milliseconds: number): number {
+    return Math.floor(milliseconds / 2.628e+9);
+  }
+
   function parseISO(
     dateString: string,
     convertToUtc = false,
@@ -78,6 +82,7 @@ export function useDate() {
     parseISO,
     formatISO,
     addTimePeriod,
-    isBefore
+    isBefore,
+    millisecondsToMonth
   };
 }

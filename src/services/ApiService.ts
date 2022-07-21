@@ -198,8 +198,11 @@ export class ApiService {
     try {
       const { value } = await this.api.query.deipVesting.vestingPlans(address);
 
-      return {
+      const intervalsCount = value.interval
+        ? Number(value.totalDuration) / Number(value.interval)
+        : 1;
 
+      return {
         // Duration of cliff, not allowed to withdraw
         cliffDuration: ApiService.millisecondsToMonth(Number(value.cliffDuration)),
 
@@ -207,7 +210,10 @@ export class ApiService {
         initialAmount: ApiService.formatCurrency(value.initialAmount),
 
         // Vesting interval (availability for the next unlock)
-        interval: ApiService.millisecondsToMonth(Number(value.interval)),
+        interval: Number(value.interval),
+
+        // Amount of intervals
+        intervalsCount,
 
         // Starting time for unlocking (vesting)
         startTime: Number(value.startTime),
@@ -392,8 +398,8 @@ export class ApiService {
       const timePoint = info.unwrap().when;
 
       const { partialFee } = await this.api.tx.multisig
-      .asMulti(threshold, otherSignatories.sort(), timePoint, callData, false, weight)
-      .paymentInfo(personalAddress);
+        .asMulti(threshold, otherSignatories.sort(), timePoint, callData, false, weight)
+        .paymentInfo(personalAddress);
 
       return ApiService.formatCurrency(partialFee);
     }
