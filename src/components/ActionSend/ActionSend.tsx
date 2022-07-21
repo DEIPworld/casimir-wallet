@@ -92,6 +92,11 @@ export const ActionSend = defineComponent({
     });
 
     const transfer = async (password: string): Promise<void> => {
+      if (amount.value + parseFloat(fee.value) > actualBalance.value) {
+        passwordError.value = 'Insufficient balance. Not enough to pay transaction fee';
+        return;
+      }
+
       isLoading.value = true;
 
       setTimeout(async () => {
