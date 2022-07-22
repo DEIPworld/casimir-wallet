@@ -1,5 +1,5 @@
 import { defineComponent, computed } from 'vue';
-import { RouterView } from 'vue-router';
+import { RouterView, useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import { VBtn, VBadge, VDivider, VTab, VTabs } from 'vuetify/components';
@@ -18,6 +18,8 @@ export const MultisigWalletView = defineComponent({
     }
   },
   setup(props) {
+    const route = useRoute();
+
     const accountStore = useAccountStore();
     const multisigStore = useMultisigWalletStore();
     const vestingStore = useVestingStore();
@@ -29,6 +31,19 @@ export const MultisigWalletView = defineComponent({
     const pendingApprovals = computed(
       () => (pendingTransactions.value?.length || 0) + (pendingVestingClaims.value?.length || 0)
     );
+
+    const activeTab = computed(() => {
+      switch(route.name) {
+        case 'multisig.balances':
+          return 'balances';
+        case 'multisig.transactions':
+          return 'transactions';
+        case 'multisig.approvals':
+        case 'multisig.approvalDetails':
+          return 'approvals';
+        default: return 'wallet';
+      }
+    });
 
     return () => (
       <InnerContainer>
@@ -52,21 +67,24 @@ export const MultisigWalletView = defineComponent({
           </div>
         </div>
 
-        <VTabs class="mx-n6" style="height: 64px">
+        <VTabs class="mx-n6" style="height: 64px" modelValue={activeTab.value}>
           <VTab
             style="height: auto"
+            value="balances"
             to={{ name: 'multisig.balances', params: { address: props.address } }}
           >
             assets
           </VTab>
           <VTab
             style="height: auto"
+            value="transactions"
             to={{ name: 'multisig.transactions', params: { address: props.address } }}
           >
             transactions
           </VTab>
           <VTab
             style="height: auto"
+            value="approvals"
             to={{ name: 'multisig.approvals', params: { address: props.address } }}
           >
             <span>approvals</span>
