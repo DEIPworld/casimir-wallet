@@ -25,7 +25,10 @@ export const SignTransaction = defineComponent({
       }
     };
 
-    const handleTransaction = ({ data }: any) => {
+    const handleTransaction = (event: any) => {
+      const { data } = event;
+      console.log('handleTransaction event: ', event);
+      console.log('handleTransaction event data: ', data);
       if (data?.packedTx) {
         packedTx.value = data.packedTx;
       }
