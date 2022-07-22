@@ -46,7 +46,7 @@ export const SignTransaction = defineComponent({
           channel: 'Deip.Wallet.Transaction'
         };
 
-        handleOpener(msgData);
+        handleOpener(msgData, false);
       } catch (error: any) {
         showError(error.message);
       } finally {
