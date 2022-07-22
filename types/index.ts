@@ -103,7 +103,7 @@ export interface IMultisigTransactionItem extends IMultisigTransactionData {
   signatories: ISignatory[];
 }
 
-export interface IMultisigVestingItem extends IMultisigTransaction {
+export interface IMultisigVestingItem extends IMultisigTransactionData {
   _id: string;
   type: string;
   address: string;

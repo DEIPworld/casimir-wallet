@@ -1,4 +1,4 @@
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import useClipboard from 'vue-clipboard3';
@@ -49,7 +49,44 @@ export const MultisigApprovalDetailsVesting = defineComponent({
     const isConfirmActionModalOpen = ref<boolean>(false);
     const isCancelAction = ref<boolean>(false);
     const isLoading = ref<boolean>(false);
+    const platformFee = ref<string>('0');
     const passwordError = ref<string>();
+
+    const getPlatformFee = async (): Promise<string> => {
+      if (!address.value || !multisigAccountDetails.value || !pendingApproval.value) {
+        return '0';
+      }
+
+      try {
+        const isFinalApproval =
+            pendingApproval.value.approvals === pendingApproval.value.threshold - 1;
+
+        return multisigStore.getMultisigTransactionFee({
+          isFirstApproval: false,
+          isFinalApproval,
+          callHash: pendingApproval.value.callHash,
+          callData: pendingApproval.value.callData,
+          threshold: multisigAccountDetails.value?.threshold,
+          otherSignatories: multisigAccountDetails.value?.signatories
+            .filter((item) => item.address !== address.value)
+            .map((item) => item.address),
+          multisigAddress: multisigAccountDetails.value.address,
+          personalAddress: address.value
+        });
+      } catch (error: any) {
+        console.error(error);
+
+        return '0';
+      }
+    };
+
+    watchEffect(async () => {
+      isLoading.value = true;
+
+      platformFee.value = await getPlatformFee();
+
+      isLoading.value = false;
+    });
 
     const onCopy = async (data: string | undefined): Promise<void> => {
       if (!data) return;
@@ -204,6 +241,15 @@ export const MultisigApprovalDetailsVesting = defineComponent({
           </div>
           <VSpacer />
           <div class="w-50 text-break">{renderSignatories()}</div>
+        </VSheet>
+        <VSheet
+          rounded
+          color="rgba(255,255,255,.05)"
+          class="pa-4 d-flex align-center mb-2"
+        >
+          <span class="text-h6">Platform fee (from personal account)</span>
+          <VSpacer />
+          <span class="text-subtitle-1">{platformFee.value}</span>
         </VSheet>
 
         <VSheet rounded color="rgba(255,255,255,.05)" class="pa-4 mb-2">
