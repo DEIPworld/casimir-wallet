@@ -94,7 +94,6 @@ export class DeipService {
         const signedTx = await deserialized.signAsync(privateKey, this.api);
         const signedTxMsg = new FinalizedTxMsg(signedTx);
 
-
         return signedTxMsg.serialize();
       }
 

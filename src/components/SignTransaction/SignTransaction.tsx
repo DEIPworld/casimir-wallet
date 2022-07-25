@@ -13,7 +13,7 @@ export const SignTransaction = defineComponent({
     const { showError } = useNotify();
 
     const isLoading = ref<boolean>(false);
-    const packedTx = ref();
+    const transaction = ref();
 
     const handleOpener = (msgData: any, withClose = true) => {
       if (window.opener) {
@@ -29,8 +29,8 @@ export const SignTransaction = defineComponent({
       const { data } = event;
       console.log('handleTransaction event: ', event);
       console.log('handleTransaction event data: ', data);
-      if (data?.packedTx) {
-        packedTx.value = data.packedTx;
+      if (data?.transaction) {
+        transaction.value = data.transaction;
       }
     };
 
@@ -42,10 +42,10 @@ export const SignTransaction = defineComponent({
       isLoading.value = true;
 
       try {
-        const transaction = await accountStore.signTransaction(packedTx.value);
+        const signedTx = await accountStore.signTransaction(transaction.value);
 
         const msgData = {
-          transaction,
+          transaction: signedTx,
           channel: 'Deip.Wallet.Transaction'
         };
 
