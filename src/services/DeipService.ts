@@ -31,11 +31,11 @@ export class DeipService {
   }
 
   async createDaoTransactionMessage({
-                                      address,
-                                      publicKey,
-                                      privateKey,
-                                      portal
-                                    }: IWallet): Promise<any> {
+    address,
+    publicKey,
+    privateKey,
+    portal
+  }: IWallet): Promise<any> {
     try {
       const daoId = genRipemd160Hash(randomAsHex(20));
 
