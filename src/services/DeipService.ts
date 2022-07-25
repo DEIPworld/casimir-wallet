@@ -89,12 +89,13 @@ export class DeipService {
     try {
       if (privateKey) {
         const { TxClass, metadata } = this.chainInfo;
-        const TxMessage = new FinalizedTxMsg();
 
-        const deserialized = TxMessage.Deserialize(transaction, TxClass, metadata);
+        const deserialized = FinalizedTxMsg.Deserialize(transaction, TxClass, metadata);
         const signedTx = await deserialized.signAsync(privateKey, this.api);
+        const signedTxMsg = new FinalizedTxMsg(signedTx);
 
-        return signedTx.serialize();
+
+        return signedTxMsg.serialize();
       }
 
       throw new Error('Private key is missing.');
