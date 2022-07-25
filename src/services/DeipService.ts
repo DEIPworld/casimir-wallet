@@ -1,7 +1,7 @@
 import { ChainService } from '@deip/chain-service';
 import { genRipemd160Hash, genSha256Hash } from '@deip/toolbox';
 import { CreateDaoCmd } from '@deip/commands';
-import { JsonDataMsg } from '@deip/messages';
+import { JsonDataMsg, FinalizedTxMsg } from '@deip/messages';
 import { randomAsHex } from '@polkadot/util-crypto';
 
 import { singleton } from '@/utils/singleton';
@@ -15,6 +15,7 @@ export class DeipService {
   private chainTxBuilder: any;
   private api: any;
   private rpc: any;
+  private chainInfo: any;
 
   async init(): Promise<void> {
     this.chainService = await ChainService.getInstanceAsync({
@@ -26,14 +27,15 @@ export class DeipService {
     this.chainTxBuilder = this.chainService.getChainTxBuilder();
     this.api = this.chainService.getChainNodeClient();
     this.rpc = this.chainService.getChainRpc();
+    this.chainInfo = this.chainService.getChainInfo();
   }
 
   async createDaoTransactionMessage({
-    address,
-    publicKey,
-    privateKey,
-    portal
-  }: IWallet): Promise<any> {
+                                      address,
+                                      publicKey,
+                                      privateKey,
+                                      portal
+                                    }: IWallet): Promise<any> {
     try {
       const daoId = genRipemd160Hash(randomAsHex(20));
 
@@ -86,7 +88,13 @@ export class DeipService {
   async signTransaction(transaction: any, privateKey?: string): Promise<any> {
     try {
       if (privateKey) {
-        return await transaction.signAsync(privateKey, this.api);
+        const { TxClass, metadata } = this.chainInfo;
+        const TxMessage = new FinalizedTxMsg();
+
+        const deserialized = TxMessage.Deserialize(transaction, TxClass, metadata);
+        const signedTx = await deserialized.signAsync(privateKey, this.api);
+
+        return signedTx.serialize();
       }
 
       throw new Error('Private key is missing.');
