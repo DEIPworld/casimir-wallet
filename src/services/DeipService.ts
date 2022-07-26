@@ -1,6 +1,6 @@
 import { ChainService } from '@deip/chain-service';
 import { genRipemd160Hash, genSha256Hash } from '@deip/toolbox';
-import { CreateDaoCmd } from '@deip/commands';
+import { CreateDaoCmd, TransferFTCmd } from '@deip/commands';
 import { JsonDataMsg } from '@deip/messages';
 import { randomAsHex } from '@polkadot/util-crypto';
 
@@ -60,6 +60,15 @@ export class DeipService {
           });
 
           txBuilder.addCmd(createDaoCmd);
+
+          const transferFTCmd = new TransferFTCmd({
+            from: address,
+            to: daoId,
+            tokenId: JSON.parse(import.meta.env.DW_CORE_ASSET).id,
+            amount: import.meta.env.DW_ACCOUNT_DEFAULT_FUNDING_AMOUNT
+          });
+
+          txBuilder.addCmd(transferFTCmd);
           return txBuilder.end();
         });
 
