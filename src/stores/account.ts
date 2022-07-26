@@ -3,10 +3,10 @@ import { computed, ref } from 'vue';
 import { ApiService } from '@/services/ApiService';
 import { DeipService } from '@/services/DeipService';
 import HttpService from '@/services/HttpService';
-
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { IMultisigWallet, ISignatory, IKeyPair } from '@/types';
+import { Keyring } from '@polkadot/api';
 
 const apiService = ApiService.getInstance();
 const deipService = DeipService.getInstance();
@@ -60,6 +60,13 @@ export const useAccountStore = defineStore(
           privateKey,
           portal
         });
+
+        const keyring = new Keyring({ type: 'sr25519' });
+        const keyringPair = keyring.addFromUri(`0x${privateKey}`);
+        const daoAddress = deipService.daoIdToAddress(accountDao.value.daoId);
+        // TODO: check settings for PROD/TEST environments
+        const prefundingAmount = import.meta.env.DW_ACCOUNT_DEFAULT_FUNDING_AMOUNT ? import.meta.env.DW_ACCOUNT_DEFAULT_FUNDING_AMOUNT : "1000000000000000000000";
+        await apiService.prefundAddress(keyringPair, daoAddress, prefundingAmount);
 
         return { secretSigHex, publicKey };
       } catch (error) {
