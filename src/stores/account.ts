@@ -61,12 +61,13 @@ export const useAccountStore = defineStore(
           portal
         });
 
-        const keyring = new Keyring({ type: 'sr25519' });
-        const keyringPair = keyring.addFromUri(`0x${privateKey}`);
         const daoAddress = deipService.daoIdToAddress(accountDao.value.daoId);
-        // TODO: check settings for PROD/TEST environments
-        const prefundingAmount = import.meta.env.DW_ACCOUNT_DEFAULT_FUNDING_AMOUNT ? import.meta.env.DW_ACCOUNT_DEFAULT_FUNDING_AMOUNT : "1000000000000000000000";
-        await apiService.prefundAddress(keyringPair, daoAddress, prefundingAmount);
+        const daoBalance = await apiService.getAccountBalance(daoAddress);
+
+        // TODO: add additional step for prefunding action approval 
+        if (daoBalance.data.free == '0.000') {
+          await apiService.makeTransaction(daoAddress, account, 1000); // TODO: add the prefunding value to config 
+        }
 
         return { secretSigHex, publicKey };
       } catch (error) {

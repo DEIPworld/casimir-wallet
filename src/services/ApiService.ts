@@ -532,17 +532,6 @@ export class ApiService {
     return ApiService.formatCurrency(this.api.consts.balances.existentialDeposit.toBigInt());
   }
 
-  async prefundAddress(pair: any, toAddress: string, amount: string): Promise<string> {
-    try {
-      const hash = await this.api.tx.balances
-        .transfer(toAddress, amount)
-        .signAndSend(pair);
-      return hash.toString();
-    } catch (error) {
-      console.error(error);
-      return error as any;
-    }
-  }
 
   static readonly getInstance = singleton(() => new ApiService());
 
