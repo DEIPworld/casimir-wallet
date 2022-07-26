@@ -144,7 +144,7 @@ export const useAccountStore = defineStore(
   {
     persistedState: {
       key: 'DEIP:account',
-      includePaths: ['accountJson', 'accountDAO', 'accountKeys']
+      includePaths: ['accountJson', 'accountDao', 'accountKeys']
     }
   });
 
