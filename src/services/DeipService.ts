@@ -1,7 +1,7 @@
 import { ChainService } from '@deip/chain-service';
 import { genRipemd160Hash, genSha256Hash } from '@deip/toolbox';
 import { CreateDaoCmd } from '@deip/commands';
-import { JsonDataMsg, FinalizedTxMsg } from '@deip/messages';
+import { JsonDataMsg } from '@deip/messages';
 import { randomAsHex } from '@polkadot/util-crypto';
 
 import { singleton } from '@/utils/singleton';
@@ -90,11 +90,10 @@ export class DeipService {
       if (privateKey) {
         const { TxClass, metadata } = this.chainInfo;
 
-        const deserialized = FinalizedTxMsg.Deserialize(transaction, TxClass, metadata);
-        const signedTx = await deserialized.signAsync(privateKey, this.api);
-        const signedTxMsg = new FinalizedTxMsg(signedTx);
+        const deserializedTx = TxClass.Deserialize(transaction, metadata); 
+        const signedTx = await deserializedTx.signAsync(privateKey, this.api);
 
-        return signedTxMsg.serialize();
+        return signedTx.serialize();
       }
 
       throw new Error('Private key is missing.');
