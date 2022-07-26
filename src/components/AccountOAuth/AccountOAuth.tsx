@@ -40,7 +40,7 @@ export const AccountOAuth = defineComponent({
           initialStep.value = 'unsigned';
           break;
 
-        case !accountDao.value && Number(balance.value?.data.actual) < 10:
+        case !accountDao.value && Number(balance.value?.data.actual) < 1010:
           initialStep.value = 'paywall';
           break;
 
