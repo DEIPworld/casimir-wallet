@@ -17,6 +17,10 @@ export class DeipService {
   private rpc: any;
   private chainInfo: any;
 
+  private static formatKey(key: string): string {
+    return key.slice(2);
+  }
+
   async init(): Promise<void> {
     this.chainService = await ChainService.getInstanceAsync({
       PROTOCOL: parseFloat(import.meta.env.DW_PROTOCOL),
@@ -89,9 +93,10 @@ export class DeipService {
     try {
       if (privateKey) {
         const { TxClass, metadata } = this.chainInfo;
+        const formattedKey = DeipService.formatKey(privateKey);
 
-        const deserializedTx = TxClass.Deserialize(transaction, metadata); 
-        const signedTx = await deserializedTx.signAsync(privateKey, this.api);
+        const deserializedTx = TxClass.Deserialize(transaction, metadata);
+        const signedTx = await deserializedTx.signAsync(formattedKey, this.api);
 
         return signedTx.serialize();
       }
