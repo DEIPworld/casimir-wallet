@@ -57,12 +57,16 @@ export const useWalletStore = defineStore('balance', () => {
     recipient: string,
     address: string,
     amount: number
-  ) => {
-    return await apiService.getTransactionFee(
-      recipient,
-      address,
-      amount
-    );
+  ): Promise<string> => {
+    try {
+      return await apiService.getTransactionFee(
+        recipient,
+        address,
+        amount
+      );
+    } catch (error) {
+      return '0';
+    }
   };
 
   const makeTransaction = async (

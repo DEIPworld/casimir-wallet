@@ -353,7 +353,7 @@ export class ApiService {
       return ApiService.formatCurrency(partialFee);
     } catch (error) {
       console.error(error);
-      return error as any;
+      throw(error);
     }
   }
 
