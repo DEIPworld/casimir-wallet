@@ -27,8 +27,7 @@ export const SignTransaction = defineComponent({
 
     const handleTransaction = (event: any) => {
       const { data } = event;
-      console.log('handleTransaction event: ', event);
-      console.log('handleTransaction event data: ', data);
+
       if (data?.transaction) {
         transaction.value = data.transaction;
       }
@@ -49,7 +48,7 @@ export const SignTransaction = defineComponent({
           channel: 'Deip.Wallet.Transaction'
         };
 
-        handleOpener(msgData, false);
+        handleOpener(msgData);
       } catch (error: any) {
         showError(error.message);
       } finally {
