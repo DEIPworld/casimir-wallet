@@ -16,10 +16,10 @@ export const useMultisigWalletStore = defineStore('multisigBalance', () => {
   const pendingApprovals = ref<IMultisigTransactionItem[]>([]);
 
   const freeBalance = computed(() =>
-    parseFloat(balance.value?.data.free.replace(',', '') || '')
+    parseFloat(balance.value?.data.free.replace(/,/g, '') || '')
   );
   const actualBalance = computed(() =>
-    parseFloat(balance.value?.data.actual.replace(',', '') || '')
+    parseFloat(balance.value?.data.actual.replace(/,/g, '') || '')
   );
 
   const clear = () => {

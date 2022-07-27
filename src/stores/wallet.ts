@@ -16,10 +16,10 @@ export const useWalletStore = defineStore('balance', () => {
   const transactionHistory = ref<ITransactionHistoryItem[]>([]);
 
   const freeBalance = computed(() =>
-    parseFloat(balance.value?.data.free.replace(',', '') || '')
+    parseFloat(balance.value?.data.free.replace(/,/g, '') || '')
   );
   const actualBalance = computed(() =>
-    parseFloat(balance.value?.data.actual.replace(',', '') || '')
+    parseFloat(balance.value?.data.actual.replace(/,/g, '') || '')
   );
 
   const clear = () => {
