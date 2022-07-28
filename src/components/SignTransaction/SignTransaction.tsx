@@ -72,9 +72,9 @@ export const SignTransaction = defineComponent({
         </div>
 
         <div class="text-body-large mb-6">
-          This is a DEIP wallet widget. From here you may approve transaction
-          initiated on the portal. The transaction amount and platform
-          fee will be charged from your DEIP wallet account.
+          This is a DEIP wallet screen. From here you may approve
+          transactions initiated on the portal. The transaction amount
+          and platform fee will be charged from your userDAO account.
         </div>
 
         <div class="d-flex mt-12">
