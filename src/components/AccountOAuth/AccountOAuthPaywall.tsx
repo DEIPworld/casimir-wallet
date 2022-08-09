@@ -14,7 +14,7 @@ export const AccountOAuthPaywall = defineComponent({
         </div>
 
         <div class="text-body-large mb-12">
-          To associated DAO with your wallet you must have at least 1010 DEIP.
+          To associate DAO with your wallet you must have at least 1010 DEIP.
         </div>
 
         <div class="d-flex mt-12">

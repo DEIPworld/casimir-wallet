@@ -29,7 +29,7 @@ export const AccountOAuthAllow = defineComponent({
 
         <div class="text-body-large mb-6">
           This will allow <span class="text-color-primary">{props.portal.name}</span> Portal
-          with ID:<span class="text-color-primary">{props.portal.portalId}</span> to:
+          with ID: <span class="text-color-primary text-break">{props.portal.portalId}</span> to:
         </div>
 
         <div class="text-body-large">
