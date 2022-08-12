@@ -15,7 +15,7 @@ export const ActionReceive = defineComponent({
     const { address, multisigAccountDetails } = storeToRefs(accountStore);
 
     const isMultiSigView = computed(() => route.path.includes('multisig'));
-    const activeAddress = computed(() => 
+    const activeAddress = computed(() =>
       isMultiSigView.value
       ? multisigAccountDetails.value?.address
       : address.value
@@ -25,7 +25,7 @@ export const ActionReceive = defineComponent({
       <>
         <div class="text-body1 mb-6">
           The address is generated, you can
-          use it to deposit your wallet
+          use it to deposit your wallet.
         </div>
 
         <VSheet maxWidth={240} class="mx-auto">
