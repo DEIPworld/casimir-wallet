@@ -23,7 +23,7 @@ export const AccountImportSuccess = defineComponent({
 
         <div class="text-body-large mb-12">
           <p>
-            Welcome back to your account
+            Welcome back to your account!
           </p>
         </div>
 

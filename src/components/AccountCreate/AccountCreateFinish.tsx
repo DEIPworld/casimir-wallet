@@ -34,7 +34,7 @@ export const AccountCreateFinish = defineComponent({
 
         <div class="text-body-large mb-12">
           The address is generated, you can
-          use it to deposit your wallet
+          use it to deposit your wallet.
         </div>
 
         <VSheet maxWidth={240} class="mx-auto">

@@ -36,14 +36,13 @@ export const AccountOAuthAllow = defineComponent({
           - see and use your DEIP wallet balance;
         </div>
         <div class="text-body-large mb-6">
-          - import and export collectibles;
+          - import and export collectibles.
         </div>
 
         <div class="text-body-large">
           Make sure you trust <span class="text-color-primary">{props.portal.name}</span> Portal
-          as no additional approvals would be requested for transactions within
-          the Portal with DEIP wallets funds. You could always see your
-          access in your DEIP wallet.
+          as no additional approvals will be requested for transactions within
+          the Portal with DEIP wallet funds. You can always see your access in your DEIP wallet.
         </div>
 
         <div class="d-flex mt-12">
