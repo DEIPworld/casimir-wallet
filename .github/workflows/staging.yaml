@@ -24,5 +24,5 @@ jobs:
 
       - name: Build and push image
         run: |
-          docker build -t deipworld/stage-wallet-frontend:latest --build-arg DW_API_URL=${{ secrets.STAGE_API_URL }} --build-arg DW_SENTRY=${{ secrets.SENTRY_DSN }} --build-arg DW_RELEASE=${{ github.sha }} -f Dockerfile.dev .
+          docker build -t deipworld/stage-wallet-frontend:latest --build-arg DW_API_URL=${{ secrets.STAGE_API_URL }} --build-arg DW_SENTRY=${{ secrets.SENTRY_DSN }} --build-arg DW_RELEASE=${{ github.sha }} -f Dockerfile.stage .
           docker push deipworld/stage-wallet-frontend:latest
