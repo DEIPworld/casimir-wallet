@@ -28,7 +28,7 @@ export const AccountOAuthAllow = defineComponent({
         </div>
 
         <div class="text-body-large mb-6">
-          This will allow <span class="text-color-primary">{props.portal.name}</span> Portal
+          This will allow the <span class="text-color-primary">{props.portal.name}</span> Portal
           with ID: <span class="text-color-primary text-break">{props.portal.portalId}</span> to:
         </div>
 
@@ -40,9 +40,9 @@ export const AccountOAuthAllow = defineComponent({
         </div>
 
         <div class="text-body-large">
-          Make sure you trust <span class="text-color-primary">{props.portal.name}</span> Portal
-          as no additional approvals will be requested for transactions within
-          the Portal with DEIP wallet funds. You can always see your access in your DEIP wallet.
+          Make sure you trust the <span class="text-color-primary">{props.portal.name}</span> Portal
+          as no additional approvals will be requested for transactions within the Portal
+          with DEIP wallet funds. You can always see your access in your DEIP wallet.
         </div>
 
         <div class="d-flex mt-12">

@@ -15,7 +15,7 @@ export const AccountOAuthUnsigned = defineComponent({
         </div>
 
         <div class="text-body-large mb-12">
-          To grant an access for Portal, you must be authenticated.
+          To grant access to the Portal, you must be authenticated.
         </div>
 
         <div class="d-flex mt-12">

@@ -24,8 +24,8 @@ export const ActionReceive = defineComponent({
     return () => (
       <>
         <div class="text-body1 mb-6">
-          The address is generated, you can
-          use it to deposit your wallet.
+          The address is generated,
+          you can use it to deposit your wallet.
         </div>
 
         <VSheet maxWidth={240} class="mx-auto">
