@@ -6,7 +6,6 @@ import HttpService from '@/services/HttpService';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { IMultisigWallet, ISignatory, IKeyPair } from '@/types';
-import { Keyring } from '@polkadot/api';
 
 const apiService = ApiService.getInstance();
 const deipService = DeipService.getInstance();
@@ -42,38 +41,39 @@ export const useAccountStore = defineStore(
       return apiService.restoreAccount(json, password);
     }
 
+    function checkIfSeedIsValidForAccount() : boolean {
+      const keys = apiService.getAccountKeyPair(tempSeed.value, address.value);
+
+      return accountKeys.value?.privateKey === keys.privateKey;
+    }
+
     async function connectPortal(portal: any): Promise<{
       secretSigHex: string,
       publicKey: string
     }> {
-      try {
-        const keys = apiService.getAccountKeyPair(tempSeed.value, address.value);
-        const account = apiService.addAccount(tempSeed.value);
-        const secretSigHex = apiService.signMessage(account, portal.seed);
+      const keys = apiService.getAccountKeyPair(tempSeed.value, address.value);
+      const account = apiService.addAccount(tempSeed.value);
+      const secretSigHex = apiService.signMessage(account, portal.seed);
 
-        const publicKey = keys.publicKey.slice(2);
-        const privateKey = keys.privateKey.slice(2);
+      const publicKey = keys.publicKey.slice(2);
+      const privateKey = keys.privateKey.slice(2);
 
-        accountDao.value = await deipService.createDaoTransactionMessage({
-          address: address.value,
-          publicKey,
-          privateKey,
-          portal
-        });
+      accountDao.value = await deipService.createDaoTransactionMessage({
+        address: address.value,
+        publicKey,
+        privateKey,
+        portal
+      });
 
-        const daoAddress = deipService.daoIdToAddress(accountDao.value.daoId);
-        const daoBalance = await apiService.getAccountBalance(daoAddress);
+      const daoAddress = deipService.daoIdToAddress(accountDao.value.daoId);
+      const daoBalance = await apiService.getAccountBalance(daoAddress);
 
-        // TODO: add additional step for prefunding action approval 
-        if (daoBalance.data.free == '0.000') {
-          await apiService.makeTransaction(daoAddress, account, 1000); // TODO: add the prefunding value to config 
-        }
-
-        return { secretSigHex, publicKey };
-      } catch (error) {
-        console.log(error);
-        return error as any;
+      // TODO: add additional step for prefunding action approval 
+      if (daoBalance.data.free == '0.000') {
+        await apiService.makeTransaction(daoAddress, account, 1000); // TODO: add the prefunding value to config 
       }
+
+      return { secretSigHex, publicKey };
     }
 
     function signTransaction(packedTx: any): Promise<any> {
@@ -138,6 +138,8 @@ export const useAccountStore = defineStore(
 
       generateSeedPhrase,
       connectPortal,
+
+      checkIfSeedIsValidForAccount,
 
       addAccount,
       restoreAccount,

@@ -23,10 +23,10 @@ export const AccountOAuth = defineComponent({
   setup() {
     const router = useRouter();
     const route = useRoute();
+    const { showError, showSuccess } = useNotify();
+    
     const accountStore = useAccountStore();
-
-    const { showSuccess } = useNotify();
-    const { isLoggedIn, accountDao } = storeToRefs(accountStore);
+    const { isLoggedIn, accountDao, address } = storeToRefs(accountStore);
 
     const balanceStore = useWalletStore();
     const { balance } = storeToRefs(balanceStore);
@@ -64,7 +64,16 @@ export const AccountOAuth = defineComponent({
     });
 
     const goToStart = () => setStep('start');
-    const goToAllow = () => setStep('allow');
+
+    const goToAllow = () => {
+      const isPassphraseValid = accountStore.checkIfSeedIsValidForAccount();
+      
+      if (isPassphraseValid) {
+        setStep('allow');
+      } else {
+        showError(`Wrong passphrase for the address ${address.value}`);
+      }
+    };
 
     const onAllowConnect = async () => {
       isLoading.value = true;
@@ -91,6 +100,9 @@ export const AccountOAuth = defineComponent({
             '_self'
           );
         }
+      } catch(error: any) {
+        console.log(error);
+        showError(error.message);
       } finally {
         isLoading.value = false;
       }
@@ -119,6 +131,7 @@ export const AccountOAuth = defineComponent({
           <VWindowItem value="start">
             <MnemonicValidate
               title="Allow an access to your DEIP wallet"
+              description={`Enter the backup passphrase associated with the address ${address.value}`}
               onClick:next={goToAllow}
             />
           </VWindowItem>

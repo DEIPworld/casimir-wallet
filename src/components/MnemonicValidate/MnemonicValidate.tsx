@@ -54,7 +54,7 @@ export const MnemonicValidate = defineComponent({
           </div>
         )}
 
-        <div class="text-body-large mb-12">
+        <div class="text-body-large mb-12 text-break">
           {props.description}
         </div>
 

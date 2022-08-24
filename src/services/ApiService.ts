@@ -130,16 +130,10 @@ export class ApiService {
   }
 
   async getAccountDao(address: string): Promise<any> {
-    try {
-      const publicKey = u8aToHex(decodeAddress(address));
+    const publicKey = u8aToHex(decodeAddress(address));
+    const { data } = await HttpService.get('/dao/get', { publicKey });
 
-      const { data } = await HttpService.get('/dao/get', { publicKey });
-
-      return data;
-    } catch (error) {
-      console.log(error);
-      return error as any;
-    }
+    return data;
   }
 
   getAccountKeyPair(
