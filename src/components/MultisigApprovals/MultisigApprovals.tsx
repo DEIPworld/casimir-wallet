@@ -7,7 +7,7 @@ import { VSheet, VBtn } from 'vuetify/components';
 import { useMultisigWalletStore } from '@/stores/multisigWallet';
 import { useVestingStore } from '@/stores/vesting';
 
-import type { IMultisigTransactionItem, IMultisigVestingItem, ApprovalType } from '../../../types';
+import type { IMultisigTransactionItem, IMultisigVestingItem, ApprovalType } from '@/types';
 
 export const MultisigApprovals = defineComponent({
   setup() {

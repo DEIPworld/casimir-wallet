@@ -11,7 +11,7 @@ import { useNotify } from '@/composable/notify';
 import { MultisigActionSendForm } from './MultisigActionSendForm';
 import { MultisigActionSendFormDetails } from './MultisigActionSendFormDetails';
 
-import type { IMultisigTransactionData } from '../../../types';
+import type { IMultisigTransactionData } from '@/types';
 
 export const MultisigActionSend = defineComponent({
   props: {

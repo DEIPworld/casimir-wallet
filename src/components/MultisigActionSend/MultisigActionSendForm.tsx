@@ -16,7 +16,7 @@ import { useYup } from '@/composable/validate';
 import { useField, useForm } from 'vee-validate';
 import { string, number, object } from 'yup';
 
-import type { IMultisigTransactionData } from '../../../types';
+import type { IMultisigTransactionData } from '@/types';
 
 export const MultisigActionSendForm = defineComponent({
   emits: ['click:cancel', 'click:confirm'],

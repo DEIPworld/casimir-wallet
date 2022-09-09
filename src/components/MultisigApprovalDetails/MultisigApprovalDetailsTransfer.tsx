@@ -11,7 +11,7 @@ import { useAccountStore } from '@/stores/account';
 import { useMultisigWalletStore } from '@/stores/multisigWallet';
 import { useNotify } from '@/composable/notify';
 
-import type { ISignatory, IMultisigTransactionItem } from '../../../types';
+import type { ISignatory, IMultisigTransactionItem } from '@/types';
 
 export const MultisigApprovalDetailsTransfer = defineComponent({
   props: {

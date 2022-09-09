@@ -13,7 +13,7 @@ import { useNotify } from '@/composable/notify';
 
 import { AccountCreateSignatoryModal } from './AccountCreateSignatoryModal';
 
-import type { ISignatory } from '../../../types';
+import type { ISignatory } from '@/types';
 
 export const AccountCreateMulti = defineComponent({
   setup() {

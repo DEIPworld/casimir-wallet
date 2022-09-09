@@ -6,7 +6,7 @@ import { VIcon, VSheet, VSpacer } from 'vuetify/components';
 import { useNumber } from '@/composable/number';
 import { useDate } from '@/composable/date';
 
-import type { ITransactionHistoryItem } from '../../../types';
+import type { ITransactionHistoryItem } from '@/types';
 
 const containerStyles = {
   maxHeight: '50vh',

@@ -12,7 +12,7 @@ import { useVestingStore } from '@/stores/vesting';
 import { useMultisigWalletStore } from '@/stores/multisigWallet';
 import { useNotify } from '@/composable/notify';
 
-import type { ISignatory, IMultisigVestingItem } from '../../../types';
+import type { ISignatory, IMultisigVestingItem } from '@/types';
 
 export const MultisigApprovalDetailsVesting = defineComponent({
   props: {
