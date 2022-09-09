@@ -85,7 +85,7 @@ prompt([{
   .then(() => {
     const globalPath = path.join(__dirname, '..', '..', 'casimir-frontend', 'node_modules', modulesToRemoveNamesGlob);
     rimraf(globalPath, {}, () => {
-      console.info(`${modulesToRemove} removed from @deip`);
+      console.info(`${modulesToRemove} removed from @casimir.one`);
     });
   })
   .catch((err) => console.error(err));

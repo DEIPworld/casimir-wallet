@@ -8,8 +8,8 @@ module.exports = {
     "eslint:recommended",
     "@vue/eslint-config-typescript/recommended",
 
-    // "@deip/eslint-config",
-    // "@deip/eslint-config/vue"
+    // "@casimir.one/eslint-config",
+    // "@casimir.one/eslint-config/vue"
   ],
   "env": {
     "vue/setup-compiler-macros": true

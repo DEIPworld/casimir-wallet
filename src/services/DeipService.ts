@@ -1,7 +1,7 @@
-import { ChainService, SubstrateChainUtils } from '@deip/chain-service';
-import { genRipemd160Hash, genSha256Hash } from '@deip/toolbox';
-import { CreateDaoCmd } from '@deip/commands';
-import { JsonDataMsg } from '@deip/messages';
+import { ChainService, SubstrateChainUtils } from '@casimir.one/chain-service';
+import { genRipemd160Hash, genSha256Hash } from '@casimir.one/toolbox';
+import { CreateDaoCmd } from '@casimir.one/commands';
+import { JsonDataMsg } from '@casimir.one/messages';
 import { randomAsHex } from '@polkadot/util-crypto';
 
 import { singleton } from '@/utils/singleton';

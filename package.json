@@ -15,10 +15,10 @@
   },
   "dependencies": {
     "@chenfengyuan/vue-qrcode": "^2.0.0",
-    "@deip/chain-service": "^1.391.1",
-    "@deip/commands": "^1.390.0",
-    "@deip/messages": "^1.391.1",
-    "@deip/toolbox": "^1.388.0",
+    "@casimir.one/chain-service": "0.0.2",
+    "@casimir.one/commands": "0.0.2",
+    "@casimir.one/messages": "0.0.2",
+    "@casimir.one/toolbox": "0.0.2",
     "@mdi/font": "^6.9.96",
     "@mdi/js": "^6.9.96",
     "@polkadot/api": "^8.11.3",
@@ -45,7 +45,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@deip/eslint-config": "^1.375.0",
+    "@casimir.one/eslint-config": "0.0.2",
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/jsdom": "^16.2.14",

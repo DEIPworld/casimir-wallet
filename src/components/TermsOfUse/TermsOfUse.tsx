@@ -425,13 +425,13 @@ export const TermsOfUse = defineComponent({
                   <b>60-Day Right to Opt Out.</b> You have the right to opt out of this Arbitration
                   Agreement by sending written notice of your decision to opt out to the following
                   address: DEIPworld, Inc. 651 N, Broad Street, suite 206, Middletown, DE 19709, or
-                  via email to support@deip.world, within 60 days after first becoming subject to
-                  this Arbitration Agreement. Notice must include your name and address and an
-                  unequivocal statement that you want to opt out of this Arbitration Agreement. If
-                  you opt out of this Arbitration Agreement, all other parts of the Terms will
-                  continue to apply to you. Opting out of this Arbitration Agreement has no effect
-                  on any other arbitration agreements that you may currently have, or may enter in
-                  the future, with us.
+                  via email to support@casimir.one, within 60 days after first becoming
+                  subject to this Arbitration Agreement. Notice must include your name and address
+                  and an unequivocal statement that you want to opt out of 
+                  this Arbitration Agreement. If you opt out of this Arbitration Agreement, 
+                  all other parts of the Terms will continue to apply to you. Opting out of 
+                  this Arbitration Agreement has no effect on any other arbitration agreements that 
+                  you may currently have, or may enter in the future, with us.
                 </li>
                 <li>
                   <b>Severability.</b> If any part of this Arbitration Agreement is found under the
@@ -479,7 +479,7 @@ export const TermsOfUse = defineComponent({
                 <li>
                   <b>Questions, Complaints, Claims.</b> If you have any questions, complaints or
                   claims with respect to the Site or Services, please contact us at:
-                  support@deip.world or at DEIPworld, Inc. 651 N, Broad Street, suite 206,
+                  support@casimir.one.world or at DEIPworld, Inc. 651 N, Broad Street, suite 206,
                   Middletown, DE 19709. We will do our best to address your concerns.
                 </li>
                 <li>
