@@ -4,7 +4,6 @@ RUN mkdir -p /var/app
 WORKDIR /var/app
 
 COPY package*.json ./
-COPY .npmrc ./
 RUN npm ci
 COPY . .
 ARG DW_API_URL
