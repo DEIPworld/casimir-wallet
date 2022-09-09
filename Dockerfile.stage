@@ -5,8 +5,7 @@ WORKDIR /var/app
 
 COPY package*.json ./
 
-RUN rm -rf dist
-RUN npm ci
+RUN rm -rf dist && npm ci
 COPY . .
 ARG DW_API_URL
 ARG DW_SENTRY
