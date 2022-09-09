@@ -3,13 +3,15 @@ FROM node:14.15.0 as build
 RUN mkdir -p /var/app
 WORKDIR /var/app
 
-# COPY package*.json ./
-# RUN npm ci
-# COPY . .
-# ARG DW_API_URL
-# ARG DW_SENTRY
-# ARG DW_RELEASE
-# RUN DW_API_URL=$DW_API_URL DW_SENTRY=$DW_SENTRY DW_RELEASE=$DW_RELEASE npm run build
+COPY package*.json ./
+
+RUN rm -rf dist
+RUN npm ci
+COPY . .
+ARG DW_API_URL
+ARG DW_SENTRY
+ARG DW_RELEASE
+RUN DW_API_URL=$DW_API_URL DW_SENTRY=$DW_SENTRY DW_RELEASE=$DW_RELEASE npm run build
 COPY . .
 
 
