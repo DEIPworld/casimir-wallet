@@ -10,7 +10,7 @@ export const AccountOAuthPaywall = defineComponent({
     return () => (
       <>
         <div class="text-h3 mb-6">
-          There is a problem
+          Your balance is not enough
         </div>
 
         <div class="text-body-large mb-12">

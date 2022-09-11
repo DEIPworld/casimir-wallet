@@ -11,7 +11,7 @@ export const AccountOAuthUnsigned = defineComponent({
     return () => (
       <>
         <div class="text-h3 mb-6">
-          There is a problem
+          No active session in the wallet
         </div>
 
         <div class="text-body-large mb-12">
