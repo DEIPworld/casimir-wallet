@@ -33,15 +33,20 @@ export const AppNotify = defineComponent({
       show(message, 'error');
     };
 
+    const showWarning = (message: string) => {
+      show(message, 'warning');
+    };
+
     emitter.on('notify.show', show);
     emitter.on('notify.showSuccess', showSuccess);
     emitter.on('notify.showError', showError);
+    emitter.on('notify.showWarning', showWarning);
 
     return () => (
       <VSnackbar
         v-model={state.isActive}
         color={state.color}
-        timeout={2000}
+        timeout={3000}
       >
         {state.message}
       </VSnackbar>

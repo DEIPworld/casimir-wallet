@@ -18,9 +18,14 @@ export function useNotify() {
     emitter.emit('notify.showError', message);
   };
 
+  const showWarning = (message: string) => {
+    emitter.emit('notify.showWarning', message);
+  };
+
   return {
     show,
     showSuccess,
-    showError
+    showError,
+    showWarning
   };
 }

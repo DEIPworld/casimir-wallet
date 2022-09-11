@@ -23,7 +23,7 @@ export const AccountOAuth = defineComponent({
   setup() {
     const router = useRouter();
     const route = useRoute();
-    const { showError, showSuccess } = useNotify();
+    const { showError, showSuccess, showWarning } = useNotify();
     
     const accountStore = useAccountStore();
     const { isLoggedIn, accountDao, address } = storeToRefs(accountStore);
@@ -71,7 +71,7 @@ export const AccountOAuth = defineComponent({
       if (isPassphraseValid) {
         setStep('allow');
       } else {
-        showError(`Wrong passphrase for the address ${address.value}`);
+        showWarning(`Entered seed passphrase does not match the address ${address.value}. If you are trying to login to the Portal with a different address, logout from the active wallet session first and retry`);
       }
     };
 
@@ -131,7 +131,7 @@ export const AccountOAuth = defineComponent({
           <VWindowItem value="start">
             <MnemonicValidate
               title="Allow an access to your DEIP wallet"
-              description={`Enter the backup passphrase associated with the address ${address.value}`}
+              description={`Currently, you are logged in the wallet with address ${address.value}. Enter the seed passphrase associated with this address to proceed with the Portal authorization`}
               onClick:next={goToAllow}
             />
           </VWindowItem>
