@@ -5,14 +5,13 @@ WORKDIR /var/app
 
 COPY package*.json ./
 
-RUN rm -rf dist && npm ci
+RUN npm ci
 COPY . .
 ARG DW_API_URL
 ARG DW_SENTRY
 ARG DW_RELEASE
 ARG DW_NETWORK
 RUN DW_API_URL=$DW_API_URL DW_SENTRY=$DW_SENTRY DW_RELEASE=$DW_RELEASE DW_NETWORK=$DW_NETWORK npm run build:testnet
-COPY . .
 
 
 

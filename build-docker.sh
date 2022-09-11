@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+rm -rf ./dist
+
 TAG=$(git log -1 --pretty=%h)
 LATEST="latest"
 ORG="deipworld"
